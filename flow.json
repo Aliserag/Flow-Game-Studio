@@ -24,7 +24,7 @@
       }
     },
     "testnet-account": {
-      "address": "0xYOUR_TESTNET_ADDRESS",
+      "address": "0x0000000000000000",
       "key": {
         "type": "file",
         "location": ".flow-testnet.pkey"
