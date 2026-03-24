@@ -23,3 +23,14 @@
   7. **Tuning Knobs** -- configurable values identified
   8. **Acceptance Criteria** -- testable success conditions
 - Balance values must link to their source formula or rationale
+
+## Cadence / Smart Contract Standards
+
+See full Cadence standards: `.claude/docs/flow-coding-standards.md`
+
+**Key rules:**
+- All contracts tested with `flow test` before commit
+- No `pub`/`priv` keywords (Cadence 0.x)
+- Entitlements required for all mutating/privileged operations
+- No hardcoded addresses — use `flow.json` named accounts
+- Admin resources never published to public paths
