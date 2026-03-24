@@ -1,0 +1,56 @@
+{
+  "contracts": {
+    "GameAsset": "cadence/contracts/core/GameAsset.cdc",
+    "GameNFT": "cadence/contracts/core/GameNFT.cdc",
+    "GameToken": "cadence/contracts/core/GameToken.cdc",
+    "RandomVRF": "cadence/contracts/systems/RandomVRF.cdc",
+    "Scheduler": "cadence/contracts/systems/Scheduler.cdc",
+    "Marketplace": "cadence/contracts/systems/Marketplace.cdc"
+  },
+  "networks": {
+    "emulator": "127.0.0.1:3569",
+    "testnet": "access.devnet.nodes.onflow.org:9000",
+    "mainnet": "access.mainnet.nodes.onflow.org:9000"
+  },
+  "accounts": {
+    "emulator-account": {
+      "address": "f8d6e0586b0a20c7",
+      "key": {
+        "type": "hex",
+        "index": 0,
+        "signatureAlgorithm": "ECDSA_P256",
+        "hashAlgorithm": "SHA3_256",
+        "privateKey": "7f55a0a33f51f0d37816f9ef05b1bbc82c3d6d3ab95f7cf4e24e4c3e32f34c18"
+      }
+    },
+    "testnet-account": {
+      "address": "0xYOUR_TESTNET_ADDRESS",
+      "key": {
+        "type": "file",
+        "location": ".flow-testnet.pkey"
+      }
+    }
+  },
+  "deployments": {
+    "emulator": {
+      "emulator-account": [
+        "GameAsset",
+        "GameNFT",
+        "GameToken",
+        "RandomVRF",
+        "Scheduler",
+        "Marketplace"
+      ]
+    },
+    "testnet": {
+      "testnet-account": [
+        "GameAsset",
+        "GameNFT",
+        "GameToken",
+        "RandomVRF",
+        "Scheduler",
+        "Marketplace"
+      ]
+    }
+  }
+}
