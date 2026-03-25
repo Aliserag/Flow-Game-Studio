@@ -12,6 +12,7 @@ Hooks are configured in `.claude/settings.json` and fire automatically:
 | `pre-compact.sh` | PreCompact | Context compression | Dumps session state (active.md, modified files, WIP design docs) into conversation before compaction so it survives summarization |
 | `session-stop.sh` | Stop | Session ends | Summarizes accomplishments and updates session log |
 | `log-agent.sh` | SubagentStart | Agent spawned | Audit trail of all subagent invocations with timestamps |
+| `validate-cadence.sh` | PreToolUse (Bash) | `git commit` on `.cdc` files | Checks for Cadence 0.x patterns (`pub`/`priv`), hardcoded addresses, force-unwrap on capabilities; runs `flow cadence lint` |
 
 Hook reference documentation: `.claude/docs/hooks-reference/`
 Hook input schema documentation: `.claude/docs/hooks-reference/hook-input-schemas.md`
