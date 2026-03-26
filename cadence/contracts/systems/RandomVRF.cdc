@@ -15,6 +15,11 @@
 
 import "RandomBeaconHistory"
 
+/// SECURITY NOTE: The `commit()` and `reveal()` functions accept `player: Address`
+/// as a parameter. This is safe when called from a transaction that captures
+/// `signer.address` in `prepare` — but any address could be passed if called
+/// from another contract. The intended call path is always: transaction prepare() -> contract function.
+
 access(all) contract RandomVRF {
 
     // -----------------------------------------------------------------------
