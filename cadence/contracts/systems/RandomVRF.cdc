@@ -119,8 +119,9 @@ access(all) contract RandomVRF {
         )
 
         // Derive result: hash(beacon.value ++ secret)
+        // beacon.value is already [UInt8] — no conversion needed
         var input: [UInt8] = []
-        input = input.concat(beacon.value.toBigEndianBytes())
+        input = input.concat(beacon.value)
         input = input.concat(secret.toBigEndianBytes())
         let resultBytes = HashAlgorithm.KECCAK_256.hash(input)
 

@@ -96,9 +96,7 @@ access(all) contract Scheduler {
 
         assert(
             blocksSinceEpochStart >= self.epochBlockLength,
-            message: "Epoch not complete yet. ".concat(
-                (self.epochBlockLength - blocksSinceEpochStart).toString()
-            ).concat(" blocks remaining")
+            message: "Epoch not complete yet"
         )
 
         self.currentEpoch = self.currentEpoch + 1

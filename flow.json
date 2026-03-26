@@ -41,6 +41,12 @@
       "aliases": {
         "testing": "0x0000000000000007"
       }
+    },
+    "Tournament": {
+      "source": "cadence/contracts/systems/Tournament.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
     }
   },
   "networks": {
@@ -77,7 +83,8 @@
         "GameToken",
         "RandomVRF",
         "Scheduler",
-        "Marketplace"
+        "Marketplace",
+        "Tournament"
       ]
     },
     "testnet": {
@@ -88,7 +95,8 @@
         "GameToken",
         "RandomVRF",
         "Scheduler",
-        "Marketplace"
+        "Marketplace",
+        "Tournament"
       ]
     }
   }
