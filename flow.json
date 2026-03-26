@@ -65,6 +65,12 @@
       "aliases": {
         "testing": "0x0000000000000007"
       }
+    },
+    "VersionRegistry": {
+      "source": "cadence/contracts/systems/VersionRegistry.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
     }
   },
   "networks": {
@@ -105,7 +111,8 @@
         "Tournament",
         "Crafting",
         "Staking",
-        "Achievement"
+        "Achievement",
+        "VersionRegistry"
       ]
     },
     "testnet": {
@@ -120,7 +127,8 @@
         "Tournament",
         "Crafting",
         "Staking",
-        "Achievement"
+        "Achievement",
+        "VersionRegistry"
       ]
     }
   }
