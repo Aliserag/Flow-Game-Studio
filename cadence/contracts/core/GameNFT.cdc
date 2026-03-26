@@ -1,24 +1,25 @@
 // cadence/contracts/core/GameNFT.cdc
 import "NonFungibleToken"
 import "MetadataViews"
+import "ViewResolver"
 
 /// GameNFT — base NFT contract for Flow game studios.
 /// Cadence 1.0: uses entitlements for access control.
 /// Extend this contract per-game; do not modify core logic here.
-access(all) contract GameNFT: NonFungibleToken {
+access(all) contract GameNFT: NonFungibleToken, ViewResolver {
 
     // -----------------------------------------------------------------------
     // Entitlements
     // -----------------------------------------------------------------------
-    access(all) entitlement Minter
+    /// NFTMinter entitlement — held only by the Minter resource at deployer storage.
+    access(all) entitlement NFTMinter
+    /// Updater entitlement — allows metadata updates on an NFT.
     access(all) entitlement Updater
 
     // -----------------------------------------------------------------------
     // Events
     // -----------------------------------------------------------------------
     access(all) event ContractInitialized()
-    access(all) event Withdraw(id: UInt64, from: Address?)
-    access(all) event Deposit(id: UInt64, to: Address?)
     access(all) event Minted(id: UInt64, name: String, to: Address?)
 
     // -----------------------------------------------------------------------
@@ -40,12 +41,15 @@ access(all) contract GameNFT: NonFungibleToken {
         access(all) var imageURL: String
         access(all) var metadata: {String: AnyStruct}
 
+        /// Default destroy event required by NonFungibleToken.NFT interface
+        access(all) event ResourceDestroyed(id: UInt64 = self.id, uuid: UInt64 = self.uuid)
+
         /// Only callable via auth(Updater) reference
         access(Updater) fun updateMetadata(key: String, value: AnyStruct) {
             self.metadata[key] = value
         }
 
-        access(all) fun getViews(): [Type] {
+        access(all) view fun getViews(): [Type] {
             return [
                 Type<MetadataViews.Display>(),
                 Type<MetadataViews.NFTCollectionData>()
@@ -76,6 +80,11 @@ access(all) contract GameNFT: NonFungibleToken {
             return nil
         }
 
+        /// Required by NonFungibleToken.NFT interface in v2
+        access(all) fun createEmptyCollection(): @{NonFungibleToken.Collection} {
+            return <- GameNFT.createEmptyCollection(nftType: Type<@GameNFT.NFT>())
+        }
+
         init(id: UInt64, name: String, description: String, imageURL: String) {
             self.id = id
             self.name = name
@@ -91,31 +100,34 @@ access(all) contract GameNFT: NonFungibleToken {
     access(all) resource Collection: NonFungibleToken.Collection {
         access(all) var ownedNFTs: @{UInt64: {NonFungibleToken.NFT}}
 
+        /// Default destroy event required by NonFungibleToken.Collection interface
+        access(all) event ResourceDestroyed(uuid: UInt64 = self.uuid)
+
         access(NonFungibleToken.Withdraw) fun withdraw(withdrawID: UInt64): @{NonFungibleToken.NFT} {
             let token <- self.ownedNFTs.remove(key: withdrawID)
                 ?? panic("GameNFT.Collection: NFT with ID ".concat(withdrawID.toString()).concat(" not found"))
-            emit Withdraw(id: token.id, from: self.owner?.address)
             return <- token
         }
 
         access(all) fun deposit(token: @{NonFungibleToken.NFT}) {
             let id = token.id
             let old <- self.ownedNFTs[id] <- token
-            emit Deposit(id: id, to: self.owner?.address)
             destroy old
         }
 
-        access(all) fun getIDs(): [UInt64] { return self.ownedNFTs.keys }
+        access(all) view fun getIDs(): [UInt64] { return self.ownedNFTs.keys }
 
-        access(all) fun borrowNFT(_ id: UInt64): &{NonFungibleToken.NFT}? {
+        access(all) view fun getLength(): Int { return self.ownedNFTs.length }
+
+        access(all) view fun borrowNFT(_ id: UInt64): &{NonFungibleToken.NFT}? {
             return &self.ownedNFTs[id]
         }
 
-        access(all) fun getSupportedNFTTypes(): {Type: Bool} {
+        access(all) view fun getSupportedNFTTypes(): {Type: Bool} {
             return {Type<@GameNFT.NFT>(): true}
         }
 
-        access(all) fun isSupportedNFTType(type: Type): Bool {
+        access(all) view fun isSupportedNFTType(type: Type): Bool {
             return type == Type<@GameNFT.NFT>()
         }
 
@@ -150,10 +162,30 @@ access(all) contract GameNFT: NonFungibleToken {
     }
 
     // -----------------------------------------------------------------------
-    // Contract functions
+    // Contract functions (ViewResolver conformance)
     // -----------------------------------------------------------------------
     access(all) fun createEmptyCollection(nftType: Type): @{NonFungibleToken.Collection} {
         return <- create Collection()
+    }
+
+    access(all) view fun getContractViews(resourceType: Type?): [Type] {
+        return [Type<MetadataViews.NFTCollectionData>()]
+    }
+
+    access(all) fun resolveContractView(resourceType: Type?, viewType: Type): AnyStruct? {
+        switch viewType {
+            case Type<MetadataViews.NFTCollectionData>():
+                return MetadataViews.NFTCollectionData(
+                    storagePath: GameNFT.CollectionStoragePath,
+                    publicPath: GameNFT.CollectionPublicPath,
+                    publicCollection: Type<&GameNFT.Collection>(),
+                    publicLinkedType: Type<&GameNFT.Collection>(),
+                    createEmptyCollectionFunction: fun(): @{NonFungibleToken.Collection} {
+                        return <- GameNFT.createEmptyCollection(nftType: Type<@GameNFT.NFT>())
+                    }
+                )
+        }
+        return nil
     }
 
     // -----------------------------------------------------------------------
