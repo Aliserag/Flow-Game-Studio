@@ -47,6 +47,24 @@
       "aliases": {
         "testing": "0x0000000000000007"
       }
+    },
+    "Crafting": {
+      "source": "cadence/contracts/systems/Crafting.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "Staking": {
+      "source": "cadence/contracts/systems/Staking.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "Achievement": {
+      "source": "cadence/contracts/systems/Achievement.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
     }
   },
   "networks": {
@@ -84,7 +102,10 @@
         "RandomVRF",
         "Scheduler",
         "Marketplace",
-        "Tournament"
+        "Tournament",
+        "Crafting",
+        "Staking",
+        "Achievement"
       ]
     },
     "testnet": {
@@ -96,7 +117,10 @@
         "RandomVRF",
         "Scheduler",
         "Marketplace",
-        "Tournament"
+        "Tournament",
+        "Crafting",
+        "Staking",
+        "Achievement"
       ]
     }
   }
