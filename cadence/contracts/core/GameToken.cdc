@@ -105,7 +105,6 @@ access(all) contract GameToken: FungibleToken {
             recipient: &{FungibleToken.Receiver}
         ) {
             let tokens <- self.mintTokens(amount: amount)
-            emit TokensMinted(amount: amount, to: recipient.owner?.address)
             recipient.deposit(from: <- tokens)
         }
     }
