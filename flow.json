@@ -1,16 +1,53 @@
 {
   "contracts": {
-    "GameAsset": "cadence/contracts/core/GameAsset.cdc",
-    "GameNFT": "cadence/contracts/core/GameNFT.cdc",
-    "GameToken": "cadence/contracts/core/GameToken.cdc",
-    "RandomVRF": "cadence/contracts/systems/RandomVRF.cdc",
-    "Scheduler": "cadence/contracts/systems/Scheduler.cdc",
-    "Marketplace": "cadence/contracts/systems/Marketplace.cdc"
+    "GameAsset": {
+      "source": "cadence/contracts/core/GameAsset.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "GameItem": {
+      "source": "cadence/contracts/core/GameItem.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "GameNFT": {
+      "source": "cadence/contracts/core/GameNFT.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "GameToken": {
+      "source": "cadence/contracts/core/GameToken.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "RandomVRF": {
+      "source": "cadence/contracts/systems/RandomVRF.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "Scheduler": {
+      "source": "cadence/contracts/systems/Scheduler.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "Marketplace": {
+      "source": "cadence/contracts/systems/Marketplace.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    }
   },
   "networks": {
     "emulator": "127.0.0.1:3569",
     "testnet": "access.devnet.nodes.onflow.org:9000",
-    "mainnet": "access.mainnet.nodes.onflow.org:9000"
+    "mainnet": "access.mainnet.nodes.onflow.org:9000",
+    "testing": "127.0.0.1:3569"
   },
   "accounts": {
     "emulator-account": {
@@ -24,7 +61,7 @@
       }
     },
     "testnet-account": {
-      "address": "0x0000000000000000",
+      "address": "0x1000000000000001",
       "key": {
         "type": "file",
         "location": ".flow-testnet.pkey"
@@ -35,6 +72,7 @@
     "emulator": {
       "emulator-account": [
         "GameAsset",
+        "GameItem",
         "GameNFT",
         "GameToken",
         "RandomVRF",
@@ -45,6 +83,7 @@
     "testnet": {
       "testnet-account": [
         "GameAsset",
+        "GameItem",
         "GameNFT",
         "GameToken",
         "RandomVRF",
