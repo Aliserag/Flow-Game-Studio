@@ -86,3 +86,12 @@ domain lead) should delegate to specialists.
 | `godot-gdscript-specialist` | GDScript | Sonnet | Static typing, design patterns, signals, coroutines, GDScript performance |
 | `godot-shader-specialist` | Shaders/Rendering | Sonnet | Godot shading language, visual shaders, particles, post-processing |
 | `godot-gdextension-specialist` | GDExtension | Sonnet | C++/Rust bindings, native performance, custom nodes, build systems |
+
+## Flow Blockchain Agents
+
+| Agent | Role |
+|-------|------|
+| `cadence-specialist` | Cadence 1.0 language authority, contract implementation |
+| `flow-architect` | Blockchain architecture, deployment strategy, upgrade paths |
+| `web3-economy-designer` | Token economy design, marketplace, staking |
+| `flow-security-engineer` | Contract security audits, key management, incident response |
