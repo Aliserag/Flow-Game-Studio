@@ -28,7 +28,7 @@ access(all) contract GameItem {
     // Fires when an item resource is destroyed
     access(all) event ItemDestroyed(id: UInt64)
 
-    // Monotonically increasing counter; never decrements
+    // Readable by all; only incremented internally by GameServerRef.createItem
     access(all) var totalItems: UInt64
 
     access(all) let StoragePath: StoragePath
@@ -42,8 +42,9 @@ access(all) contract GameItem {
         access(all) let assetType:     String
         access(all) let createdAtBlock: UInt64
         access(all) var version:       UInt32
-        // Mutable game-state dict; only writable via GameServer entitlement
-        access(all) var state:         {String: AnyStruct}
+        // Mutable game-state dict; only writable via GameServer entitlement.
+        // access(self) prevents unauthenticated &Item refs from mutating the dict directly.
+        access(self) var state:        {String: AnyStruct}
 
         /// Only callable through an auth(GameServer) reference — see Bag.updateItemState
         access(GameServer) fun updateState(key: String, value: AnyStruct) {
@@ -74,6 +75,7 @@ access(all) contract GameItem {
         /// Deposit an item into this Bag.
         /// Requires Owner entitlement so only the Bag holder can deposit.
         access(Owner) fun deposit(item: @Item) {
+            pre { self.items[item.id] == nil : "Item ID already exists in bag" }
             let id        = item.id
             let assetType = item.assetType
             let old      <- self.items[id] <- item
