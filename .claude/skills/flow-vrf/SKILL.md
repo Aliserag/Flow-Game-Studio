@@ -158,3 +158,27 @@ Show:
 - How the commit/reveal cycle works for this mechanic
 - Key security guarantee: "The player cannot game the outcome because they commit before randomness is determined"
 - Next step: wire the result into the game contract
+
+## EVM Path (Solidity contracts on Flow EVM)
+
+For Solidity contracts, use `FlowEVMVRF.sol` instead of `RandomVRF.cdc`.
+The underlying randomness comes from the same Flow random beacon via the `cadenceArch` precompile.
+
+**Same two phases apply:**
+1. Player calls `vrf.commit(secret, gameId)` — stores hash commitment
+2. Player calls `vrf.reveal(secret, gameId)` — verifies commitment, returns random result
+3. Contract calls `vrf.boundedRandom(result, max)` — rejection-sampled bounded value
+
+**When to use Cadence VRF vs EVM VRF:**
+
+| Use Cadence `RandomVRF.cdc` | Use EVM `FlowEVMVRF.sol` |
+|-----------------------------|--------------------------|
+| Pure Cadence game logic | Solidity game contracts |
+| NFT minting outcome | ERC-721 reveal |
+| Cadence tournament brackets | EVM-based game mechanics |
+| Scheduler-triggered actions | EVM loot box reveals |
+
+**Never use `CADENCE_ARCH.revertibleRandom()` directly** — always use the commit/reveal wrapper.
+The commit/reveal pattern is required on both paths for the same reason: validators can bias
+`revertibleRandom()` by aborting unfavorable blocks. The commit locks the player in before
+the random value is known; revealing after 1+ blocks breaks the bias window.
