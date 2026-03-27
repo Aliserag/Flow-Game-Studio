@@ -1,0 +1,53 @@
+# Prometheus alert rules for Flow game contracts
+# Load with: alertmanager --config.file=alertmanager.yml
+
+groups:
+  - name: flow_game_alerts
+    rules:
+
+      - alert: IndexerFallingBehind
+        expr: (flow_indexer_latest_block - flow_indexer_last_block) > 1000
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: "Event indexer is >1000 blocks behind"
+          description: "Indexer may have crashed or lost connection to access node"
+
+      - alert: IndexerStopped
+        expr: (flow_indexer_latest_block - flow_indexer_last_block) > 10000
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: "Event indexer appears stopped"
+          description: "10,000+ blocks behind — immediate investigation required"
+
+      - alert: UnusualMintVolume
+        expr: rate(flow_events_24h{event_type=~".*NFTMinted.*"}[1h]) > 100
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "NFT mint rate exceeds 100/hour"
+          description: "Possible bot attack or runaway minting script"
+
+      - alert: MarketplaceVolumeDropped
+        expr: flow_marketplace_sales_24h < 10
+        for: 24h
+        labels: { severity: warning }
+        annotations:
+          summary: "Marketplace sales very low"
+          description: "Fewer than 10 sales in 24 hours — possible liquidity issue"
+
+      - alert: WhaleConcentration
+        expr: flow_token_top10pct_concentration > 70
+        for: 1h
+        labels: { severity: warning }
+        annotations:
+          summary: "Top 10% of holders control >70% of supply"
+          description: "High whale concentration — consider governance intervention"
+
+      - alert: SystemPaused
+        expr: increase(flow_events_24h{event_type=~".*SystemPaused.*"}[5m]) > 0
+        labels: { severity: critical }
+        annotations:
+          summary: "EmergencyPause activated"
+          description: "System has been paused — investigate immediately"

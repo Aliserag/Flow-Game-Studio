@@ -1,0 +1,42 @@
+{
+  "__inputs": [],
+  "__requires": [],
+  "annotations": { "list": [] },
+  "description": "Flow Game Contract Monitoring Dashboard",
+  "editable": true,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Indexer Block Lag",
+      "targets": [{ "expr": "flow_indexer_latest_block - flow_indexer_last_block" }],
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "Marketplace Sales (24h)",
+      "targets": [{ "expr": "flow_marketplace_sales_24h" }],
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "Whale Concentration (top 10%)",
+      "targets": [{ "expr": "flow_token_top10pct_concentration" }],
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "Staking Participants",
+      "targets": [{ "expr": "flow_staking_participants" }],
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 }
+    },
+    {
+      "type": "graph",
+      "title": "Event Volume (24h)",
+      "targets": [{ "expr": "flow_events_24h", "legendFormat": "{{event_type}}" }],
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 }
+    }
+  ],
+  "title": "Flow Game Contracts",
+  "uid": "flow-game-contracts",
+  "version": 1
+}
