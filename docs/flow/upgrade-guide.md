@@ -1,40 +1,37 @@
 # Contract Upgrade Guide
 
-## Before You Upgrade
+## Cadence 1.0 Upgrade Constraints
 
-1. Run `/flow-migrate [contract] [version]` — checks compatibility
-2. Run `/flow-audit [contract]` — security review of new version
-3. Run `/flow-review [contract]` — code review
-4. Deploy to testnet first — always
+Cadence contracts can be upgraded with `flow project deploy --update`, but with restrictions:
 
-## The Golden Rule
+**Cannot change:**
+- Remove a field from a struct or resource
+- Change the type of an existing field
+- Remove an entitlement
+- Remove a public function (breaks callers)
+- Change a function's parameter types
 
-**Cadence contracts are permanent. Bad upgrades cannot be fully undone.**
-Player assets stored in their accounts cannot be seized or altered by the contract owner.
-A bad upgrade can brick the contract but cannot steal player funds.
+**Can change:**
+- Add new fields with default values
+- Add new functions
+- Add new entitlements
+- Add new events
+- Change function bodies (logic changes)
 
-## Migration Transaction Pattern
+## Canary Deploy Workflow
 
-When adding new required fields to a player-stored resource:
+1. Deploy canary to a separate account on testnet/mainnet
+2. Start canary routing: `flow transactions send start_canary.cdc <contractName> <canaryAddr> <prodAddr> 5`
+3. Monitor for 24 hours — check event indexer for errors
+4. Increase to 25%: `flow transactions send ...start_canary.cdc... 25`
+5. After 48h with no errors, complete: `flow transactions send complete_upgrade.cdc <contractName>`
+6. Deploy the upgraded contract: `flow project deploy --update --network mainnet`
 
-```cadence
-// cadence/transactions/migrations/migrate_[contract]_v2.cdc
-// Players run this ONCE to upgrade their stored resource.
-import "[Contract]"
+## Rollback
 
-transaction {
-    prepare(player: auth(Storage) &Account) {
-        let resource = player.storage.borrow<&[Contract].Resource>(from: [Contract].StoragePath)
-            ?? panic("Resource not found")
-        // Trigger the migration function added in v2
-        resource.migrateToV2()
-    }
-}
+If errors are detected during canary:
+```bash
+flow transactions send rollback_canary.cdc <contractName>
 ```
 
-## Version Numbering
-
-Use semantic versioning: `MAJOR.MINOR.PATCH`
-- MAJOR: breaking change (requires new contract name)
-- MINOR: new fields/functions (backwards compatible upgrade)
-- PATCH: logic-only fixes (no interface changes)
+This immediately routes all traffic back to production.
