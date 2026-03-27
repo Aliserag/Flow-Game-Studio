@@ -1,0 +1,36 @@
+name: Contract Security Audit
+
+on:
+  pull_request:
+    paths: ['cadence/contracts/**']
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for auth without entitlements
+        run: |
+          # Warn on bare 'auth &' patterns (should use auth(Entitlement) &)
+          if grep -rn 'auth &' cadence/contracts/; then
+            echo "WARNING: Found bare 'auth &' — should use entitlement syntax 'auth(E) &'"
+          fi
+
+      - name: Check for hardcoded addresses
+        run: |
+          # Addresses should come from flow.json imports, not be hardcoded
+          if grep -rEn '0x[0-9a-f]{16}' cadence/contracts/ | grep -v '//'; then
+            echo "WARNING: Hardcoded addresses found in contracts. Use import aliases from flow.json."
+          fi
+
+      - name: Check for missing EmergencyPause guard
+        run: |
+          for f in cadence/contracts/systems/*.cdc; do
+            if ! grep -q 'EmergencyPause.assertNotPaused()' "$f"; then
+              echo "WARN: $f does not call EmergencyPause.assertNotPaused()"
+            fi
+          done
+
+      - name: Summarize audit
+        run: echo "Audit complete. Review warnings above before merging."

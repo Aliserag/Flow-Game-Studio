@@ -1,0 +1,58 @@
+name: Cadence Tests
+
+on:
+  push:
+    paths: ['cadence/**', 'flow.json']
+  pull_request:
+    paths: ['cadence/**', 'flow.json']
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Flow CLI
+        run: |
+          sh -ci "$(curl -fsSL https://raw.githubusercontent.com/onflow/flow-cli/master/install.sh)"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Lint Cadence files
+        run: |
+          find cadence/ -name '*.cdc' -exec flow cadence lint {} \;
+
+      - name: Check for Cadence 0.x patterns
+        run: bash tools/ci/check-cadence-patterns.sh
+
+      - name: Check contract sizes
+        run: |
+          find cadence/contracts/ -name '*.cdc' | while read f; do
+            size=$(wc -c < "$f")
+            if [ "$size" -gt 102400 ]; then
+              echo "FAIL: $f is ${size} bytes (max 100KB)"
+              exit 1
+            elif [ "$size" -gt 51200 ]; then
+              echo "WARN: $f is ${size} bytes (approaching 50KB soft limit)"
+            fi
+          done
+
+      - name: Start Flow emulator
+        run: flow emulator --log-level error &
+        timeout-minutes: 1
+
+      - name: Wait for emulator
+        run: |
+          for i in $(seq 1 20); do
+            flow blocks get latest --network emulator && break
+            sleep 1
+          done
+
+      - name: Deploy contracts
+        run: flow project deploy --network emulator
+
+      - name: Run Cadence tests
+        run: flow test ./cadence/tests/...
+
+      - name: Stop emulator
+        if: always()
+        run: pkill -f "flow emulator" || true
