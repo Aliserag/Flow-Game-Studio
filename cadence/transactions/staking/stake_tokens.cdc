@@ -1,27 +1,21 @@
-// cadence/transactions/staking/stake_tokens.cdc
-//
-// Stake GameTokens in the Staking contract for a specified lock period (in blocks).
-// Tokens are escrowed until unstake() is called after the lock expires.
-import "FungibleToken"
+import "StakingPool"
 import "GameToken"
-import "Staking"
+import "FungibleToken"
 
-transaction(amount: UFix64, lockBlocks: UInt64) {
+transaction(amount: UFix64) {
+    let stakerAddress: Address
+    let payment: @{FungibleToken.Vault}
 
-    prepare(player: auth(Storage) &Account) {
-        // Borrow the player's GameToken vault with Withdraw entitlement
-        let vault = player.storage.borrow<auth(FungibleToken.Withdraw) &GameToken.Vault>(
+    prepare(signer: auth(BorrowValue) &Account) {
+        self.stakerAddress = signer.address
+        let vault = signer.storage.borrow<auth(FungibleToken.Withdraw) &GameToken.Vault>(
             from: GameToken.VaultStoragePath
-        ) ?? panic("No GameToken vault found — run setup_token_vault.cdc first")
+        ) ?? panic("No GameToken vault")
+        self.payment <- vault.withdraw(amount: amount)
+    }
 
-        // Withdraw the stake amount and pass to the contract
-        let payment <- vault.withdraw(amount: amount)
-        let positionId = Staking.stake(
-            player: player.address,
-            payment: <- payment,
-            lockBlocks: lockBlocks
-        )
-        // positionId returned for caller reference (logged in event)
-        let _ = positionId
+    execute {
+        StakingPool.stake(staker: self.stakerAddress, payment: <-self.payment)
+        log("Staked: ".concat(amount.toString()))
     }
 }
