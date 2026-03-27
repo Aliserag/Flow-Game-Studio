@@ -1,3 +1,7 @@
+// NOTE: This is the legacy REST polling indexer (5s polling interval).
+// For production use, prefer flow-indexer-streaming.ts which uses gRPC subscription
+// for ~100ms latency and lower access node load.
+
 import Database from "better-sqlite3";
 import * as fs from "fs";
 
