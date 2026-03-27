@@ -1,0 +1,21 @@
+{
+  "name": "flow-event-indexer",
+  "version": "1.0.0",
+  "description": "Polls Flow Access Node for game events and indexes them into SQLite.",
+  "type": "module",
+  "main": "flow-indexer.ts",
+  "scripts": {
+    "start": "ts-node flow-indexer.ts",
+    "dev": "nodemon flow-indexer.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.4.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "ts-node": "^10.9.0",
+    "nodemon": "^3.0.0"
+  }
+}
