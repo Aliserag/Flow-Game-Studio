@@ -1,0 +1,31 @@
+name: Generate Contract Docs
+
+on:
+  push:
+    paths: ['cadence/contracts/**/*.cdc']
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: cd tools/docs && npm install
+
+      - name: Generate docs
+        run: cd tools/docs && npx ts-node generate-contract-docs.ts
+
+      - name: Commit generated docs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/flow/contracts/ docs/flow/contract-index.md
+          git diff --staged --quiet || git commit -m "docs: regenerate contract API docs [skip ci]"
+          git push
