@@ -1,0 +1,20 @@
+{
+  "name": "flow-metadata-pipeline",
+  "version": "1.0.0",
+  "description": "IPFS metadata pinning pipeline for Flow NFTs. Validates against NFTMetadataSchema (Zod) before pinning.",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "pin": "ts-node pin-metadata.ts",
+    "batch-pin": "ts-node batch-pin.ts"
+  },
+  "dependencies": {
+    "@pinata/sdk": "^2.1.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "ts-node": "^10.9.0"
+  }
+}
