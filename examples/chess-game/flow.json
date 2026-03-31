@@ -1,0 +1,65 @@
+{
+  "networks": {
+    "emulator": "127.0.0.1:3569"
+  },
+  "accounts": {
+    "emulator-account": {
+      "address": "f8d6e0586b0a20c7",
+      "key": "2eae2f31cb5b756151fa11d82949763b73e28b92f8cc26c97d5bf4620e60d8b6"
+    },
+    "chess-player-1": {
+      "address": "01cf0e2f2f715450",
+      "key": "4c5b2e1f8d3a7b9c0e6f2a1d8b4e7c3a9f5b2d8e1c7a4b6f3e9d2c8a5b7f4e1"
+    },
+    "chess-player-2": {
+      "address": "179b6b1cb6755e31",
+      "key": "7b3f9d1e5c2a8b6f4e7c1a9d3b5f8e2c6a4b7d1f3e9c5a2b8d6f4e1c7a3b9f5"
+    }
+  },
+  "contracts": {
+    "ChessPiece": "./cadence/contracts/ChessPiece.cdc",
+    "ChessStatsAttachment": "./cadence/contracts/ChessStatsAttachment.cdc",
+    "ChessGame": "./cadence/contracts/ChessGame.cdc",
+    "NonFungibleToken": {
+      "source": "../../cadence/contracts/standards/NonFungibleToken.cdc",
+      "aliases": {
+        "emulator": "f8d6e0586b0a20c7"
+      }
+    },
+    "MetadataViews": {
+      "source": "../../cadence/contracts/standards/MetadataViews.cdc",
+      "aliases": {
+        "emulator": "f8d6e0586b0a20c7"
+      }
+    },
+    "ViewResolver": {
+      "source": "../../cadence/contracts/standards/ViewResolver.cdc",
+      "aliases": {
+        "emulator": "f8d6e0586b0a20c7"
+      }
+    },
+    "FungibleToken": {
+      "source": "../../cadence/contracts/standards/FungibleToken.cdc",
+      "aliases": {
+        "emulator": "ee82856bf20e2aa6"
+      }
+    },
+    "EmergencyPause": {
+      "source": "../../cadence/contracts/systems/EmergencyPause.cdc",
+      "aliases": {
+        "emulator": "f8d6e0586b0a20c7"
+      }
+    },
+    "GameToken": {
+      "source": "../../cadence/contracts/economy/GameToken.cdc",
+      "aliases": {
+        "emulator": "f8d6e0586b0a20c7"
+      }
+    }
+  },
+  "deployments": {
+    "emulator": {
+      "emulator-account": ["ChessPiece", "ChessStatsAttachment", "ChessGame"]
+    }
+  }
+}

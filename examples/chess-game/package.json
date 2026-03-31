@@ -1,0 +1,9 @@
+{
+  "name": "chess-on-flow",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "flow test ./cadence/tests/ChessPiece_test.cdc ./cadence/tests/ChessGame_test.cdc",
+    "dev": "cd client && npm run dev",
+    "build": "cd client && npm run build"
+  }
+}
