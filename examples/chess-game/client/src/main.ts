@@ -137,6 +137,7 @@ function startGame(gameId: number, color: 'w' | 'b'): void {
 }
 
 async function challenge(opponentAddr: string): Promise<void> {
+  if (!myAddress) { updateStatus('Connect wallet first'); return }
   if (!opponentAddr) { updateStatus('Enter opponent address'); return }
   try {
     updateStatus('Creating challenge...')
@@ -153,20 +154,32 @@ async function challenge(opponentAddr: string): Promise<void> {
 }
 
 async function acceptChallenge(gameIdStr: string): Promise<void> {
+  if (!myAddress) { updateStatus('Connect wallet first'); return }
   const gameId = parseInt(gameIdStr, 10)
   if (isNaN(gameId)) { updateStatus('Enter a valid game ID'); return }
   try {
     updateStatus('Accepting challenge...')
-    // Generate a random VRF secret (random UInt256 derived from a 32-bit random value)
-    const secret = Math.floor(Math.random() * 0xFFFFFFFF).toString()
+    // Generate a 256-bit cryptographically secure random secret
+    const randomBytes = new Uint8Array(32)
+    crypto.getRandomValues(randomBytes)
+    const secret = Array.from(randomBytes).reduce((acc, b) => acc * 256n + BigInt(b), 0n).toString()
     await acceptAndReveal(gameId, secret)
-    // Determine our color from the board and auto-start
-    const boardData = await getBoard(gameId)
-    if (boardData) {
-      const isWhite = (boardData['white'] as string) === myAddress
-      startGame(gameId, isWhite ? 'w' : 'b')
-      updateStatus(`Game ${gameId} started! You are ${isWhite ? 'White' : 'Black'}`)
+
+    // Poll until board shows assigned colors (Access Node may lag behind execution)
+    let boardData: Record<string, unknown> | null = null
+    for (let attempt = 0; attempt < 10; attempt++) {
+      boardData = await getBoard(gameId)
+      if (boardData && boardData['white'] && boardData['black']) break
+      await new Promise(resolve => setTimeout(resolve, 500))
     }
+    if (!boardData || !boardData['white']) {
+      updateStatus(`Game ${gameId} started! Colors pending — refresh to see assignment`)
+      startGame(gameId, 'w') // default to white pending refresh
+      return
+    }
+    const isWhite = (boardData['white'] as string) === myAddress
+    startGame(gameId, isWhite ? 'w' : 'b')
+    updateStatus(`Game ${gameId} started! You are ${isWhite ? 'White' : 'Black'}`)
   } catch (e) { updateStatus(`Accept failed: ${e}`) }
 }
 
