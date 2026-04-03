@@ -1,11 +1,44 @@
 import Test
 import "ChessPiece"
 
-access(all) let deployer = Test.getAccount(Address(0xf8d6e0586b0a20c7))
+access(all) let deployer = Test.getAccount(Address(0x0000000000000007))
 access(all) let player1 = Test.createAccount()
 
 access(all) fun setup() {
-    let err = Test.deployContract(
+    // Deploy standard contracts in dependency order.
+    // Paths are relative to this test file (cadence/tests/).
+    // ../../../../ goes up to flow-blockchain-studio/ root.
+    var err = Test.deployContract(
+        name: "ViewResolver",
+        path: "../../../../cadence/contracts/standards/ViewResolver.cdc",
+        arguments: []
+    )
+    Test.expect(err, Test.beNil())
+
+    err = Test.deployContract(
+        name: "NonFungibleToken",
+        path: "../../../../cadence/contracts/standards/NonFungibleToken.cdc",
+        arguments: []
+    )
+    Test.expect(err, Test.beNil())
+
+    err = Test.deployContract(
+        name: "FungibleToken",
+        path: "../../../../cadence/contracts/standards/FungibleToken.cdc",
+        arguments: []
+    )
+    Test.expect(err, Test.beNil())
+
+    err = Test.deployContract(
+        name: "MetadataViews",
+        path: "../../../../cadence/contracts/standards/MetadataViews.cdc",
+        arguments: []
+    )
+    Test.expect(err, Test.beNil())
+
+    // Deploy the contract under test.
+    // ../contracts/ is relative to this test file.
+    err = Test.deployContract(
         name: "ChessPiece",
         path: "../contracts/ChessPiece.cdc",
         arguments: []
@@ -15,16 +48,19 @@ access(all) fun setup() {
 
 access(all) fun testSetupCollection() {
     let result = Test.executeTransaction(
-        "../transactions/setup_chess_account.cdc",
-        [],
-        player1
+        Test.Transaction(
+            code: Test.readFile("../transactions/setup_chess_account.cdc"),
+            authorizers: [player1.address],
+            signers: [player1],
+            arguments: []
+        )
     )
     Test.expect(result, Test.beSucceeded())
 }
 
 access(all) fun testTotalSupplyStartsAtZero() {
     let supply = Test.executeScript(
-        "import ChessPiece from \"ChessPiece\"\naccess(all) fun main(): UInt64 { return ChessPiece.totalSupply }",
+        "import ChessPiece from 0x0000000000000007\naccess(all) fun main(): UInt64 { return ChessPiece.totalSupply }",
         []
     )
     Test.expect(supply, Test.beSucceeded())

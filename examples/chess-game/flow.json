@@ -1,6 +1,7 @@
 {
   "networks": {
-    "emulator": "127.0.0.1:3569"
+    "emulator": "127.0.0.1:3569",
+    "testing": "127.0.0.1:3569"
   },
   "accounts": {
     "emulator-account": {
@@ -9,43 +10,67 @@
     }
   },
   "contracts": {
-    "ChessPiece": "./cadence/contracts/ChessPiece.cdc",
-    "ChessStatsAttachment": "./cadence/contracts/ChessStatsAttachment.cdc",
-    "ChessGame": "./cadence/contracts/ChessGame.cdc",
+    "ChessPiece": {
+      "source": "./cadence/contracts/ChessPiece.cdc",
+      "aliases": {
+        "emulator": "f8d6e0586b0a20c7",
+        "testing": "0000000000000007"
+      }
+    },
+    "ChessStatsAttachment": {
+      "source": "./cadence/contracts/ChessStatsAttachment.cdc",
+      "aliases": {
+        "emulator": "f8d6e0586b0a20c7",
+        "testing": "0000000000000007"
+      }
+    },
+    "ChessGame": {
+      "source": "./cadence/contracts/ChessGame.cdc",
+      "aliases": {
+        "emulator": "f8d6e0586b0a20c7",
+        "testing": "0000000000000007"
+      }
+    },
     "NonFungibleToken": {
       "source": "../../cadence/contracts/standards/NonFungibleToken.cdc",
       "aliases": {
-        "emulator": "f8d6e0586b0a20c7"
+        "emulator": "f8d6e0586b0a20c7",
+        "testing": "0000000000000007"
       }
     },
     "MetadataViews": {
       "source": "../../cadence/contracts/standards/MetadataViews.cdc",
       "aliases": {
-        "emulator": "f8d6e0586b0a20c7"
+        "emulator": "f8d6e0586b0a20c7",
+        "testing": "0000000000000007"
       }
     },
     "ViewResolver": {
       "source": "../../cadence/contracts/standards/ViewResolver.cdc",
       "aliases": {
-        "emulator": "f8d6e0586b0a20c7"
+        "emulator": "f8d6e0586b0a20c7",
+        "testing": "0000000000000007"
       }
     },
     "FungibleToken": {
       "source": "../../cadence/contracts/standards/FungibleToken.cdc",
       "aliases": {
-        "emulator": "ee82856bf20e2aa6"
+        "emulator": "ee82856bf20e2aa6",
+        "testing": "0000000000000007"
       }
     },
     "EmergencyPause": {
       "source": "../../cadence/contracts/systems/EmergencyPause.cdc",
       "aliases": {
-        "emulator": "f8d6e0586b0a20c7"
+        "emulator": "f8d6e0586b0a20c7",
+        "testing": "0000000000000007"
       }
     },
     "GameToken": {
       "source": "../../cadence/contracts/economy/GameToken.cdc",
       "aliases": {
-        "emulator": "f8d6e0586b0a20c7"
+        "emulator": "f8d6e0586b0a20c7",
+        "testing": "0000000000000007"
       }
     }
   },
