@@ -1,7 +1,7 @@
 import * as fcl from '@onflow/fcl'
 import { configureFCL, getCurrentUser } from './wallet'
 import { renderBoard, createBoardState, getValidMoveTargets, applyMove } from './board'
-import { getBoard, makeMove, createChallenge, setupAccount, resign } from './chess-client'
+import { getBoard, makeMove, createChallenge, setupAccount, resign, getActiveGames, acceptAndReveal } from './chess-client'
 import { chessAudio } from './audio'
 import { Chess } from 'chess.js'
 
@@ -37,6 +37,18 @@ async function pollBoard(): Promise<void> {
         updateStatus(`Checkmate! Winner: ${data['winner']}`)
       } else if (chess.inCheck()) {
         chessAudio.playCheck()
+      }
+      const moveListEl = document.getElementById('move-list')
+      if (moveListEl && data['moveHistory']) {
+        const history = data['moveHistory'] as string[]
+        moveListEl.textContent = ''
+        history.forEach((m, i) => {
+          const moveNum = Math.floor(i / 2) + 1
+          const isWhiteMove = i % 2 === 0
+          const span = document.createElement('span')
+          span.textContent = isWhiteMove ? `${moveNum}. ${m} ` : `${m} `
+          moveListEl.appendChild(span)
+        })
       }
     }
     const statusMap: Record<number, string> = { 0: 'Pending', 1: 'Active', 2: 'Checkmate', 3: 'Stalemate', 4: 'Resigned', 5: 'Drawn', 6: 'Timed Out' }
@@ -129,8 +141,33 @@ async function challenge(opponentAddr: string): Promise<void> {
   try {
     updateStatus('Creating challenge...')
     await createChallenge(opponentAddr)
-    updateStatus('Challenge created! Waiting for opponent...')
+    // Query active games to surface the new gameId to share with the opponent
+    const games = await getActiveGames(myAddress!)
+    const gameId = games.length > 0 ? games[games.length - 1] : null
+    if (gameId !== null) {
+      updateStatus(`Challenge created! Game ID: ${gameId} — share with opponent`)
+    } else {
+      updateStatus('Challenge created! Waiting for opponent...')
+    }
   } catch (e) { updateStatus(`Challenge failed: ${e}`) }
+}
+
+async function acceptChallenge(gameIdStr: string): Promise<void> {
+  const gameId = parseInt(gameIdStr, 10)
+  if (isNaN(gameId)) { updateStatus('Enter a valid game ID'); return }
+  try {
+    updateStatus('Accepting challenge...')
+    // Generate a random VRF secret (random UInt256 derived from a 32-bit random value)
+    const secret = Math.floor(Math.random() * 0xFFFFFFFF).toString()
+    await acceptAndReveal(gameId, secret)
+    // Determine our color from the board and auto-start
+    const boardData = await getBoard(gameId)
+    if (boardData) {
+      const isWhite = (boardData['white'] as string) === myAddress
+      startGame(gameId, isWhite ? 'w' : 'b')
+      updateStatus(`Game ${gameId} started! You are ${isWhite ? 'White' : 'Black'}`)
+    }
+  } catch (e) { updateStatus(`Accept failed: ${e}`) }
 }
 
 async function resignGame(): Promise<void> {
@@ -146,6 +183,6 @@ bindSquareClicks()
 void myAddress
 
 // Bind Connect Wallet button directly (inline onclick can't access ESM imports)
-document.getElementById('connect-btn')?.addEventListener('click', () => fcl.authenticate())
+document.getElementById('connect-btn')?.addEventListener('click', () => (fcl as unknown as { authenticate: () => void }).authenticate())
 
-;(window as unknown as Record<string, unknown>).chessApp = { startGame, challenge, resignGame, setupAccount, createChallenge }
+;(window as unknown as Record<string, unknown>).chessApp = { startGame, challenge, acceptChallenge, resignGame, setupAccount, createChallenge }

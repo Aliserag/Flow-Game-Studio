@@ -14,6 +14,7 @@ export async function getBoard(gameId: number): Promise<Record<string, unknown> 
         return {
           "fen": game.fen,
           "lastMove": game.moveHistory.length > 0 ? game.moveHistory[game.moveHistory.length - 1] : "",
+          "moveHistory": game.moveHistory,
           "status": game.status.rawValue,
           "white": game.white,
           "black": game.black,

@@ -53,6 +53,10 @@
         <input id="opponent-input" placeholder="Opponent Flow address (0x...)" />
         <button onclick="window.chessApp?.challenge?.(document.getElementById('opponent-input').value)">Challenge Player</button>
       </div>
+      <div id="accept-game" style="background: #16213e; border-radius: 8px; padding: 16px; margin-top: 8px; width: 100%;">
+        <input id="game-id-input" placeholder="Game ID to accept" style="background: #0f3460; border: none; color: white; padding: 8px 12px; border-radius: 6px; width: 100%; margin: 6px 0; font-size: 14px;" />
+        <button onclick="window.chessApp?.acceptChallenge?.(document.getElementById('game-id-input').value)" style="background: #0f3460; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; width: 100%;">Accept Challenge</button>
+      </div>
     </div>
     <aside id="history-panel">
       <h3>Moves</h3>

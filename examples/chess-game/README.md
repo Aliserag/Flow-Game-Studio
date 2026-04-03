@@ -2,7 +2,7 @@
 
 Fully playable chess game on Flow blockchain — end-to-end integration test of the Flow game studio.
 
-**Systems exercised:** GameNFT, NFT Attachments, EmergencyPause, VRF, Sponsor Service (gasless), HybridCustody (walletless), Audio, MetadataViews.
+**Systems exercised:** GameNFT, NFT Attachments, EmergencyPause, VRF, Audio, MetadataViews.
 
 ## Quickstart (under 5 minutes)
 
@@ -21,8 +21,6 @@ cd client && npm install && npm run dev
 # Browser opens automatically at http://localhost:5173
 ```
 
-No wallet extension required (HybridCustody). No FLOW tokens required (sponsored transactions).
-
 ## Architecture
 
 | Layer | Technology |
@@ -31,8 +29,8 @@ No wallet extension required (HybridCustody). No FLOW tokens required (sponsored
 | Board state | FEN string on-chain in ChessGame |
 | NFTs | 32 ChessPiece NFTs minted per game |
 | Stats | ChessStatsAttachment (Cadence 1.0 attachment) |
-| Gas | Sponsored — players pay zero FLOW |
-| Onboarding | HybridCustody app-custodied accounts |
+| Gas | FCL wallet (sponsor payer planned) |
+| Onboarding | FCL Wallet + flow dev-wallet for local testing |
 | Colors | VRF commit/reveal |
 | Audio | Procedural Web Audio API (no files) |
 
