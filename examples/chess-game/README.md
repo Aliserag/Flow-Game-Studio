@@ -46,13 +46,13 @@ npm run dev
 Open **two browser tabs** at `http://localhost:5173`.
 
 **Tab 1 (Player 1 — Challenger):**
-1. Click **Connect Wallet** → sign in with Account 1 in the dev wallet popup
+1. Click **Connect Wallet** → select any account in the dev wallet popup
 2. Copy Player 2's address from Tab 2
 3. Paste it in the opponent address field and click **Challenge Player**
 4. Note the Game ID shown in the status bar
 
 **Tab 2 (Player 2 — Opponent):**
-1. Click **Connect Wallet** → sign in with Account 2 in the dev wallet popup
+1. Click **Connect Wallet** → select a DIFFERENT account than Tab 1
 2. Enter the Game ID from Tab 1
 3. Click **Accept Challenge**
 4. Game starts — pieces appear on both boards
@@ -98,7 +98,7 @@ flow test cadence/tests/ChessGame_e2e_test.cdc
 | Error | Fix |
 |-------|-----|
 | `Error: cannot find network emulator` | Run `flow emulator` from `examples/chess-game/` (not repo root) |
-| `Contract already deployed` | Re-running `deploy.sh` is safe — errors for existing contracts are ignored |
+| `Contract already deployed` | Re-running `deploy.sh` is safe — `--update` flag handles already-deployed contracts |
 | Connect Wallet popup doesn't appear | Ensure `flow dev-wallet` is running on port 8701 |
 | `Move failed: Transaction failed` | Wallet not connected, or it's not your turn |
 | Board doesn't update after opponent moves | Board polls every 3 seconds — wait or refresh |

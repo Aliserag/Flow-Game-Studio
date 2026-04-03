@@ -76,7 +76,7 @@
   },
   "deployments": {
     "emulator": {
-      "emulator-account": ["ChessPiece", "ChessStatsAttachment", "ChessGame"]
+      "emulator-account": ["EmergencyPause", "ChessPiece", "ChessStatsAttachment", "ChessGame"]
     }
   }
 }
