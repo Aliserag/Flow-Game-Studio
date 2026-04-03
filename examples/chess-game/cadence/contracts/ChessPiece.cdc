@@ -10,7 +10,7 @@ access(all) contract ChessPiece: NonFungibleToken, ViewResolver {
     access(all) event ContractInitialized()
     access(all) event Withdraw(id: UInt64, from: Address?)
     access(all) event Deposit(id: UInt64, to: Address?)
-    access(all) event PieceMinted(id: UInt64, pieceType: PieceType, color: PieceColor, gameId: UInt64)
+    access(all) event PieceMinted(id: UInt64, pieceType: UInt8, color: UInt8, gameId: UInt64)
 
     access(all) let CollectionStoragePath: StoragePath
     access(all) let CollectionPublicPath: PublicPath
@@ -50,7 +50,7 @@ access(all) contract ChessPiece: NonFungibleToken, ViewResolver {
             self.symbol = ChessPiece.symbolFor(pieceType: pieceType, color: color)
         }
 
-        access(all) fun getViews(): [Type] {
+        access(all) view fun getViews(): [Type] {
             return [
                 Type<MetadataViews.Display>(),
                 Type<MetadataViews.Serial>(),
@@ -59,7 +59,7 @@ access(all) contract ChessPiece: NonFungibleToken, ViewResolver {
             ]
         }
 
-        access(all) fun resolveView(_ view: Type): AnyStruct? {
+        access(all) view fun resolveView(_ view: Type): AnyStruct? {
             switch view {
                 case Type<MetadataViews.Display>():
                     let colorName = self.color == ChessPiece.PieceColor.White ? "White" : "Black"
@@ -72,10 +72,13 @@ access(all) contract ChessPiece: NonFungibleToken, ViewResolver {
                 case Type<MetadataViews.Serial>():
                     return MetadataViews.Serial(self.id)
                 case Type<MetadataViews.Traits>():
-                    let traits: [MetadataViews.Trait] = []
-                    traits.append(MetadataViews.Trait(name: "pieceType", value: ChessPiece.typeNameFor(pieceType: self.pieceType), displayType: "String", rarity: nil))
-                    traits.append(MetadataViews.Trait(name: "color", value: self.color == ChessPiece.PieceColor.White ? "White" : "Black", displayType: "String", rarity: nil))
-                    traits.append(MetadataViews.Trait(name: "gameId", value: self.gameId, displayType: "Number", rarity: nil))
+                    let colorName = self.color == ChessPiece.PieceColor.White ? "White" : "Black"
+                    let typeName = ChessPiece.typeNameFor(pieceType: self.pieceType)
+                    let traits: [MetadataViews.Trait] = [
+                        MetadataViews.Trait(name: "pieceType", value: typeName, displayType: "String", rarity: nil),
+                        MetadataViews.Trait(name: "color", value: colorName, displayType: "String", rarity: nil),
+                        MetadataViews.Trait(name: "gameId", value: self.gameId, displayType: "Number", rarity: nil)
+                    ]
                     return MetadataViews.Traits(traits)
                 case Type<MetadataViews.NFTCollectionData>():
                     return MetadataViews.NFTCollectionData(
@@ -94,6 +97,10 @@ access(all) contract ChessPiece: NonFungibleToken, ViewResolver {
         access(all) fun createEmptyCollection(): @{NonFungibleToken.Collection} {
             return <- ChessPiece.createEmptyCollection(nftType: Type<@ChessPiece.NFT>())
         }
+
+        // GameUpdater entitlement support: required so attachments (e.g. ChessStatsAttachment)
+        // can declare members with access(GameUpdater) against this base type.
+        access(GameUpdater) fun _gameUpdaterSupport() {}
     }
 
     access(all) resource Collection: NonFungibleToken.Collection {
@@ -114,9 +121,11 @@ access(all) contract ChessPiece: NonFungibleToken, ViewResolver {
             self.ownedNFTs[piece.id] <-! piece
         }
 
-        access(all) fun getIDs(): [UInt64] { return self.ownedNFTs.keys }
+        access(all) view fun getIDs(): [UInt64] { return self.ownedNFTs.keys }
 
-        access(all) fun borrowNFT(_ id: UInt64): &{NonFungibleToken.NFT}? {
+        access(all) view fun getLength(): Int { return self.ownedNFTs.length }
+
+        access(all) view fun borrowNFT(_ id: UInt64): &{NonFungibleToken.NFT}? {
             return &self.ownedNFTs[id]
         }
 
@@ -125,11 +134,11 @@ access(all) contract ChessPiece: NonFungibleToken, ViewResolver {
             return ref as! &ChessPiece.NFT?
         }
 
-        access(all) fun getSupportedNFTTypes(): {Type: Bool} {
+        access(all) view fun getSupportedNFTTypes(): {Type: Bool} {
             return {Type<@ChessPiece.NFT>(): true}
         }
 
-        access(all) fun isSupportedNFTType(type: Type): Bool {
+        access(all) view fun isSupportedNFTType(type: Type): Bool {
             return type == Type<@ChessPiece.NFT>()
         }
 
@@ -142,7 +151,7 @@ access(all) contract ChessPiece: NonFungibleToken, ViewResolver {
         access(Minter) fun mintPiece(pieceType: PieceType, color: PieceColor, gameId: UInt64, startSquare: String): @NFT {
             let id = ChessPiece.totalSupply
             ChessPiece.totalSupply = ChessPiece.totalSupply + 1
-            emit PieceMinted(id: id, pieceType: pieceType, color: color, gameId: gameId)
+            emit PieceMinted(id: id, pieceType: pieceType.rawValue, color: color.rawValue, gameId: gameId)
             return <- create NFT(id: id, pieceType: pieceType, color: color, gameId: gameId, startSquare: startSquare)
         }
     }
@@ -151,11 +160,11 @@ access(all) contract ChessPiece: NonFungibleToken, ViewResolver {
         return <- create Collection()
     }
 
-    access(all) fun getContractViews(resourceType: Type?): [Type] {
+    access(all) view fun getContractViews(resourceType: Type?): [Type] {
         return [Type<MetadataViews.NFTCollectionData>()]
     }
 
-    access(all) fun resolveContractView(resourceType: Type?, viewType: Type): AnyStruct? {
+    access(all) view fun resolveContractView(resourceType: Type?, viewType: Type): AnyStruct? {
         switch viewType {
             case Type<MetadataViews.NFTCollectionData>():
                 return MetadataViews.NFTCollectionData(
@@ -171,7 +180,7 @@ access(all) contract ChessPiece: NonFungibleToken, ViewResolver {
         return nil
     }
 
-    access(all) fun symbolFor(pieceType: PieceType, color: PieceColor): String {
+    access(all) view fun symbolFor(pieceType: PieceType, color: PieceColor): String {
         if color == PieceColor.White {
             switch pieceType {
                 case PieceType.King:   return "\u{2654}"
@@ -194,7 +203,7 @@ access(all) contract ChessPiece: NonFungibleToken, ViewResolver {
         return "?"
     }
 
-    access(all) fun typeNameFor(pieceType: PieceType): String {
+    access(all) view fun typeNameFor(pieceType: PieceType): String {
         switch pieceType {
             case PieceType.King:   return "King"
             case PieceType.Queen:  return "Queen"

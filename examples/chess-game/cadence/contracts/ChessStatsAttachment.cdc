@@ -25,9 +25,9 @@ access(all) contract ChessStatsAttachment {
             self.movesMade = self.movesMade + 1
         }
 
-        access(ChessPiece.GameUpdater) fun recordCapture() {
+        access(ChessPiece.GameUpdater) fun recordCapture(pieceId: UInt64) {
             self.capturesMade = self.capturesMade + 1
-            emit StatsUpdated(pieceId: self.base.id, movesMade: self.movesMade, capturesMade: self.capturesMade)
+            emit StatsUpdated(pieceId: pieceId, movesMade: self.movesMade, capturesMade: self.capturesMade)
         }
 
         access(ChessPiece.GameUpdater) fun recordCheck() {
@@ -43,9 +43,10 @@ access(all) contract ChessStatsAttachment {
         }
     }
 
-    access(all) fun attachStats(to nft: auth(ChessPiece.GameUpdater) &ChessPiece.NFT) {
+    access(all) fun attachStats(to nft: @ChessPiece.NFT): @ChessPiece.NFT {
         if nft[Stats] == nil {
-            attach Stats() to nft
+            return <- attach Stats() to <- nft
         }
+        return <- nft
     }
 }

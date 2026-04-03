@@ -59,22 +59,55 @@ access(all) contract ChessGame {
             self.drawOfferedBy = nil
             self.vrfCommit = nil
         }
+
+        // Mutators — called via remove-modify-reinsert from ChessGame contract functions
+        access(contract) fun setVrfCommit(_ secret: UInt256) {
+            self.vrfCommit = secret
+        }
+
+        access(contract) fun setColors(white: Address, black: Address) {
+            self.white = white
+            self.black = black
+        }
+
+        access(contract) fun setStatus(_ s: GameStatus) {
+            self.status = s
+        }
+
+        access(contract) fun setWinner(_ w: Address?) {
+            self.winner = w
+        }
+
+        access(contract) fun setLastMoveBlock(_ h: UInt64) {
+            self.lastMoveBlock = h
+        }
+
+        access(contract) fun setFen(_ f: String) {
+            self.fen = f
+        }
+
+        access(contract) fun appendMove(_ m: String) {
+            self.moveHistory.append(m)
+        }
+
+        access(contract) fun setDrawOfferedBy(_ addr: Address?) {
+            self.drawOfferedBy = addr
+        }
     }
 
     access(self) var games: {UInt64: Game}
 
     // VRF: derive color assignment from secret
     access(self) fun assignColors(gameId: UInt64, secret: UInt256) {
-        let game = self.games[gameId] ?? panic("Game not found")
+        var game = self.games.remove(key: gameId) ?? panic("Game not found")
         // Simple deterministic assignment: hash of secret mod 2
         let hash = secret % 2
         if hash == 0 {
-            self.games[gameId]!.white = game.challenger
-            self.games[gameId]!.black = game.opponent
+            game.setColors(white: game.challenger, black: game.opponent)
         } else {
-            self.games[gameId]!.white = game.opponent
-            self.games[gameId]!.black = game.challenger
+            game.setColors(white: game.opponent, black: game.challenger)
         }
+        self.games[gameId] = game
     }
 
     // Mint all 32 pieces and deposit into each player's collection
@@ -168,7 +201,9 @@ access(all) contract ChessGame {
         let game = self.games[gameId] ?? panic("Game not found")
         assert(game.status == GameStatus.pending, message: "Game not pending")
         assert(caller == game.opponent, message: "Only opponent can accept")
-        self.games[gameId]!.vrfCommit = secret
+        var g = self.games.remove(key: gameId) ?? panic("Game not found")
+        g.setVrfCommit(secret)
+        self.games[gameId] = g
         emit ChallengeAccepted(gameId: gameId, secret: secret)
     }
 
@@ -180,11 +215,14 @@ access(all) contract ChessGame {
         assert(game.vrfCommit != nil, message: "Must accept challenge first")
 
         self.assignColors(gameId: gameId, secret: secret)
-        self.games[gameId]!.status = GameStatus.active
-        self.games[gameId]!.lastMoveBlock = getCurrentBlock().height
 
-        let white = self.games[gameId]!.white!
-        let black = self.games[gameId]!.black!
+        var g = self.games.remove(key: gameId) ?? panic("Game not found")
+        g.setStatus(GameStatus.active)
+        g.setLastMoveBlock(getCurrentBlock().height)
+        let white = g.white!
+        let black = g.black!
+        self.games[gameId] = g
+
         emit ColorsRevealed(gameId: gameId, white: white, black: black)
 
         self.mintPiecesForGame(gameId: gameId)
@@ -195,19 +233,17 @@ access(all) contract ChessGame {
         let game = self.games[gameId] ?? panic("Game not found")
         assert(game.status == GameStatus.active, message: "Game not active")
 
-        // Determine whose turn it is from FEN
-        let fenParts = newFen.split(separator: " ")
-        // Current FEN (before move) tells us whose turn it was
-        let currentFenParts = game.fen.split(separator: " ")
-        let turnIndicator = currentFenParts.length > 1 ? currentFenParts[1] : "w"
-        let isWhiteTurn = turnIndicator == "w"
-        let expectedPlayer = isWhiteTurn ? game.white! : game.black!
+        // Determine whose turn it is from FEN: " b " means black's turn, " w " means white's turn
+        let isBlackTurn = game.fen.contains(" b ")
+        let expectedPlayer = isBlackTurn ? game.black! : game.white!
         assert(caller == expectedPlayer, message: "Not your turn")
 
-        self.games[gameId]!.fen = newFen
-        self.games[gameId]!.moveHistory.append(move)
-        self.games[gameId]!.lastMoveBlock = getCurrentBlock().height
-        self.games[gameId]!.drawOfferedBy = nil // move cancels draw offer
+        var g = self.games.remove(key: gameId) ?? panic("Game not found")
+        g.setFen(newFen)
+        g.appendMove(move)
+        g.setLastMoveBlock(getCurrentBlock().height)
+        g.setDrawOfferedBy(nil) // move cancels draw offer
+        self.games[gameId] = g
 
         emit MoveMade(gameId: gameId, player: caller, move: move, fen: newFen, isCapture: isCapture, isCheck: isCheck)
     }
@@ -216,8 +252,10 @@ access(all) contract ChessGame {
         EmergencyPause.assertNotPaused()
         let game = self.games[gameId] ?? panic("Game not found")
         assert(game.status == GameStatus.active, message: "Game not active")
-        self.games[gameId]!.status = status
-        self.games[gameId]!.winner = winner
+        var g = self.games.remove(key: gameId) ?? panic("Game not found")
+        g.setStatus(status)
+        g.setWinner(winner)
+        self.games[gameId] = g
         emit GameEnded(gameId: gameId, status: status.rawValue, winner: winner)
     }
 
@@ -227,8 +265,10 @@ access(all) contract ChessGame {
         assert(game.status == GameStatus.active, message: "Game not active")
         assert(caller == game.challenger || caller == game.opponent, message: "Not a participant")
         let winner = caller == game.challenger ? game.opponent : game.challenger
-        self.games[gameId]!.status = GameStatus.resigned
-        self.games[gameId]!.winner = winner
+        var g = self.games.remove(key: gameId) ?? panic("Game not found")
+        g.setStatus(GameStatus.resigned)
+        g.setWinner(winner)
+        self.games[gameId] = g
         emit GameEnded(gameId: gameId, status: GameStatus.resigned.rawValue, winner: winner)
     }
 
@@ -237,7 +277,9 @@ access(all) contract ChessGame {
         let game = self.games[gameId] ?? panic("Game not found")
         assert(game.status == GameStatus.active, message: "Game not active")
         assert(caller == game.challenger || caller == game.opponent, message: "Not a participant")
-        self.games[gameId]!.drawOfferedBy = caller
+        var g = self.games.remove(key: gameId) ?? panic("Game not found")
+        g.setDrawOfferedBy(caller)
+        self.games[gameId] = g
         emit DrawOffered(gameId: gameId, by: caller)
     }
 
@@ -247,8 +289,10 @@ access(all) contract ChessGame {
         assert(game.status == GameStatus.active, message: "Game not active")
         assert(game.drawOfferedBy != nil, message: "No draw offer pending")
         assert(caller != game.drawOfferedBy!, message: "Cannot accept your own draw offer")
-        self.games[gameId]!.status = GameStatus.drawn
-        self.games[gameId]!.winner = nil
+        var g = self.games.remove(key: gameId) ?? panic("Game not found")
+        g.setStatus(GameStatus.drawn)
+        g.setWinner(nil)
+        self.games[gameId] = g
         emit DrawAccepted(gameId: gameId)
         emit GameEnded(gameId: gameId, status: GameStatus.drawn.rawValue, winner: nil)
     }
@@ -261,8 +305,10 @@ access(all) contract ChessGame {
         let blocksElapsed = getCurrentBlock().height - game.lastMoveBlock
         assert(blocksElapsed >= 1000, message: "Timeout not reached (need 1000 blocks)")
         let winner = caller
-        self.games[gameId]!.status = GameStatus.timedOut
-        self.games[gameId]!.winner = winner
+        var g = self.games.remove(key: gameId) ?? panic("Game not found")
+        g.setStatus(GameStatus.timedOut)
+        g.setWinner(winner)
+        self.games[gameId] = g
         emit GameEnded(gameId: gameId, status: GameStatus.timedOut.rawValue, winner: winner)
     }
 
