@@ -1,3 +1,4 @@
+import * as fcl from '@onflow/fcl'
 import { configureFCL, getCurrentUser } from './wallet'
 import { renderBoard, createBoardState, getValidMoveTargets, applyMove } from './board'
 import { getBoard, makeMove, createChallenge, setupAccount, resign } from './chess-client'
@@ -143,5 +144,8 @@ bindSquareClicks()
 
 // Suppress unused variable warnings — these are intentionally exposed on window
 void myAddress
+
+// Bind Connect Wallet button directly (inline onclick can't access ESM imports)
+document.getElementById('connect-btn')?.addEventListener('click', () => fcl.authenticate())
 
 ;(window as unknown as Record<string, unknown>).chessApp = { startGame, challenge, resignGame, setupAccount, createChallenge }

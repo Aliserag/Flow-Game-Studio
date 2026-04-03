@@ -4,7 +4,6 @@
 //
 // IMPORTANT: Pausing blocks NEW transactions only. Existing player assets
 // (NFTs, tokens) remain untouched in player accounts.
-import "EmergencyPause"
 
 access(all) contract EmergencyPause {
 

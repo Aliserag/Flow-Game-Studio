@@ -45,8 +45,8 @@
       <div id="board"></div>
       <div id="status">Connecting...</div>
       <div id="controls">
-        <button onclick="window.chessApp?.signIn?.() ?? fcl?.authenticate?.()">Connect Wallet</button>
-        <button onclick="window.chessApp?.resignGame?.()">Resign</button>
+        <button id="connect-btn">Connect Wallet</button>
+        <button id="resign-btn" onclick="window.chessApp?.resignGame?.()">Resign</button>
         <button id="mute-btn" title="Toggle sound">🔊</button>
       </div>
       <div id="new-game">
