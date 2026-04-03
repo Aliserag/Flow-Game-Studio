@@ -2,11 +2,11 @@ import Test
 import "ChessGame"
 import "ChessPiece"
 
-access(all) let deployer = Test.getAccount(Address(0x0000000000000007))
 access(all) let player1 = Test.createAccount()
 access(all) let player2 = Test.createAccount()
 
 access(all) fun setup() {
+    // Note: standard contract setup duplicated from ChessPiece_test.cdc — Cadence testing has no shared fixtures
     // Deploy standard contracts in dependency order.
     // Paths are relative to this test file (cadence/tests/).
     // ../../../../ goes up to flow-blockchain-studio/ root.
@@ -24,6 +24,7 @@ access(all) fun setup() {
     )
     Test.expect(err, Test.beNil())
 
+    // Required by MetadataViews transitive import (MetadataViews imports FungibleToken)
     err = Test.deployContract(
         name: "FungibleToken",
         path: "../../../../cadence/contracts/standards/FungibleToken.cdc",
@@ -134,7 +135,7 @@ access(all) fun testGetBoard() {
 
 access(all) fun testResign() {
     // Create a fresh game (gameId=1)
-    Test.executeTransaction(
+    let r1 = Test.executeTransaction(
         Test.Transaction(
             code: Test.readFile("../transactions/create_challenge.cdc"),
             authorizers: [player1.address],
@@ -142,7 +143,8 @@ access(all) fun testResign() {
             arguments: [player2.address]
         )
     )
-    Test.executeTransaction(
+    Test.expect(r1, Test.beSucceeded())
+    let r2 = Test.executeTransaction(
         Test.Transaction(
             code: Test.readFile("../transactions/accept_challenge.cdc"),
             authorizers: [player2.address],
@@ -150,7 +152,8 @@ access(all) fun testResign() {
             arguments: [1 as UInt64, 99 as UInt256]
         )
     )
-    Test.executeTransaction(
+    Test.expect(r2, Test.beSucceeded())
+    let r3 = Test.executeTransaction(
         Test.Transaction(
             code: Test.readFile("../transactions/reveal_colors.cdc"),
             authorizers: [player2.address],
@@ -158,6 +161,7 @@ access(all) fun testResign() {
             arguments: [1 as UInt64, 99 as UInt256]
         )
     )
+    Test.expect(r3, Test.beSucceeded())
 
     // Get who is white and have them resign
     let boardResult = Test.executeScript(

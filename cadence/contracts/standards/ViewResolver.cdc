@@ -1,3 +1,5 @@
+// Vendored from https://github.com/onflow/flow-nft — Cadence 1.0 compatible version.
+// Do not edit — update by re-vendoring from upstream.
 /// Taken from the NFT Metadata standard, this contract exposes an interface to let
 /// anyone borrow a contract and resolve views on it.
 ///

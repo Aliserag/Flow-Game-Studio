@@ -1,7 +1,6 @@
 import Test
 import "ChessPiece"
 
-access(all) let deployer = Test.getAccount(Address(0x0000000000000007))
 access(all) let player1 = Test.createAccount()
 
 access(all) fun setup() {
@@ -22,6 +21,7 @@ access(all) fun setup() {
     )
     Test.expect(err, Test.beNil())
 
+    // Required by MetadataViews transitive import (MetadataViews imports FungibleToken)
     err = Test.deployContract(
         name: "FungibleToken",
         path: "../../../../cadence/contracts/standards/FungibleToken.cdc",
@@ -59,10 +59,7 @@ access(all) fun testSetupCollection() {
 }
 
 access(all) fun testTotalSupplyStartsAtZero() {
-    let supply = Test.executeScript(
-        "import ChessPiece from 0x0000000000000007\naccess(all) fun main(): UInt64 { return ChessPiece.totalSupply }",
-        []
-    )
+    let supply = Test.executeScript(Test.readFile("../scripts/get_total_supply.cdc"), [])
     Test.expect(supply, Test.beSucceeded())
     let count = supply.returnValue! as! UInt64
     Test.assertEqual(count, 0 as UInt64)

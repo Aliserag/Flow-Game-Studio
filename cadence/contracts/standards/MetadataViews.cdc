@@ -1,3 +1,5 @@
+// Vendored from https://github.com/onflow/flow-nft — Cadence 1.0 compatible version.
+// Do not edit — update by re-vendoring from upstream.
 import "FungibleToken"
 import "NonFungibleToken"
 import "ViewResolver"
