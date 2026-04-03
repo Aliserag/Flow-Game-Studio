@@ -1,0 +1,37 @@
+{
+  "networks": {
+    "emulator": "127.0.0.1:3569",
+    "testing": "127.0.0.1:3569",
+    "testnet": "access.devnet.nodes.onflow.org:9000",
+    "mainnet": "access.mainnet.nodes.onflow.org:9000"
+  },
+  "accounts": {
+    "emulator-account": {
+      "address": "f8d6e0586b0a20c7",
+      "key": "2eae2f31cb5b756151fa11d82949763b73e28b92f8cc26c97d5bf4620e60d8b6"
+    }
+  },
+  "contracts": {
+    "CoinFlip": {
+      "source": "./cadence/contracts/CoinFlip.cdc",
+      "aliases": {
+        "emulator": "f8d6e0586b0a20c7",
+        "testing": "0000000000000007"
+      }
+    },
+    "RandomBeaconHistory": {
+      "source": "../../cadence/contracts/standards/RandomBeaconHistory.cdc",
+      "aliases": {
+        "emulator": "f8d6e0586b0a20c7",
+        "testnet": "8c5303eaa26202d6",
+        "mainnet": "d7431fd358660d73",
+        "testing": "0000000000000007"
+      }
+    }
+  },
+  "deployments": {
+    "emulator": {
+      "emulator-account": ["RandomBeaconHistory", "CoinFlip"]
+    }
+  }
+}
