@@ -17,4 +17,5 @@ fcl.config({
   "0xNonFungibleToken": "0xf8d6e0586b0a20c7",
   "0xMetadataViews": "0xf8d6e0586b0a20c7",
   "0xViewResolver": "0xf8d6e0586b0a20c7",
+  "0xFungibleToken": "0xee82856bf20e2aa6",
 })

@@ -55,18 +55,14 @@
     "FungibleToken": {
       "source": "../../cadence/contracts/standards/FungibleToken.cdc",
       "aliases": {
-        "emulator": "f8d6e0586b0a20c7",
-        "testing": "0000000000000007"
+        "emulator": "ee82856bf20e2aa6",
+        "testing": "0000000000000002"
       }
     }
   },
   "deployments": {
     "emulator": {
       "emulator-account": [
-        "ViewResolver",
-        "NonFungibleToken",
-        "FungibleToken",
-        "MetadataViews",
         "PowerUp",
         "Fighter",
         "BattleArena"
