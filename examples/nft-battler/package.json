@@ -1,0 +1,15 @@
+{
+  "name": "nft-battler",
+  "version": "1.0.0",
+  "description": "NFT Battler — walletless onboarding + Cadence attachment power-ups on Flow",
+  "private": true,
+  "scripts": {
+    "emulator": "flow emulator",
+    "deploy": "flow project deploy --update --network emulator",
+    "test": "flow test cadence/tests/NFTBattler_test.cdc",
+    "dev": "cd client && npm run dev",
+    "client:install": "cd client && npm install",
+    "client:build": "cd client && npm run build",
+    "client:typecheck": "cd client && npx tsc --noEmit"
+  }
+}

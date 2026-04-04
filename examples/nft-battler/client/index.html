@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NFT Battler on Flow</title>
+  <style>
+    /* ── Base ────────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --attack:  #e74c3c;
+      --defense: #3498db;
+      --magic:   #9b59b6;
+      --bg:      #0f0f1a;
+      --surface: #1a1a2e;
+      --card:    #16213e;
+      --border:  #2a2a4a;
+      --text:    #e8e8f0;
+      --muted:   #8888aa;
+      --success: #2ecc71;
+      --error:   #e74c3c;
+      --gold:    #f39c12;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0 0 4rem;
+    }
+
+    /* ── Header ──────────────────────────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #0d0d1a 0%, #1a0a2e 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-size: 1.6rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--attack), var(--magic));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    /* ── Layout ──────────────────────────────────────────────────────────── */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h2 .section-icon {
+      font-size: 1.2rem;
+    }
+
+    /* ── Buttons ─────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn:hover  { opacity: 0.88; }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary   { background: linear-gradient(135deg, #6c47ff, #9b59b6); color: #fff; }
+    .btn-attack    { background: linear-gradient(135deg, #c0392b, var(--attack)); color: #fff; }
+    .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+    .btn-success   { background: linear-gradient(135deg, #27ae60, var(--success)); color: #fff; }
+    .btn-danger    { background: linear-gradient(135deg, #c0392b, var(--error)); color: #fff; }
+
+    /* ── Status bar ──────────────────────────────────────────────────────── */
+    #status {
+      display: none;
+      padding: 0.75rem 1.2rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    #status.success { background: rgba(46,204,113,0.15); border: 1px solid var(--success); color: var(--success); }
+    #status.error   { background: rgba(231,76,60,0.15);  border: 1px solid var(--error);   color: var(--error); }
+
+    /* ── Fighter cards ───────────────────────────────────────────────────── */
+    #fighters-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .fighter-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      transition: transform 0.15s;
+    }
+    .fighter-card:hover { transform: translateY(-2px); }
+
+    .fighter-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .class-icon { font-size: 1.3rem; }
+
+    .fighter-id {
+      margin-left: auto;
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: rgba(255,255,255,0.07);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+    }
+
+    .fighter-class {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    .fighter-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+
+    .stat-label { color: var(--muted); }
+
+    .stat-value { font-weight: 600; }
+    .stat-value.power { color: var(--gold); }
+    .stat-value.boosted { color: var(--success); }
+
+    .powerup-badge {
+      margin-top: 0.75rem;
+      font-size: 0.78rem;
+      background: rgba(46,204,113,0.12);
+      border: 1px solid rgba(46,204,113,0.3);
+      border-radius: 6px;
+      padding: 0.3rem 0.6rem;
+      color: var(--success);
+    }
+
+    .empty {
+      color: var(--muted);
+      font-size: 0.9rem;
+      padding: 0.5rem 0;
+    }
+
+    /* ── Battle result banner ────────────────────────────────────────────── */
+    .battle-result {
+      display: none;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-align: center;
+      animation: fadeSlide 0.3s ease;
+    }
+    .battle-result.win  { background: rgba(46,204,113,0.15); border: 2px solid var(--success); color: var(--success); }
+    .battle-result.loss { background: rgba(231,76,60,0.15);  border: 2px solid var(--error);   color: var(--error); }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Forms ───────────────────────────────────────────────────────────── */
+    .input-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    label { font-size: 0.8rem; color: var(--muted); }
+
+    input[type="number"], input[type="text"] {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+      width: 120px;
+    }
+    input:focus { outline: none; border-color: #6c47ff; }
+
+    /* ── RPS legend ──────────────────────────────────────────────────────── */
+    .rps-legend {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .rps-legend span { display: flex; align-items: center; gap: 0.3rem; }
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot.attack  { background: var(--attack); }
+    .dot.defense { background: var(--defense); }
+    .dot.magic   { background: var(--magic); }
+
+    /* ── App account card ────────────────────────────────────────────────── */
+    .app-account-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .app-account-card.success { border-color: rgba(46,204,113,0.4); }
+    .app-account-card p { margin-bottom: 0.5rem; font-size: 0.88rem; }
+
+    /* ── Modal ───────────────────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 480px;
+      width: 90%;
+    }
+    .modal h3 { margin-bottom: 1rem; }
+    .modal p  { margin-bottom: 0.75rem; font-size: 0.9rem; color: var(--muted); }
+
+    .key-display {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+      word-break: break-all;
+    }
+    .key-display code { font-size: 0.78rem; color: var(--text); }
+
+    .warning {
+      color: var(--error) !important;
+      font-size: 0.82rem !important;
+    }
+
+    .modal .btn { margin-right: 0.5rem; margin-top: 0.5rem; }
+
+    /* ── Wallet section ──────────────────────────────────────────────────── */
+    #wallet-section p { margin-bottom: 0.75rem; font-size: 0.9rem; }
+    #wallet-address {
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .info-text {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <div class="logo">NFT Battler</div>
+      <div class="subtitle">Walletless onboarding · NFT attachments · On-chain battles · Flow blockchain</div>
+    </div>
+    <div id="wallet-section"></div>
+  </header>
+
+  <div class="container">
+
+    <!-- Status bar -->
+    <div id="status"></div>
+
+    <!-- ── Walletless Onboarding ───────────────────────────────────────── -->
+    <section>
+      <h2><span class="section-icon">🔑</span> Walletless Onboarding (HybridCustody)</h2>
+      <p class="info-text">
+        No wallet? No problem. Click below — the app generates a keypair for you and creates
+        a Flow account in the background. You own the keys; the app sponsors gas.
+        When ready, export your private key to any Flow wallet to take full custody.
+      </p>
+      <div class="button-row">
+        <button id="create-app-account-btn" class="btn btn-primary">Create App Account</button>
+      </div>
+      <div id="app-account-info" style="margin-top:1rem;"></div>
+    </section>
+
+    <!-- ── Connect Wallet ─────────────────────────────────────────────── -->
+    <section>
+      <h2><span class="section-icon">👛</span> Connect Wallet (FCL Auth)</h2>
+      <p class="info-text">
+        Already have a Flow wallet? Connect via FCL to sign transactions directly.
+        Make sure the emulator and Dev Wallet are running.
+      </p>
+      <!-- wallet-section populated by JS -->
+    </section>
+
+    <!-- ── Game Section (shown after wallet connect) ──────────────────── -->
+    <div id="game-section" style="display:none;">
+
+      <!-- Account Setup -->
+      <section>
+        <h2><span class="section-icon">⚙</span> Account Setup</h2>
+        <p class="info-text">
+          Create empty Fighter and PowerUp collections in your account storage.
+          Required once before minting or receiving any NFTs.
+        </p>
+        <p style="font-size:0.82rem;color:#8888aa;margin-bottom:0.75rem;">
+          Account: <span id="wallet-address">—</span>
+        </p>
+        <button id="setup-account-btn" class="btn btn-secondary">Setup Collections</button>
+      </section>
+
+      <!-- Fighters -->
+      <section>
+        <h2><span class="section-icon">⚔</span> Your Fighters</h2>
+        <div class="rps-legend" style="margin-bottom:1rem;">
+          <span><span class="dot attack"></span> Attack beats Defense</span>
+          <span><span class="dot defense"></span> Defense beats Magic</span>
+          <span><span class="dot magic"></span> Magic beats Attack</span>
+        </div>
+        <div id="fighters-list">
+          <p class="empty">Loading fighters…</p>
+        </div>
+        <div class="button-row">
+          <button id="refresh-fighters-btn" class="btn btn-secondary">Refresh</button>
+        </div>
+      </section>
+
+      <!-- Battle -->
+      <section>
+        <h2><span class="section-icon">🏟</span> Battle Arena</h2>
+        <p class="info-text">
+          Challenge one of your fighters against another. Both fighters must be in your
+          collection. Wins and losses are recorded permanently on-chain in the NFT itself.
+        </p>
+        <div id="battle-result"></div>
+        <div class="input-row">
+          <div class="field">
+            <label for="my-fighter-id">Your Fighter ID</label>
+            <input type="number" id="my-fighter-id" placeholder="0" min="0" />
+          </div>
+          <div class="field">
+            <label for="opponent-fighter-id">Opponent Fighter ID</label>
+            <input type="number" id="opponent-fighter-id" placeholder="1" min="0" />
+          </div>
+          <button id="battle-btn" class="btn btn-attack">⚔ Battle!</button>
+        </div>
+        <p class="info-text">
+          <strong>How to get fighters:</strong> Ask the admin account to run
+          <code>mint_starter.cdc</code> for your address, or run it yourself
+          from the emulator-account in the Flow CLI.
+        </p>
+      </section>
+
+    </div><!-- /game-section -->
+
+    <!-- ── How It Works ───────────────────────────────────────────────── -->
+    <section>
+      <h2><span class="section-icon">📖</span> How It Works</h2>
+      <p class="info-text">
+        <strong>HybridCustody</strong> — The app creates and manages a Flow account for you
+        using a sponsored transaction. Your keypair is stored in localStorage. In production,
+        Flow's HybridCustody contracts let you reclaim full ownership later.
+      </p>
+      <p class="info-text">
+        <strong>NFT Attachments</strong> — PowerUp NFTs physically attach to Fighter NFTs
+        using Cadence's <code>attach</code> keyword. The <code>PowerUp.Boost</code> attachment
+        travels with the Fighter when it's transferred. <code>Fighter.effectivePower()</code>
+        reads <code>self[PowerUp.Boost]</code> to calculate the boosted stat at query time.
+      </p>
+      <p class="info-text">
+        <strong>On-chain battle record</strong> — Win/loss counters are mutable fields on
+        the Fighter NFT resource itself. The <code>BattleArena</code> contract mutates them
+        via a <code>BattleRecorder</code> Cadence entitlement, ensuring only authorized code
+        can update combat history.
+      </p>
+    </section>
+
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
