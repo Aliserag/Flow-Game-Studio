@@ -118,7 +118,12 @@ access(all) contract PrizePoolOrchestrator {
         // We XOR with `secret` for additional admin entropy, then mod by the
         // depositor count.
         let randomSource = RandomBeaconHistory.sourceOfRandomness(atBlockHeight: commitBlockHeight)
-        let randomValue = randomSource.value ^ secret
+        // Convert [UInt8] beacon value to UInt256 for arithmetic (big-endian).
+        var beaconUInt256: UInt256 = 0
+        for byte in randomSource.value {
+            beaconUInt256 = (beaconUInt256 << 8) | UInt256(byte)
+        }
+        let randomValue = beaconUInt256 ^ secret
         let winnerIndex = UInt64(randomValue % UInt256(depositors.length))
         let winnerEVMAddrStr = depositors[winnerIndex]
 

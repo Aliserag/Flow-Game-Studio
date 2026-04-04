@@ -13,7 +13,6 @@
 ///   POST /sign       → signs a transaction envelope message
 ///   GET  /health     → liveness check
 import express, { Request, Response } from "express"
-import * as fcl from "@onflow/fcl"
 import * as elliptic from "elliptic"
 import { SHA3 } from "sha3"
 
@@ -28,15 +27,6 @@ const SERVICE_KEY_ID = 0
 // In production, load from env:
 // const SERVICE_ADDRESS    = process.env.PAYER_ADDRESS   ?? ""
 // const SERVICE_PRIVATE_KEY = process.env.PAYER_PRIVATE_KEY ?? ""
-
-// ---------------------------------------------------------------------------
-// FCL config
-// ---------------------------------------------------------------------------
-
-fcl.config({
-  "accessNode.api": "http://localhost:8888",
-  "flow.network": "emulator",
-})
 
 // ---------------------------------------------------------------------------
 // Signing helper
@@ -65,7 +55,7 @@ app.use(express.json())
 
 // CORS — open for local dev; restrict in production.
 app.use((_req: Request, res: Response, next: () => void) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:5173")
+  res.header("Access-Control-Allow-Origin", "*")
   res.header("Access-Control-Allow-Headers", "Content-Type")
   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
   next()

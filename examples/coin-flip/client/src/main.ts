@@ -18,7 +18,7 @@ import { sponsoredMutate } from "./sponsorship.js"
 // ---------------------------------------------------------------------------
 
 const COMMIT_TX = `
-import CoinFlip from "CoinFlip"
+import CoinFlip from 0xCoinFlip
 
 transaction(commitHashHex: String, playerChoice: Bool) {
     prepare(signer: &Account) {
@@ -34,7 +34,7 @@ transaction(commitHashHex: String, playerChoice: Bool) {
 `
 
 const REVEAL_TX = `
-import CoinFlip from "CoinFlip"
+import CoinFlip from 0xCoinFlip
 
 transaction(flipId: UInt64, secret: UInt256) {
     prepare(signer: &Account) {
@@ -49,9 +49,9 @@ transaction(flipId: UInt64, secret: UInt256) {
 `
 
 const GET_ALL_FLIPS_SCRIPT = `
-import CoinFlip from "CoinFlip"
+import CoinFlip from 0xCoinFlip
 access(all) fun main(player: Address): {UInt64: CoinFlip.Commit} {
-    return CoinFlip.commits[player] ?? {}
+    return CoinFlip.getFlipsForPlayer(player: player)
 }
 `
 
@@ -158,10 +158,10 @@ async function commitFlip(choice: boolean): Promise<void> {
   try {
     const txId = await sponsoredMutate({
       cadence: COMMIT_TX,
-      args: fcl.args([
-        fcl.arg(commitHashHex, t.String),
-        fcl.arg(choice, t.Bool),
-      ]),
+      args: (arg, t) => [
+        arg(commitHashHex, t.String),
+        arg(choice, t.Bool),
+      ],
     })
 
     setResult("Commit submitted — waiting for seal…")
@@ -210,17 +210,17 @@ async function revealFlip(flipId: number): Promise<void> {
   try {
     const txId = await sponsoredMutate({
       cadence: REVEAL_TX,
-      args: fcl.args([
-        fcl.arg(String(flipId), t.UInt64),
-        fcl.arg(secret.toString(), t.UInt256),
-      ]),
+      args: (arg, t) => [
+        arg(String(flipId), t.UInt64),
+        arg(secret.toString(), t.UInt256),
+      ],
     })
 
     await fcl.tx(txId).onceSealed()
 
     const flips = await queryAllFlips(currentUser.addr)
     const flip = flips[flipId]
-    if (flip?.resolved) {
+    if (flip?.isResolved) {
       const resultLabel = flip.result ? "HEADS" : "TAILS"
       const choiceLabel = flip.playerChoice ? "HEADS" : "TAILS"
       const wonLabel    = flip.won ? "WON" : "LOST"
@@ -259,7 +259,7 @@ flipBtn.addEventListener("click", () => {
 
 interface FlipCommit {
   commitBlockHeight: string
-  resolved: boolean
+  isResolved: boolean
   result: boolean | null
   playerChoice: boolean
   won: boolean | null
@@ -268,7 +268,8 @@ interface FlipCommit {
 async function queryAllFlips(addr: string): Promise<Record<number, FlipCommit>> {
   const result = await fcl.query({
     cadence: GET_ALL_FLIPS_SCRIPT,
-    args: fcl.args([fcl.arg(addr, t.Address)]),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    args: (arg: (v: unknown, x: unknown) => unknown, fclT: any) => [arg(addr, fclT.Address)],
   })
   return result as Record<number, FlipCommit>
 }
@@ -293,8 +294,8 @@ async function refreshHistory(): Promise<void> {
 
     for (const id of ids) {
       const f = flips[id]
-      const status  = f.resolved ? (f.won ? "WON" : "LOST") : "pending reveal"
-      const result  = f.resolved ? (f.result ? "Heads" : "Tails") : "—"
+      const status  = f.isResolved ? (f.won ? "WON" : "LOST") : "pending reveal"
+      const result  = f.isResolved ? (f.result ? "Heads" : "Tails") : "—"
       const choice  = f.playerChoice ? "Heads" : "Tails"
 
       const row = el(

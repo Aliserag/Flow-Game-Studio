@@ -4,6 +4,7 @@
 /// players never need FLOW tokens.  Falls back to user-pays if the
 /// sponsor service is unavailable (e.g. running client standalone).
 import * as fcl from "@onflow/fcl"
+import type * as FCLTypes from "@onflow/types"
 
 const SPONSOR_URL = "http://localhost:3001"
 
@@ -50,25 +51,31 @@ async function sponsorAuthz(account: Record<string, unknown>): Promise<Record<st
   }
 }
 
+type ArgFn = (
+  arg: (value: unknown, xform: unknown) => unknown,
+  t: typeof FCLTypes
+) => unknown[]
+
 /// Mutate the chain with optional sponsorship.
 ///
 /// Usage:
 ///   const txId = await sponsoredMutate({
 ///     cadence: commitTxCode,
-///     args: fcl.args([fcl.arg(hashHex, t.String), fcl.arg(choice, t.Bool)]),
+///     args: (arg, t) => [arg(hashHex, t.String), arg(choice, t.Bool)],
 ///   })
-export async function sponsoredMutate(args: {
+///
+/// Pass args as a function — FCL's mutate() calls it with (arg, t).
+export async function sponsoredMutate(mutateArgs: {
   cadence: string
-  args?: ReturnType<typeof fcl.args>
-  authorizations?: typeof fcl.authz[]
+  args?: ArgFn
   limit?: number
 }): Promise<string> {
   return fcl.mutate({
-    cadence: args.cadence,
-    args: args.args ?? fcl.args([]),
+    cadence: mutateArgs.cadence,
+    args: mutateArgs.args,
     proposer: fcl.authz,
     payer: sponsorAuthz,
-    authorizations: args.authorizations ?? [fcl.authz],
-    limit: args.limit ?? 999,
+    authorizations: [fcl.authz],
+    limit: mutateArgs.limit ?? 999,
   })
 }

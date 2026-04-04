@@ -3,40 +3,57 @@
 /// On testnet:  0x8c5303eaa26202d6
 /// On mainnet:  0xd7431fd358660d73
 ///
-/// This minimal implementation is deterministic for emulator and `flow test`.
-/// The production protocol contract provides true protocol-level randomness;
-/// this stub derives a deterministic value from the block height so tests
-/// can verify the commit/reveal logic without a live network.
+/// IMPORTANT: `value` is `[UInt8]` (32 bytes) — matching the real protocol
+/// contract. Contracts must convert bytes to UInt256 before arithmetic.
 access(all) contract RandomBeaconHistory {
 
-    /// Holds the random source for a given block height.
     access(all) struct RandomSource {
-        /// Block height this source is bound to.
         access(all) let atBlockHeight: UInt64
-        /// 256-bit random value (deterministic for emulator; protocol-provided on-chain).
-        access(all) let value: UInt256
+        /// 32-byte random value. Matches the real RandomBeaconHistory interface.
+        access(all) let value: [UInt8]
 
-        init(atBlockHeight: UInt64, value: UInt256) {
+        init(atBlockHeight: UInt64, value: [UInt8]) {
             self.atBlockHeight = atBlockHeight
             self.value = value
         }
     }
 
-    /// Returns the random source sealed at `atBlockHeight`.
-    ///
-    /// Emulator derivation: multiply by a large prime and XOR with a second constant
-    /// so that adjacent heights produce very different values.  This is NOT
-    /// cryptographically secure — it only exists to let tests exercise the
-    /// contract logic.  The real protocol contract is provided by the network.
+    /// Deterministic stub for emulator/testing only.
+    /// Spreads the block height across 32 bytes using XOR + shift.
+    /// NOT cryptographically secure.
     access(all) fun sourceOfRandomness(atBlockHeight: UInt64): RandomSource {
-        let h: UInt256 = UInt256(atBlockHeight)
-        // Simple deterministic hash: multiply in a large prime and XOR with an offset.
-        // UInt256 does not support wrapping arithmetic (&*), so we keep the prime small
-        // enough that multiplication stays within UInt256 range for realistic block heights.
-        // Max block height ~1e12; prime ~1e10 → product ~1e22, well within UInt256.
-        let prime: UInt256  = 10000000007
-        let offset: UInt256 = 6364136223846793005
-        let seed: UInt256 = (h * prime) ^ offset
-        return RandomSource(atBlockHeight: atBlockHeight, value: seed)
+        // XOR the block height with 4 distinct 64-bit constants.
+        // Each constant produces 8 bytes → 32 bytes total.
+        let h = atBlockHeight
+        let c0: UInt64 = 0x6c62272e07bb0142
+        let c1: UInt64 = 0xb492b66fbe98f273
+        let c2: UInt64 = 0x9ae16a3b2f90404f
+        let c3: UInt64 = 0xdeadbeefcafebabe
+
+        let m0 = h ^ c0
+        let m1 = h ^ c1
+        let m2 = h ^ c2
+        let m3 = h ^ c3
+
+        let bytes: [UInt8] = [
+            UInt8((m0 >> 56) & 0xFF), UInt8((m0 >> 48) & 0xFF),
+            UInt8((m0 >> 40) & 0xFF), UInt8((m0 >> 32) & 0xFF),
+            UInt8((m0 >> 24) & 0xFF), UInt8((m0 >> 16) & 0xFF),
+            UInt8((m0 >> 8)  & 0xFF), UInt8( m0        & 0xFF),
+            UInt8((m1 >> 56) & 0xFF), UInt8((m1 >> 48) & 0xFF),
+            UInt8((m1 >> 40) & 0xFF), UInt8((m1 >> 32) & 0xFF),
+            UInt8((m1 >> 24) & 0xFF), UInt8((m1 >> 16) & 0xFF),
+            UInt8((m1 >> 8)  & 0xFF), UInt8( m1        & 0xFF),
+            UInt8((m2 >> 56) & 0xFF), UInt8((m2 >> 48) & 0xFF),
+            UInt8((m2 >> 40) & 0xFF), UInt8((m2 >> 32) & 0xFF),
+            UInt8((m2 >> 24) & 0xFF), UInt8((m2 >> 16) & 0xFF),
+            UInt8((m2 >> 8)  & 0xFF), UInt8( m2        & 0xFF),
+            UInt8((m3 >> 56) & 0xFF), UInt8((m3 >> 48) & 0xFF),
+            UInt8((m3 >> 40) & 0xFF), UInt8((m3 >> 32) & 0xFF),
+            UInt8((m3 >> 24) & 0xFF), UInt8((m3 >> 16) & 0xFF),
+            UInt8((m3 >> 8)  & 0xFF), UInt8( m3        & 0xFF)
+        ]
+
+        return RandomSource(atBlockHeight: atBlockHeight, value: bytes)
     }
 }

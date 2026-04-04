@@ -178,9 +178,16 @@ access(all) contract CoinFlip {
             atBlockHeight: existingCommit.commitBlockHeight
         )
 
+        // Convert [UInt8] beacon value to UInt256 for arithmetic.
+        // The real RandomBeaconHistory returns 32 bytes; we interpret them big-endian.
+        var beaconUInt256: UInt256 = 0
+        for byte in randomSource.value {
+            beaconUInt256 = (beaconUInt256 << 8) | UInt256(byte)
+        }
+
         // Derive result: XOR beacon value with player secret, modulo 2.
         // 0 → heads (true), 1 → tails (false).
-        let combined: UInt256 = randomSource.value ^ secret
+        let combined: UInt256 = beaconUInt256 ^ secret
         let flipResult: Bool = (combined % 2) == 0
 
         let flipWon = flipResult == existingCommit.playerChoice
