@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prize Pool Wager — Flow EVM + Cadence</title>
+  <style>
+    :root {
+      --bg: #0d0f14;
+      --surface: #161b22;
+      --surface2: #1e2532;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent-evm: #627eea;   /* EVM / MetaMask blue */
+      --accent-flow: #00ef8b;  /* Cadence / Flow green */
+      --accent-warn: #f0b429;
+      --accent-error: #f85149;
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    header h1 {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    header .tagline {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .badge-evm  { background: #1a1f4a; color: var(--accent-evm);  border: 1px solid var(--accent-evm); }
+    .badge-flow { background: #0a2a1e; color: var(--accent-flow); border: 1px solid var(--accent-flow); }
+
+    /* ── Status bar ── */
+    #status-message {
+      display: none;
+      padding: 10px 24px;
+      font-size: 0.85rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .status-info    { background: #111827; color: var(--text-muted); }
+    .status-success { background: #0a2a1e; color: var(--accent-flow); }
+    .status-error   { background: #2d0f0f; color: var(--accent-error); }
+
+    /* ── Main layout ── */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .main-layout { grid-template-columns: 1fr; }
+    }
+
+    /* ── Round info banner ── */
+    .round-banner {
+      grid-column: 1 / -1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 24px;
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .stat-item { display: flex; flex-direction: column; gap: 4px; }
+    .stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .stat-value { font-size: 1.1rem; font-weight: 600; }
+    .stat-value.open   { color: var(--accent-flow); }
+    .stat-value.closed { color: var(--accent-error); }
+
+    /* ── Panels ── */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .panel-header h2 { font-size: 1rem; font-weight: 600; }
+    .panel-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+    /* ── Wallet status ── */
+    .wallet-status {
+      background: var(--surface2);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-size: 0.85rem;
+    }
+
+    .wallet-addr { font-family: monospace; font-size: 0.8rem; color: var(--text-muted); word-break: break-all; }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn:hover:not(:disabled) { opacity: 0.85; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-evm   { background: var(--accent-evm); color: #fff; }
+    .btn-flow  { background: var(--accent-flow); color: #000; }
+    .btn-admin { background: var(--accent-warn); color: #000; }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+
+    /* ── Form elements ── */
+    label { font-size: 0.8rem; color: var(--text-muted); }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent-evm);
+    }
+
+    /* ── Trophy cards ── */
+    .trophy-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .trophy-icon { font-size: 1.8rem; line-height: 1; }
+    .trophy-details { flex: 1; display: flex; flex-direction: column; gap: 3px; font-size: 0.85rem; }
+    .trophy-details strong { font-size: 0.95rem; color: var(--accent-flow); }
+    .trophy-block { color: var(--text-muted); font-size: 0.75rem; }
+
+    /* ── Admin panel ── */
+    #admin-panel {
+      grid-column: 1 / -1;
+      background: #1a1400;
+      border: 1px solid var(--accent-warn);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    #admin-panel h3 {
+      color: var(--accent-warn);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 16px;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .admin-field { display: flex; flex-direction: column; }
+
+    .empty-state { color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 24px 0; }
+
+    /* ── Feature callout ── */
+    .feature-note {
+      background: #0a1a2a;
+      border: 1px solid #1a4a6a;
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-size: 0.8rem;
+      color: #7ec8e3;
+      line-height: 1.6;
+    }
+
+    .feature-note strong { color: #a8d8ef; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Prize Pool Wager</h1>
+  <span class="tagline">Flow's unique superpower: Cadence VRF + EVM deposits + NFT trophies</span>
+  <span class="badge badge-evm">Flow EVM</span>
+  <span class="badge badge-flow">Cadence VRF</span>
+</header>
+
+<div id="status-message"></div>
+
+<div class="main-layout">
+
+  <!-- ── Round status banner ── -->
+  <div class="round-banner">
+    <div class="stat-item">
+      <span class="stat-label">Round</span>
+      <span class="stat-value" id="round-id">—</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Status</span>
+      <span class="stat-value" id="round-status">Connect wallet</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Total Deposited</span>
+      <span class="stat-value" id="total-deposited">— PTK</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Players</span>
+      <span class="stat-value" id="depositor-count">—</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">My Deposit</span>
+      <span class="stat-value" id="my-deposit">— PTK</span>
+    </div>
+  </div>
+
+  <!-- ── Left panel: EVM / MetaMask ── -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="badge badge-evm">Flow EVM</span>
+      <h2>Deposit Tokens (MetaMask)</h2>
+    </div>
+    <div class="panel-body">
+
+      <div class="feature-note">
+        <strong>Powered by Flow EVM:</strong> Players interact with a standard Solidity
+        contract using MetaMask — no special wallet needed. The prize pool contract
+        is secretly owned by a Cadence account on the other side.
+      </div>
+
+      <!-- Disconnected -->
+      <div id="evm-disconnected">
+        <button class="btn btn-evm" id="connect-metamask-btn">Connect MetaMask</button>
+      </div>
+
+      <!-- Connected -->
+      <div id="evm-connected" style="display:none; display:flex; flex-direction:column; gap:14px;">
+        <div class="wallet-status">
+          <div>Connected</div>
+          <div class="wallet-addr" id="evm-address"></div>
+        </div>
+
+        <div id="deposit-section" style="display:none; display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <label for="deposit-amount">Deposit amount (PTK)</label>
+            <input type="number" id="deposit-amount" min="0.01" step="0.01" placeholder="100" />
+          </div>
+          <button class="btn btn-evm" id="deposit-btn">Deposit to Prize Pool</button>
+        </div>
+
+        <p id="round-closed-msg" style="color:#8b949e; font-size:0.85rem; display:none;">
+          Round is closed — wait for admin to open the next round.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Right panel: Cadence / FCL ── -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="badge badge-flow">Cadence</span>
+      <h2>Trophy Collection (Flow Wallet)</h2>
+    </div>
+    <div class="panel-body">
+
+      <div class="feature-note">
+        <strong>Secured by Cadence VRF:</strong> When a round closes, a Cadence transaction
+        uses <code>RandomBeaconHistory</code> to pick the winner, calls the Solidity
+        contract via COA, and mints this NFT trophy — all in one atomic transaction.
+      </div>
+
+      <!-- Disconnected -->
+      <div id="flow-disconnected">
+        <button class="btn btn-flow" id="connect-flow-btn">Connect Flow Wallet</button>
+      </div>
+
+      <!-- Connected -->
+      <div id="flow-connected" style="display:none;">
+        <div class="wallet-status" style="margin-bottom:14px;">
+          <div>Flow wallet connected</div>
+          <div class="wallet-addr" id="flow-address"></div>
+          <button class="btn btn-ghost" id="disconnect-flow-btn" style="margin-top:8px; padding:6px 12px; font-size:0.8rem;">
+            Disconnect
+          </button>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <strong style="font-size:0.9rem;">Your Trophies</strong>
+          <button class="btn btn-ghost" id="refresh-trophies-btn" style="padding:6px 12px; font-size:0.8rem;">
+            Refresh
+          </button>
+        </div>
+
+        <div id="trophies-list" style="display:flex; flex-direction:column; gap:10px;">
+          <p class="empty-state">Loading trophies…</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Admin panel (hidden until owner connects) ── -->
+  <div id="admin-panel" style="display:none;">
+    <h3>Admin — Close Round</h3>
+    <p style="font-size:0.82rem; color:#b59a00; margin-bottom:16px;">
+      This sends a Cadence transaction that: (1) picks winner via VRF,
+      (2) calls EVM closeRound via COA, (3) mints a trophy NFT.
+      Requires Flow wallet connected as the contract deployer.
+    </p>
+    <div class="admin-grid">
+      <div class="admin-field">
+        <label for="commit-block-height">VRF Commit Block Height</label>
+        <input type="number" id="commit-block-height" placeholder="e.g. 100" />
+      </div>
+      <div class="admin-field">
+        <label for="vrf-secret">VRF Secret (UInt256)</label>
+        <input type="text" id="vrf-secret" placeholder="0 for testing" />
+      </div>
+      <div class="admin-field">
+        <label for="winner-flow-address">Winner Flow Address (for trophy)</label>
+        <input type="text" id="winner-flow-address" placeholder="0x..." />
+      </div>
+    </div>
+    <button class="btn btn-admin" id="close-round-btn" style="margin-top:16px;">
+      Close Round + Release Prize + Mint Trophy
+    </button>
+  </div>
+
+</div>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
