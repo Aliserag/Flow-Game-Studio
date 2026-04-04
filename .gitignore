@@ -139,3 +139,5 @@ $RECYCLE.BIN/
 *.msp
 *.lnk
 .worktrees/
+examples/prize-pool/db-evm/
+examples/prize-pool/client/.env
