@@ -39,26 +39,28 @@ Players                    Flow EVM                   Cadence
    - Mints a `WinnerTrophy` NFT to the winner's Cadence account
 3. Winner receives: ERC-20 prize (EVM side) + NFT trophy (Cadence side)
 
-## Quickstart (4 terminals)
+## Quickstart (3 terminals)
 
 ```bash
-# Terminal 1: Flow emulator (runs both Cadence RPC :8888 and EVM RPC :8545)
+# Terminal 1: Flow emulator (Cadence RPC :8888, gRPC :3569)
 flow emulator
 
 # Terminal 2: Dev wallet (FCL auth)
 flow dev-wallet
 
-# Terminal 3: Deploy EVM + Cadence contracts
+# Terminal 3: Deploy contracts + start client
 cd examples/prize-pool
 npm install
-npm run deploy-evm           # deploys MockToken + PrizePool
-bash scripts/deploy-cadence.sh  # deploys Cadence contracts + sets up COA
-
-# Terminal 4: Start client
-cd examples/prize-pool/client
-npm install
-npm run dev                  # opens at http://localhost:3000
+npm run compile                    # compile Solidity
+bash scripts/deploy-cadence.sh     # deploy Cadence contracts + set up COA
+npm run deploy-evm-cadence         # deploy MockToken + PrizePool via COA
+# → copy the printed addresses into client/src/fcl-config.ts
+cd client && npm install && npm run dev   # http://localhost:3000
 ```
+
+> **No `flow evm gateway` needed.** EVM contracts are deployed from Cadence via the
+> COA (`coa.deploy()`), making the COA the contract `owner()` directly — no
+> `transferOwnership` step required.
 
 ## Run tests
 
@@ -118,7 +120,7 @@ examples/prize-pool/
 │   ├── scripts/        get_coa_address, get_round_info, get_trophies
 │   └── tests/          WinnerTrophy_test.cdc
 ├── test/               PrizePool.test.ts (Hardhat)
-├── scripts/            deploy-evm.ts, deploy-cadence.sh
+├── scripts/            deploy-evm-cadence.mjs, deploy-cadence.sh, deploy-evm.ts
 ├── client/             TypeScript/Vite UI (MetaMask + FCL)
 ├── tools/              deploy.sh
 ├── flow.json

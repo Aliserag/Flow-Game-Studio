@@ -55,11 +55,11 @@ export async function connectEVM(): Promise<Signer> {
   await window.ethereum.request({ method: "eth_requestAccounts" })
   const provider = new BrowserProvider(window.ethereum)
 
-  // Prompt to switch to Flow EVM emulator (chainId 1337) if needed
+  // Prompt to switch to Flow EVM emulator (chainId 646 = 0x286) if needed
   try {
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
-      params: [{ chainId: "0x539" }], // 1337 hex
+      params: [{ chainId: "0x286" }], // 646 = Flow EVM preview network
     })
   } catch (_switchErr: unknown) {
     // If chain not added, add it
@@ -69,7 +69,7 @@ export async function connectEVM(): Promise<Signer> {
         method: "wallet_addEthereumChain",
         params: [
           {
-            chainId: "0x539",
+            chainId: "0x286",
             chainName: "Flow EVM Emulator",
             rpcUrls: ["http://localhost:8545"],
             nativeCurrency: { name: "FLOW", symbol: "FLOW", decimals: 18 },

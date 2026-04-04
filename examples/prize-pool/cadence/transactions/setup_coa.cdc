@@ -22,7 +22,15 @@ transaction {
 
         // Create a new COA and save it to /storage/evm
         let coa <- EVM.createCadenceOwnedAccount()
-        let evmAddress = coa.address().toString()
+        // EVM.EVMAddress has no toString() — convert bytes to hex manually
+        let addrBytes = coa.address().bytes
+        let hexChars: [Character] = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]
+        var evmAddress = "0x"
+        for b in addrBytes {
+            evmAddress = evmAddress
+                .concat(hexChars[b >> 4].toString())
+                .concat(hexChars[b & 0x0F].toString())
+        }
         log("COA created. EVM address: ".concat(evmAddress))
 
         signer.storage.save(<- coa, to: /storage/evm)

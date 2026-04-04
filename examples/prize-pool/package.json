@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "test": "npx hardhat test",
-    "deploy-evm": "npx hardhat run scripts/deploy-evm.ts --network flow-emulator",
-    "compile": "npx hardhat compile"
+    "compile": "npx hardhat compile",
+    "deploy-evm-cadence": "node scripts/deploy-evm-cadence.mjs",
+    "deploy-evm": "npx hardhat run scripts/deploy-evm.ts --network flow-emulator"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
