@@ -28,6 +28,11 @@ access(all) contract Governance {
         access(all) var status: ProposalStatus
         access(all) var voters: {Address: Bool}  // address -> voted yes?
 
+        access(contract) fun addYesVote(_ weight: UFix64) { self.yesVotes = self.yesVotes + weight }
+        access(contract) fun addNoVote(_ weight: UFix64) { self.noVotes = self.noVotes + weight }
+        access(contract) fun setVoter(_ voter: Address, _ support: Bool) { self.voters[voter] = support }
+        access(contract) fun setStatus(_ s: ProposalStatus) { self.status = s }
+
         init(id: UInt64, proposer: Address, title: String, description: String,
              actionType: String, actionPayload: String, voteEndBlock: UInt64) {
             self.id = id; self.proposer = proposer; self.title = title
@@ -53,7 +58,7 @@ access(all) contract Governance {
 
     access(all) event ProposalCreated(id: UInt64, proposer: Address, title: String)
     access(all) event VoteCast(proposalId: UInt64, voter: Address, support: Bool, weight: UFix64)
-    access(all) event ProposalFinalized(id: UInt64, status: ProposalStatus)
+    access(all) event ProposalFinalized(id: UInt64, status: UInt8)
     access(all) event ProposalExecuted(id: UInt64, actionType: String)
 
     access(all) fun createProposal(
@@ -64,11 +69,11 @@ access(all) contract Governance {
         actionPayload: String,
         voterBalance: UFix64
     ): UInt64 {
-        EmergencyPause.assertNotPaused()
         pre {
             voterBalance >= Governance.proposalThreshold:
                 "Insufficient tokens to propose (need ".concat(Governance.proposalThreshold.toString()).concat(")")
         }
+        EmergencyPause.assertNotPaused()
         let id = Governance.nextProposalId
         Governance.nextProposalId = id + 1
         let endBlock = getCurrentBlock().height + Governance.votingPeriodBlocks
@@ -82,17 +87,17 @@ access(all) contract Governance {
     }
 
     access(all) fun castVote(proposalId: UInt64, voter: Address, support: Bool, weight: UFix64) {
-        EmergencyPause.assertNotPaused()
         pre { weight > 0.0: "Zero voting weight" }
+        EmergencyPause.assertNotPaused()
 
         var proposal = Governance.proposals[proposalId] ?? panic("Unknown proposal")
         assert(proposal.status == ProposalStatus.pending, message: "Voting closed")
         assert(getCurrentBlock().height <= proposal.voteEndBlock, message: "Voting period ended")
         assert(proposal.voters[voter] == nil, message: "Already voted")
 
-        proposal.voters[voter] = support
-        if support { proposal.yesVotes = proposal.yesVotes + weight }
-        else { proposal.noVotes = proposal.noVotes + weight }
+        proposal.setVoter(voter, support)
+        if support { proposal.addYesVote(weight) }
+        else { proposal.addNoVote(weight) }
         Governance.proposals[proposalId] = proposal
         emit VoteCast(proposalId: proposalId, voter: voter, support: support, weight: weight)
     }
@@ -108,9 +113,9 @@ access(all) contract Governance {
         let passed = totalVotes >= quorum
             && (proposal.yesVotes / totalVotes) * 100.0 >= Governance.passMajorityPct
 
-        proposal.status = passed ? ProposalStatus.succeeded : ProposalStatus.defeated
+        proposal.setStatus(passed ? ProposalStatus.succeeded : ProposalStatus.defeated)
         Governance.proposals[proposalId] = proposal
-        emit ProposalFinalized(id: proposalId, status: proposal.status)
+        emit ProposalFinalized(id: proposalId, status: proposal.status.rawValue)
     }
 
     access(all) resource Admin {
@@ -119,7 +124,7 @@ access(all) contract Governance {
             assert(proposal.status == ProposalStatus.succeeded, message: "Proposal not succeeded")
             // Action dispatch — executor contract reads actionType and actionPayload
             // and routes to the appropriate admin transaction
-            proposal.status = ProposalStatus.executed
+            proposal.setStatus(ProposalStatus.executed)
             Governance.proposals[proposalId] = proposal
             emit ProposalExecuted(id: proposalId, actionType: proposal.actionType)
         }

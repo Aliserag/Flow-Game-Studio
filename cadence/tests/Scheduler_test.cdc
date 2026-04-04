@@ -2,6 +2,15 @@
 import Test
 import "Scheduler"
 
+access(all) fun setup() {
+    let err = Test.deployContract(
+        name: "Scheduler",
+        path: "../contracts/systems/Scheduler.cdc",
+        arguments: []
+    )
+    Test.expect(err, Test.beNil())
+}
+
 access(all) fun testDeployment() {
     Test.assertEqual(Scheduler.currentEpoch, UInt64(0))
     Test.assertEqual(Scheduler.epochBlockLength, UInt64(1000))
@@ -16,11 +25,21 @@ access(all) fun testEpochAdvancesAfterBlocks() {
         i = i + 1
     }
 
-    let txResult = Test.executeTransaction(
-        "../transactions/scheduler/process_epoch.cdc",
-        [],
-        Test.getAccount(0x0000000000000007)
+    // process_epoch.cdc has no prepare block — zero authorizers needed
+    let tx = Test.Transaction(
+        code: Test.readFile("../transactions/scheduler/process_epoch.cdc"),
+        authorizers: [],
+        signers: [],
+        arguments: []
     )
+    let txResult = Test.executeTransaction(tx)
     Test.expect(txResult, Test.beSucceeded())
-    Test.assertEqual(Scheduler.currentEpoch, UInt64(1))
+
+    // Read live state via script to avoid import-time snapshot
+    let result = Test.executeScript(
+        "import Scheduler from 0x0000000000000007\naccess(all) fun main(): UInt64 { return Scheduler.currentEpoch }",
+        []
+    )
+    Test.expect(result, Test.beSucceeded())
+    Test.assertEqual(result.returnValue! as! UInt64, UInt64(1))
 }

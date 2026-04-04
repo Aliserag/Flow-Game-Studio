@@ -1,4 +1,5 @@
 import "NonFungibleToken"
+import "FungibleToken"
 import "Scheduler"
 import "EmergencyPause"
 import "GameToken"
@@ -33,6 +34,10 @@ access(all) contract SeasonPass {
         access(all) var hasPremium: Bool
         access(all) var claimedTiers: [UInt8]
 
+        access(contract) fun addXP(_ amount: UFix64) { self.xp = self.xp + amount }
+        access(contract) fun setTier(_ tier: UInt8) { self.currentTier = tier }
+        access(contract) fun setPremium(_ v: Bool) { self.hasPremium = v }
+
         init() {
             self.xp = 0.0; self.currentTier = 0
             self.hasPremium = false; self.claimedTiers = []
@@ -62,12 +67,12 @@ access(all) contract SeasonPass {
                 SeasonPass.playerProgress[player] = PlayerProgress()
             }
             var progress = SeasonPass.playerProgress[player]!
-            progress.xp = progress.xp + amount
+            progress.addXP(amount)
 
             let season = SeasonPass.activeSeason ?? panic("No active season")
             let newTier = UInt8(progress.xp / season.xpPerTier)
             if newTier > progress.currentTier && newTier <= season.maxTier {
-                progress.currentTier = newTier
+                progress.setTier(newTier)
             }
             SeasonPass.playerProgress[player] = progress
             emit XPAwarded(player: player, amount: amount, newTier: progress.currentTier)
@@ -75,16 +80,16 @@ access(all) contract SeasonPass {
     }
 
     access(all) fun purchasePremium(buyer: Address, payment: @{FungibleToken.Vault}) {
-        EmergencyPause.assertNotPaused()
         // Premium costs 1000 GameTokens
         pre { payment.balance >= 1000.0: "Insufficient payment" }
+        EmergencyPause.assertNotPaused()
         destroy payment  // Burn the tokens (adjust to treasury deposit as needed)
 
         if SeasonPass.playerProgress[buyer] == nil {
             SeasonPass.playerProgress[buyer] = PlayerProgress()
         }
         var progress = SeasonPass.playerProgress[buyer]!
-        progress.hasPremium = true
+        progress.setPremium(true)
         SeasonPass.playerProgress[buyer] = progress
         let season = SeasonPass.activeSeason ?? panic("No active season")
         emit PremiumPurchased(player: buyer, seasonId: season.seasonId)

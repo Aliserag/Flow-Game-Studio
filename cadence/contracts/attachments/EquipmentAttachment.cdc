@@ -21,6 +21,15 @@ access(all) contract EquipmentAttachment {
         access(all) var equippedItemId: UInt64?
         access(all) var equippedItemName: String?
 
+        access(contract) fun setEquipped(itemId: UInt64, itemName: String) {
+            self.equippedItemId = itemId
+            self.equippedItemName = itemName
+        }
+        access(contract) fun clearEquipped() {
+            self.equippedItemId = nil
+            self.equippedItemName = nil
+        }
+
         init(slot: String) {
             self.slot = slot
             self.equippedItemId = nil
@@ -65,8 +74,7 @@ access(all) contract EquipmentAttachment {
                 self.slots[slot]!.equippedItemId == nil: "Slot already occupied — unequip first"
             }
             var slotData = self.slots[slot]!
-            slotData.equippedItemId = itemId
-            slotData.equippedItemName = itemName
+            slotData.setEquipped(itemId: itemId, itemName: itemName)
             self.slots[slot] = slotData
             emit ItemEquipped(nftId: self.base.id, slot: slot, itemId: itemId, itemName: itemName)
         }
@@ -79,8 +87,7 @@ access(all) contract EquipmentAttachment {
             }
             var slotData = self.slots[slot]!
             let itemId = slotData.equippedItemId!
-            slotData.equippedItemId = nil
-            slotData.equippedItemName = nil
+            slotData.clearEquipped()
             self.slots[slot] = slotData
             emit ItemUnequipped(nftId: self.base.id, slot: slot, itemId: itemId)
             return itemId

@@ -1,31 +1,42 @@
+// cadence/tests/EmergencyPause_test.cdc
 import Test
 import "EmergencyPause"
 
+access(all) let admin = Test.getAccount(0x0000000000000007)
+
+access(all) fun setup() {
+    let err = Test.deployContract(
+        name: "EmergencyPause",
+        path: "../contracts/systems/EmergencyPause.cdc",
+        arguments: []
+    )
+    Test.expect(err, Test.beNil())
+}
+
+access(all) fun getIsPaused(): Bool {
+    let result = Test.executeScript(
+        "import EmergencyPause from 0x0000000000000007\naccess(all) fun main(): Bool { return EmergencyPause.isPaused }",
+        []
+    )
+    Test.expect(result, Test.beSucceeded())
+    return result.returnValue! as! Bool
+}
+
 access(all) fun testPauseBlocksTransactions() {
-    let admin = Test.getAccount(0x0000000000000001)
-    Test.deployContract(name: "EmergencyPause", path: "../contracts/systems/EmergencyPause.cdc", arguments: [])
-
     // Should succeed before pause
-    EmergencyPause.assertNotPaused()
+    Test.assertEqual(false, getIsPaused())
 
-    // Pause the system
+    // Pause the system using the existing transaction
     let tx = Test.Transaction(
-        code: `
-            import "EmergencyPause"
-            transaction {
-                prepare(signer: auth(BorrowValue) &Account) {
-                    let a = signer.storage.borrow<auth(EmergencyPause.Pauser) &EmergencyPause.Admin>(
-                        from: EmergencyPause.AdminStoragePath) ?? panic("no admin")
-                    a.pause(reason: "test pause", by: signer.address)
-                }
-            }
-        `,
-        args: [],
-        signers: [admin]
+        code: Test.readFile("../transactions/admin/pause_system.cdc"),
+        authorizers: [admin.address],
+        signers: [admin],
+        arguments: ["test pause"]
     )
     Test.expect(Test.executeTransaction(tx), Test.beSucceeded())
 
-    Test.assertEqual(true, EmergencyPause.isPaused)
+    // Read live state via script
+    Test.assertEqual(true, getIsPaused())
 
     // assertNotPaused should now panic
     Test.expectFailure(fun() { EmergencyPause.assertNotPaused() }, errorMessageSubstring: "System paused")

@@ -71,6 +71,42 @@
       "aliases": {
         "testing": "0x0000000000000007"
       }
+    },
+    "EmergencyPause": {
+      "source": "cadence/contracts/systems/EmergencyPause.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "StakingPool": {
+      "source": "cadence/contracts/systems/StakingPool.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "Governance": {
+      "source": "cadence/contracts/governance/Governance.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "NFTLending": {
+      "source": "cadence/contracts/systems/NFTLending.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "SeasonPass": {
+      "source": "cadence/contracts/liveops/SeasonPass.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "EquipmentAttachment": {
+      "source": "cadence/contracts/attachments/EquipmentAttachment.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
     }
   },
   "networks": {
@@ -112,7 +148,13 @@
         "Crafting",
         "Staking",
         "Achievement",
-        "VersionRegistry"
+        "VersionRegistry",
+        "EmergencyPause",
+        "StakingPool",
+        "Governance",
+        "NFTLending",
+        "SeasonPass",
+        "EquipmentAttachment"
       ]
     },
     "testnet": {

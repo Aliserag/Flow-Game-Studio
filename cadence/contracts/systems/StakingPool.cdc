@@ -24,6 +24,11 @@ access(all) contract StakingPool {
         access(all) var unstakeRequestBlock: UInt64  // 0 = no pending unstake
         access(all) var unstakeAmount: UFix64
 
+        access(contract) fun setStakedAmount(_ v: UFix64) { self.stakedAmount = v }
+        access(contract) fun setRewardIndexSnapshot(_ v: UFix64) { self.rewardIndexSnapshot = v }
+        access(contract) fun setUnstakeRequestBlock(_ v: UInt64) { self.unstakeRequestBlock = v }
+        access(contract) fun setUnstakeAmount(_ v: UFix64) { self.unstakeAmount = v }
+
         init() {
             self.stakedAmount = 0.0
             self.rewardIndexSnapshot = 0.0
@@ -49,8 +54,9 @@ access(all) contract StakingPool {
     access(all) event RewardsDistributed(amount: UFix64, newIndex: UFix64)
 
     // Calculate pending rewards without mutating state
-    access(all) view fun pendingRewards(staker: Address): UFix64 {
-        let info = StakingPool.stakers[staker] ?? StakerInfo()
+    access(all) fun pendingRewards(staker: Address): UFix64 {
+        if StakingPool.stakers[staker] == nil { return 0.0 }
+        let info = StakingPool.stakers[staker]!
         if info.stakedAmount == 0.0 { return 0.0 }
         let indexDelta = StakingPool.rewardIndex - info.rewardIndexSnapshot
         return indexDelta * info.stakedAmount
@@ -58,20 +64,23 @@ access(all) contract StakingPool {
 
     // Stake tokens
     access(all) fun stake(staker: Address, payment: @{FungibleToken.Vault}) {
-        EmergencyPause.assertNotPaused()
         pre { payment.balance > 0.0: "Cannot stake 0 tokens" }
+        EmergencyPause.assertNotPaused()
 
         let amount = payment.balance
 
         // Settle pending rewards before changing staked amount
-        var info = StakingPool.stakers[staker] ?? StakerInfo()
+        if StakingPool.stakers[staker] == nil {
+            StakingPool.stakers[staker] = StakerInfo()
+        }
+        var info = StakingPool.stakers[staker]!
         if info.stakedAmount > 0.0 {
             let pending = (StakingPool.rewardIndex - info.rewardIndexSnapshot) * info.stakedAmount
             StakingPool.rewardReserve = StakingPool.rewardReserve + pending
         }
 
-        info.stakedAmount = info.stakedAmount + amount
-        info.rewardIndexSnapshot = StakingPool.rewardIndex
+        info.setStakedAmount(info.stakedAmount + amount)
+        info.setRewardIndexSnapshot(StakingPool.rewardIndex)
         StakingPool.stakers[staker] = info
         StakingPool.totalStaked = StakingPool.totalStaked + amount
 
@@ -86,12 +95,13 @@ access(all) contract StakingPool {
 
     // Request unstake (starts delay timer)
     access(all) fun requestUnstake(staker: Address, amount: UFix64) {
-        EmergencyPause.assertNotPaused()
-        var info = StakingPool.stakers[staker] ?? panic("Not staking")
         pre {
-            info.stakedAmount >= amount: "Insufficient staked balance"
-            info.unstakeRequestBlock == 0: "Unstake already pending — wait for it to complete"
+            StakingPool.stakers[staker] != nil: "Not staking"
         }
+        EmergencyPause.assertNotPaused()
+        var info = StakingPool.stakers[staker]!
+        assert(info.stakedAmount >= amount, message: "Insufficient staked balance")
+        assert(info.unstakeRequestBlock == 0, message: "Unstake already pending — wait for it to complete")
 
         // Settle pending rewards first
         let pending = (StakingPool.rewardIndex - info.rewardIndexSnapshot) * info.stakedAmount
@@ -99,9 +109,9 @@ access(all) contract StakingPool {
             StakingPool.rewardReserve = StakingPool.rewardReserve + pending
         }
 
-        info.unstakeRequestBlock = getCurrentBlock().height
-        info.unstakeAmount = amount
-        info.rewardIndexSnapshot = StakingPool.rewardIndex
+        info.setUnstakeRequestBlock(getCurrentBlock().height)
+        info.setUnstakeAmount(amount)
+        info.setRewardIndexSnapshot(StakingPool.rewardIndex)
         StakingPool.stakers[staker] = info
 
         emit UnstakeRequested(
@@ -116,18 +126,19 @@ access(all) contract StakingPool {
         staker: Address,
         receiver: &{FungibleToken.Receiver}
     ) {
-        EmergencyPause.assertNotPaused()
-        var info = StakingPool.stakers[staker] ?? panic("Not staking")
         pre {
-            info.unstakeRequestBlock > 0: "No pending unstake"
-            getCurrentBlock().height >= info.unstakeRequestBlock + StakingPool.unstakeDelayBlocks:
-                "Unstake delay not elapsed"
+            StakingPool.stakers[staker] != nil: "Not staking"
         }
+        EmergencyPause.assertNotPaused()
+        var info = StakingPool.stakers[staker]!
+        assert(info.unstakeRequestBlock > 0, message: "No pending unstake")
+        assert(getCurrentBlock().height >= info.unstakeRequestBlock + StakingPool.unstakeDelayBlocks,
+            message: "Unstake delay not elapsed")
 
         let amount = info.unstakeAmount
-        info.stakedAmount = info.stakedAmount - amount
-        info.unstakeRequestBlock = 0
-        info.unstakeAmount = 0.0
+        info.setStakedAmount(info.stakedAmount - amount)
+        info.setUnstakeRequestBlock(0)
+        info.setUnstakeAmount(0.0)
         StakingPool.stakers[staker] = info
         StakingPool.totalStaked = StakingPool.totalStaked - amount
 
@@ -146,9 +157,9 @@ access(all) contract StakingPool {
         EmergencyPause.assertNotPaused()
         var info = StakingPool.stakers[staker] ?? panic("Not staking")
         let pending = (StakingPool.rewardIndex - info.rewardIndexSnapshot) * info.stakedAmount
-        pre { pending > 0.0: "No rewards to claim" }
+        assert(pending > 0.0, message: "No rewards to claim")
 
-        info.rewardIndexSnapshot = StakingPool.rewardIndex
+        info.setRewardIndexSnapshot(StakingPool.rewardIndex)
         StakingPool.stakers[staker] = info
         StakingPool.rewardReserve = StakingPool.rewardReserve - pending
 
@@ -164,7 +175,7 @@ access(all) contract StakingPool {
     access(all) resource Admin {
         // Called by Marketplace (or admin) to distribute platform fee revenue to stakers
         access(StakingAdmin) fun distributeRewards(payment: @{FungibleToken.Vault}) {
-            pre { StakingPool.totalStaked > 0.0: "No stakers" }
+            pre { StakingPool.totalStaked > 0.0 : "No stakers" }
             let amount = payment.balance
 
             // Update the global reward index: each staked token earns amount/totalStaked

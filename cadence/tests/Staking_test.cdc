@@ -133,7 +133,7 @@ access(all) fun testStake() {
 
     // Act — stake 50 tokens with a 10-block lock
     let stakeResult = runTx(
-        "../transactions/staking/stake_tokens.cdc",
+        "../transactions/staking/stake_position.cdc",
         [UFix64(50.0), UInt64(10)],
         player
     )
@@ -155,13 +155,13 @@ access(all) fun testEarlyUnstakeFails() {
 
     let positionId = getTotalPositions()
     Test.expect(
-        runTx("../transactions/staking/stake_tokens.cdc", [UFix64(100.0), UInt64(10000)], player),
+        runTx("../transactions/staking/stake_position.cdc", [UFix64(100.0), UInt64(10000)], player),
         Test.beSucceeded()
     )
 
     // Act — try to unstake immediately (lock not elapsed)
     let unstakeTx = Test.Transaction(
-        code: Test.readFile("../transactions/staking/unstake_tokens.cdc"),
+        code: Test.readFile("../transactions/staking/unstake_position.cdc"),
         authorizers: [player.address],
         signers: [player],
         arguments: [positionId]
@@ -181,7 +181,7 @@ access(all) fun testUnstakeAfterLock() {
 
     let positionId = getTotalPositions()
     Test.expect(
-        runTx("../transactions/staking/stake_tokens.cdc", [UFix64(100.0), UInt64(2)], player),
+        runTx("../transactions/staking/stake_position.cdc", [UFix64(100.0), UInt64(2)], player),
         Test.beSucceeded()
     )
 
@@ -192,7 +192,7 @@ access(all) fun testUnstakeAfterLock() {
 
     // Act — unstake
     let unstakeResult = runTx(
-        "../transactions/staking/unstake_tokens.cdc",
+        "../transactions/staking/unstake_position.cdc",
         [positionId],
         player
     )
@@ -222,7 +222,7 @@ access(all) fun testYieldCalculation() {
 
     let positionId = getTotalPositions()
     Test.expect(
-        runTx("../transactions/staking/stake_tokens.cdc", [UFix64(1000.0), UInt64(2)], player),
+        runTx("../transactions/staking/stake_position.cdc", [UFix64(1000.0), UInt64(2)], player),
         Test.beSucceeded()
     )
 

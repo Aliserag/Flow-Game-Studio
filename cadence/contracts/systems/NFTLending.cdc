@@ -31,6 +31,8 @@ access(all) contract NFTLending {
         access(all) var active: Bool
         access(all) var capabilityControllerID: UInt64  // for revocation
 
+        access(contract) fun setActive(_ v: Bool) { self.active = v }
+
         init(
             rentalId: UInt64, lender: Address, borrower: Address,
             nftId: UInt64, nftContractAddress: Address,
@@ -50,7 +52,7 @@ access(all) contract NFTLending {
             return self.startBlock + self.durationBlocks
         }
 
-        access(all) view fun isExpired(): Bool {
+        access(all) fun isExpired(): Bool {
             return getCurrentBlock().height > self.expiresAtBlock()
         }
     }
@@ -93,10 +95,14 @@ access(all) contract NFTLending {
         )
 
         if NFTLending.rentals[lender] == nil { NFTLending.rentals[lender] = {} }
-        NFTLending.rentals[lender]![rentalId] = terms
+        var lenderMap = NFTLending.rentals[lender]!
+        lenderMap[rentalId] = terms
+        NFTLending.rentals[lender] = lenderMap
 
         if NFTLending.borrowerRentals[borrower] == nil { NFTLending.borrowerRentals[borrower] = [] }
-        NFTLending.borrowerRentals[borrower]!.append(rentalId)
+        var borrowerList = NFTLending.borrowerRentals[borrower]!
+        borrowerList.append(rentalId)
+        NFTLending.borrowerRentals[borrower] = borrowerList
 
         emit RentalCreated(rentalId: rentalId, lender: lender, borrower: borrower,
                            nftId: nftId, durationBlocks: durationBlocks)
@@ -105,7 +111,10 @@ access(all) contract NFTLending {
 
     // Get rental terms for a specific rental
     access(all) view fun getRental(lender: Address, rentalId: UInt64): RentalTerms? {
-        return NFTLending.rentals[lender]?[rentalId]
+        if let lenderRentals = NFTLending.rentals[lender] {
+            return lenderRentals[rentalId]
+        }
+        return nil
     }
 
     // Returns all active (non-expired) rentals for a borrower
@@ -124,18 +133,19 @@ access(all) contract NFTLending {
     // Internal admin resource for cleanup operations
     access(all) resource NFTLending_Admin {
         // Admin can batch-revoke expired rentals
-        access(LendingAdmin) fun revokeExpired(lenderAccount: auth(RevokeCapabilityController) &Account, lenderAddress: Address) {
+        access(LendingAdmin) fun revokeExpired(lenderAddress: Address) {
             if let lenderRentals = NFTLending.rentals[lenderAddress] {
+                var updatedMap = lenderRentals
                 for rentalId in lenderRentals.keys {
                     var terms = lenderRentals[rentalId]!
                     if terms.isExpired() && terms.active {
-                        // Revoke the capability via the controller ID
-                        lenderAccount.capabilities.storage.getController(byID: terms.capabilityControllerID)?.delete()
-                        terms.active = false
-                        NFTLending.rentals[lenderAddress]![rentalId] = terms
+                        // Mark as inactive; capability revocation happens in lender's own transaction
+                        terms.setActive(false)
+                        updatedMap[rentalId] = terms
                         emit RentalRevoked(rentalId: rentalId, reason: "expired")
                     }
                 }
+                NFTLending.rentals[lenderAddress] = updatedMap
             }
         }
     }
