@@ -16,11 +16,11 @@
   <main class="arena-main">
 
     <!-- Status bar -->
-    <div id="status"></div>
+    <div id="status" role="status" aria-live="polite"></div>
 
     <!-- ── Walletless Onboarding ─────────────────────────────────────────── -->
     <section class="panel">
-      <h2 class="panel-title"><span class="icon">&#128273;</span> Walletless Onboarding</h2>
+      <h2 class="panel-title"><span class="icon" aria-hidden="true">&#128273;</span> Walletless Onboarding</h2>
       <p class="info-text">
         No wallet? No problem. Click below &mdash; the app generates a keypair for you and creates
         a Flow account in the background. You own the keys; the app sponsors gas.
@@ -34,7 +34,7 @@
 
     <!-- ── Connect Wallet ────────────────────────────────────────────────── -->
     <section class="panel">
-      <h2 class="panel-title"><span class="icon">&#128091;</span> Connect Wallet</h2>
+      <h2 class="panel-title"><span class="icon" aria-hidden="true">&#128091;</span> Connect Wallet</h2>
       <p class="info-text">
         Already have a Flow wallet? Connect via FCL to sign transactions directly.
         Make sure the emulator and Dev Wallet are running.
@@ -50,7 +50,7 @@
 
       <!-- Account Setup -->
       <section class="panel">
-        <h2 class="panel-title"><span class="icon">&#9881;</span> Account Setup</h2>
+        <h2 class="panel-title"><span class="icon" aria-hidden="true">&#9881;</span> Account Setup</h2>
         <p class="info-text">
           Create empty Fighter and PowerUp collections in your account storage.
           Required once before minting or receiving any NFTs.
@@ -65,7 +65,7 @@
 
       <!-- Fighters -->
       <section class="panel">
-        <h2 class="panel-title"><span class="icon">&#9876;</span> Your Fighters</h2>
+        <h2 class="panel-title"><span class="icon" aria-hidden="true">&#9876;</span> Your Fighters</h2>
         <div class="rps-legend">
           <span><span class="dot attack"></span> Attack beats Defense</span>
           <span><span class="dot defense"></span> Defense beats Magic</span>
@@ -81,7 +81,7 @@
 
       <!-- Battle Arena -->
       <section class="panel">
-        <h2 class="panel-title"><span class="icon">&#127959;</span> Battle Arena</h2>
+        <h2 class="panel-title"><span class="icon" aria-hidden="true">&#127959;</span> Battle Arena</h2>
         <p class="info-text">
           Challenge one of your fighters against another. Both fighters must be in your
           collection. Wins and losses are recorded permanently on-chain in the NFT itself.
@@ -109,7 +109,7 @@
 
     <!-- ── How It Works ──────────────────────────────────────────────────── -->
     <section class="panel how-it-works">
-      <h2 class="panel-title"><span class="icon">&#128214;</span> How It Works</h2>
+      <h2 class="panel-title"><span class="icon" aria-hidden="true">&#128214;</span> How It Works</h2>
       <p class="info-text">
         <strong>HybridCustody</strong> &mdash; The app creates and manages a Flow account for you
         using a sponsored transaction. Your keypair is stored in localStorage. In production,

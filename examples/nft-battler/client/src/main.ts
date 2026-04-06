@@ -179,15 +179,15 @@ function getEl(id: string): HTMLElement {
 function showStatus(message: string, isError = false): void {
   const status = getEl("status")
   status.textContent = message
-  status.className = "status " + (isError ? "error" : "success")
+  status.className = isError ? "error" : "success"
   status.style.display = "block"
   setTimeout(() => { status.style.display = "none" }, 5000)
 }
 
 function combatClassColor(cls: string): string {
-  if (cls === "Attack")  return "#e74c3c"
-  if (cls === "Defense") return "#3498db"
-  if (cls === "Magic")   return "#9b59b6"
+  if (cls === "Attack")  return "var(--attack)"
+  if (cls === "Defense") return "var(--defense)"
+  if (cls === "Magic")   return "var(--magic)"
   return "#95a5a6"
 }
 
@@ -275,7 +275,7 @@ function renderFighters(fts: FighterInfo[]): void {
 
 function renderBattleResult(won: boolean, myId: number, oppId: number): void {
   const banner = getEl("battle-result")
-  banner.className = "battle-result " + (won ? "win" : "loss")
+  banner.className = won ? "win" : "loss"
   banner.textContent = won
     ? `Fighter #${myId} won the battle against Fighter #${oppId}!`
     : `Fighter #${myId} lost the battle against Fighter #${oppId}.`
