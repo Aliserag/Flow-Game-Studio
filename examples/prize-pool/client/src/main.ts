@@ -51,6 +51,10 @@ function setVisible(id: string, visible: boolean): void {
 
 function showStatus(message: string, type: "info" | "success" | "error" = "info"): void {
   const el = getEl("status-message")
+  if (message === "") {
+    el.className = "status-message"
+    return
+  }
   el.textContent = message
   el.className = `status-message status-${type}`
   el.style.display = "block"
@@ -93,6 +97,7 @@ async function refreshRoundState(): Promise<void> {
 // ─── EVM panel ────────────────────────────────────────────────────────────────
 getEl("connect-metamask-btn").addEventListener("click", () => {
   void (async () => {
+    showStatus("", "info")
     try {
       showStatus("Connecting MetaMask...")
       evmSigner = await connectEVM()
@@ -125,13 +130,14 @@ getEl("connect-metamask-btn").addEventListener("click", () => {
 
       await refreshRoundState()
     } catch (err: unknown) {
-      showStatus(`MetaMask error: ${(err as Error).message}`, "error")
+      showStatus(`MetaMask error: ${String((err as Error).message).slice(0, 200)}`, "error")
     }
   })()
 })
 
 getEl("deposit-btn").addEventListener("click", () => {
   void (async () => {
+    showStatus("", "info")
     if (!evmSigner) {
       showStatus("Connect MetaMask first", "error")
       return
@@ -155,7 +161,7 @@ getEl("deposit-btn").addEventListener("click", () => {
       amountInput.value = ""
       await refreshRoundState()
     } catch (err: unknown) {
-      showStatus(`Deposit failed: ${(err as Error).message}`, "error")
+      showStatus(`Deposit failed: ${String((err as Error).message).slice(0, 200)}`, "error")
     } finally {
       ;(getEl("deposit-btn") as HTMLButtonElement).disabled = false
     }
@@ -165,6 +171,7 @@ getEl("deposit-btn").addEventListener("click", () => {
 // ─── Admin panel ──────────────────────────────────────────────────────────────
 getEl("close-round-btn").addEventListener("click", () => {
   void (async () => {
+    showStatus("", "info")
     if (!flowUser.loggedIn || !roundState) {
       showStatus("Connect Flow wallet and load round state first", "error")
       return
@@ -229,7 +236,7 @@ getEl("close-round-btn").addEventListener("click", () => {
       await refreshRoundState()
       await refreshTrophies()
     } catch (err: unknown) {
-      showStatus(`Close round failed: ${(err as Error).message}`, "error")
+      showStatus(`Close round failed: ${String((err as Error).message).slice(0, 200)}`, "error")
     } finally {
       ;(getEl("close-round-btn") as HTMLButtonElement).disabled = false
     }
@@ -279,7 +286,8 @@ function buildTrophyCard(t: TrophyData): HTMLElement {
 
   const icon = document.createElement("div")
   icon.className = "trophy-icon"
-  icon.textContent = "trophy" // text only, no raw emoji from chain
+  icon.textContent = "🏆"
+  icon.setAttribute("aria-hidden", "true")
 
   const details = document.createElement("div")
   details.className = "trophy-details"
