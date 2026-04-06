@@ -1,3 +1,4 @@
+import './style.css'
 /// main.ts — Coin Flip on Flow — UI logic.
 ///
 /// Flow:
@@ -225,7 +226,7 @@ async function revealFlip(flipId: number): Promise<void> {
       const choiceLabel = flip.playerChoice ? "HEADS" : "TAILS"
       const wonLabel    = flip.won ? "WON" : "LOST"
       coinEl.textContent = flip.result ? "🪙" : "🔵"
-      setResult(`${wonLabel}! Result: ${resultLabel} — You chose ${choiceLabel}`)
+      setResult(`${wonLabel}! Result: ${resultLabel} — You chose ${choiceLabel}`, flip.won ? "win" : "lose")
     }
   } catch (err) {
     console.error(err)
@@ -290,7 +291,7 @@ async function refreshHistory(): Promise<void> {
       return
     }
 
-    historyDiv.appendChild(el("h3", {}, "Flip History"))
+    historyDiv.appendChild(el("h3", { class: "history-title" }, "Flip History"))
 
     for (const id of ids) {
       const f = flips[id]
@@ -298,13 +299,16 @@ async function refreshHistory(): Promise<void> {
       const result  = f.isResolved ? (f.result ? "Heads" : "Tails") : "—"
       const choice  = f.playerChoice ? "Heads" : "Tails"
 
+      const outcomeClass = f.isResolved
+        ? (f.won ? "flip-outcome" : "flip-outcome lose")
+        : "flip-outcome"
       const row = el(
         "div",
         { class: "flip-row" },
         el("span", {}, `#${id}`),
         el("span", {}, `Choice: ${choice}`),
         el("span", {}, `Result: ${result}`),
-        el("span", {}, status)
+        el("span", { class: outcomeClass }, status)
       )
       historyDiv.appendChild(row)
     }
@@ -313,6 +317,8 @@ async function refreshHistory(): Promise<void> {
   }
 }
 
-function setResult(msg: string): void {
+function setResult(msg: string, outcome?: "win" | "lose"): void {
   resultDiv.textContent = msg
+  resultDiv.classList.remove("win", "lose")
+  if (outcome) resultDiv.classList.add(outcome)
 }
