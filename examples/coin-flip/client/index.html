@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coin Flip — Flow Blockchain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+  <header class="game-header">
+    <h1 class="game-title">COIN FLIP</h1>
+    <p class="game-subtitle">Provably Fair &nbsp;&bull;&nbsp; Gasless &nbsp;&bull;&nbsp; On-chain VRF</p>
+  </header>
+
+  <div class="wallet-bar">
+    <button class="btn btn-primary" id="connect-btn">Connect Wallet</button>
+    <span class="wallet-address" id="wallet-address"></span>
+  </div>
+
+  <section class="coin-arena" id="game-section" style="display:none">
+    <div class="coin" id="coin" aria-hidden="true">🪙</div>
+    <div class="choices" role="radiogroup" aria-label="Pick heads or tails">
+      <label class="choice-chip">
+        <input type="radio" name="choice" value="heads" checked />
+        <span class="choice-label">🟡 Heads</span>
+      </label>
+      <label class="choice-chip">
+        <input type="radio" name="choice" value="tails" />
+        <span class="choice-label">⚪ Tails</span>
+      </label>
+    </div>
+    <button class="btn btn-primary" id="flip-btn">FLIP</button>
+    <p class="result-display" id="result" aria-live="polite"></p>
+  </section>
+
+  <section class="history" id="history" aria-label="Flip history"></section>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

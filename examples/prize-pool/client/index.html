@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prize Pool Jackpot — Flow EVM + Cadence VRF</title>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="pool-header">
+    <h1 class="pool-title">Prize Pool</h1>
+    <p class="pool-subtitle">Flow EVM Deposits &nbsp;&middot;&nbsp; Cadence VRF Winner &nbsp;&middot;&nbsp; NFT Trophy</p>
+  </header>
+
+  <!-- ── Status message ── -->
+  <div
+    id="status-message"
+    class="status-message"
+    role="status"
+    aria-live="polite"
+  ></div>
+
+  <!-- ── Prize display ── -->
+  <section class="prize-display" aria-label="Current prize pool">
+    <p class="prize-label">Total Prize Pool</p>
+    <p class="prize-amount" id="total-deposited">— PTK</p>
+    <p class="prize-currency">Prize Token (PTK)</p>
+  </section>
+
+  <!-- ── Pool stats chips ── -->
+  <div class="pool-stats" role="region" aria-label="Round statistics">
+    <div class="stat-chip">
+      <div class="label">Round</div>
+      <div class="value" id="round-id">—</div>
+    </div>
+    <div class="stat-chip">
+      <div class="label">Status</div>
+      <div class="value" id="round-status">Connect wallet</div>
+    </div>
+    <div class="stat-chip">
+      <div class="label">Players</div>
+      <div class="value" id="depositor-count">—</div>
+    </div>
+    <div class="stat-chip">
+      <div class="label">My Deposit</div>
+      <div class="value" id="my-deposit">—</div>
+    </div>
+  </div>
+
+  <!-- ── Two-panel layout ── -->
+  <div class="panels-layout">
+
+    <!-- ── Left panel: EVM / MetaMask ── -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="badge badge-evm">Flow EVM</span>
+        <h2>Deposit Tokens (MetaMask)</h2>
+      </div>
+      <div class="panel-body">
+
+        <div class="feature-note">
+          <strong>Powered by Flow EVM:</strong> Deposit using MetaMask — no special
+          wallet needed. The prize pool contract is owned by a Cadence account
+          which picks winners via on-chain VRF.
+        </div>
+
+        <!-- Disconnected state -->
+        <div id="evm-disconnected">
+          <button class="btn btn-enter" id="connect-metamask-btn" type="button">
+            Connect MetaMask
+          </button>
+        </div>
+
+        <!-- Connected state -->
+        <div id="evm-connected" style="display:none; flex-direction:column; gap:1rem;">
+          <div class="wallet-status-box">
+            <div class="label">EVM Wallet Connected</div>
+            <div class="wallet-addr" id="evm-address" aria-live="polite"></div>
+          </div>
+
+          <!-- Deposit form — shown only when round is open -->
+          <div id="deposit-section" style="display:none; flex-direction:column; gap:0.75rem;">
+            <div class="deposit-group">
+              <label for="deposit-amount">Deposit amount (PTK)</label>
+              <input
+                type="number"
+                id="deposit-amount"
+                min="0.01"
+                step="0.01"
+                placeholder="100"
+                aria-label="Deposit amount in PTK"
+              />
+            </div>
+            <button class="btn btn-enter" id="deposit-btn" type="button">
+              Deposit to Prize Pool
+            </button>
+          </div>
+
+          <p id="round-closed-msg" style="display:none;" class="text-muted">
+            Round is closed — wait for admin to open the next round.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Right panel: Cadence / FCL ── -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="badge badge-flow">Cadence</span>
+        <h2>Trophy Collection (Flow Wallet)</h2>
+      </div>
+      <div class="panel-body">
+
+        <div class="feature-note">
+          <strong>Secured by Cadence VRF:</strong> When a round closes, a Cadence
+          transaction uses <code>RandomBeaconHistory</code> to pick the winner,
+          calls the Solidity contract via COA, and mints a trophy NFT — all atomically.
+        </div>
+
+        <!-- Disconnected state -->
+        <div id="flow-disconnected">
+          <button class="btn btn-pick" id="connect-flow-btn" type="button">
+            Connect Flow Wallet
+          </button>
+        </div>
+
+        <!-- Connected state -->
+        <div id="flow-connected" style="display:none; flex-direction:column; gap:1rem;">
+          <div class="wallet-status-box">
+            <div class="label">Flow Wallet Connected</div>
+            <div class="wallet-addr" id="flow-address" aria-live="polite"></div>
+            <button
+              class="btn btn-ghost btn-sm"
+              id="disconnect-flow-btn"
+              type="button"
+              style="margin-top:0.6rem;"
+            >
+              Disconnect
+            </button>
+          </div>
+
+          <div class="trophies-header">
+            <strong>Your Trophies</strong>
+            <button class="btn btn-ghost btn-sm" id="refresh-trophies-btn" type="button">
+              Refresh
+            </button>
+          </div>
+
+          <div
+            id="trophies-list"
+            class="trophies-container"
+            aria-live="polite"
+            aria-label="Your trophy collection"
+          >
+            <p class="empty-state">Loading trophies…</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /.panels-layout -->
+
+  <!-- ── Admin panel (hidden until owner connects) ── -->
+  <div id="admin-panel" style="display:none;" role="region" aria-label="Admin controls">
+    <h3>Admin — Close Round</h3>
+    <p class="admin-desc">
+      This sends a Cadence transaction that: (1) picks winner via VRF,
+      (2) calls EVM closeRound via COA, (3) mints a trophy NFT.
+      Requires Flow wallet connected as the contract deployer.
+    </p>
+    <div class="admin-grid">
+      <div class="admin-field">
+        <label for="commit-block-height">VRF Commit Block Height</label>
+        <input
+          type="number"
+          id="commit-block-height"
+          placeholder="e.g. 100"
+          aria-describedby="commit-block-help"
+        />
+      </div>
+      <div class="admin-field">
+        <label for="vrf-secret">VRF Secret (UInt256)</label>
+        <input
+          type="text"
+          id="vrf-secret"
+          placeholder="0 for testing"
+        />
+      </div>
+      <div class="admin-field">
+        <label for="winner-flow-address">Winner Flow Address (for trophy)</label>
+        <input
+          type="text"
+          id="winner-flow-address"
+          placeholder="0x..."
+        />
+      </div>
+    </div>
+    <button class="btn btn-admin" id="close-round-btn" type="button">
+      Close Round + Release Prize + Mint Trophy
+    </button>
+  </div>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

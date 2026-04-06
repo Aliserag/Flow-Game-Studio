@@ -1,0 +1,49 @@
+name: Testnet Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-testnet:
+    runs-on: ubuntu-latest
+    environment: testnet   # Requires manual approval via GitHub Environments
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Flow CLI
+        run: |
+          sh -ci "$(curl -fsSL https://raw.githubusercontent.com/onflow/flow-cli/master/install.sh)"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Configure testnet account
+        run: |
+          mkdir -p ~/.config/flow
+          echo '${{ secrets.FLOW_TESTNET_KEY_JSON }}' > ~/.config/flow/testnet-key.json
+
+      - name: Deploy to testnet
+        env:
+          FLOW_TESTNET_ADDRESS: ${{ secrets.FLOW_TESTNET_ADDRESS }}
+        run: |
+          flow project deploy --network testnet \
+            --update \
+            --show-diff
+
+      - name: Register versions in VersionRegistry
+        env:
+          FLOW_TESTNET_ADDRESS: ${{ secrets.FLOW_TESTNET_ADDRESS }}
+        run: |
+          for contract in cadence/contracts/**/*.cdc; do
+            name=$(basename "$contract" .cdc)
+            hash=$(sha256sum "$contract" | cut -d' ' -f1)
+            flow transactions send cadence/transactions/admin/register_version.cdc \
+              --arg String:"$name" \
+              --arg String:"$(git describe --tags --abbrev=0 2>/dev/null || echo '0.0.0')" \
+              --arg String:"0x$hash" \
+              --network testnet \
+              --signer testnet-deployer
+          done
+
+      - name: Notify deployment
+        if: success()
+        run: echo "Testnet deploy complete at block $(flow blocks get latest --network testnet --format json | jq '.header.height')"

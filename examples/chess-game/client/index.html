@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess on Flow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+  <main class="app" role="main">
+
+    <!-- Left panel: piece stats / NFT metadata -->
+    <aside class="side-panel" aria-label="Piece statistics">
+      <h2 class="panel-title">Piece Stats</h2>
+      <div id="piece-stats" class="piece-stat-entry" aria-live="polite">Select a piece to view stats</div>
+    </aside>
+
+    <!-- Center: board + controls + game forms -->
+    <div class="board-wrap">
+
+      <!-- Status bar -->
+      <div id="status" class="status-bar" role="status" aria-live="polite">Connecting...</div>
+
+      <!-- Chess board — board.ts sets className='chess-board' and fills children -->
+      <div id="board" role="grid" aria-label="Chess board"></div>
+
+      <!-- File coordinates -->
+      <div class="board-coords" aria-hidden="true">
+        <span class="coord">a</span>
+        <span class="coord">b</span>
+        <span class="coord">c</span>
+        <span class="coord">d</span>
+        <span class="coord">e</span>
+        <span class="coord">f</span>
+        <span class="coord">g</span>
+        <span class="coord">h</span>
+      </div>
+
+      <!-- Game controls -->
+      <div id="controls" class="controls">
+        <button id="connect-btn" class="btn btn-connect" type="button" aria-label="Connect Flow wallet">
+          Connect Wallet
+        </button>
+        <button id="resign-btn" class="btn btn-resign" type="button" aria-label="Resign current game">
+          Resign
+        </button>
+        <button id="mute-btn" class="btn btn-mute" type="button" title="Toggle sound" aria-label="Toggle sound">
+          &#128266;
+        </button>
+      </div>
+
+      <!-- Challenge a player -->
+      <section class="challenge-form" aria-label="Challenge a player">
+        <p>Challenge a Player</p>
+        <label for="opponent-input" class="visually-hidden">Opponent Flow address</label>
+        <input
+          id="opponent-input"
+          type="text"
+          placeholder="Opponent Flow address (0x...)"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Opponent Flow address"
+        />
+        <button id="challenge-btn" class="btn btn-ghost" type="button">Challenge Player</button>
+      </section>
+
+      <!-- Accept a challenge -->
+      <section class="challenge-form" aria-label="Accept a challenge">
+        <p>Accept a Challenge</p>
+        <label for="game-id-input" class="visually-hidden">Game ID to accept</label>
+        <input
+          id="game-id-input"
+          type="text"
+          placeholder="Game ID to accept"
+          autocomplete="off"
+          inputmode="numeric"
+          aria-label="Game ID to accept"
+        />
+        <button id="accept-btn" class="btn btn-ghost" type="button">Accept Challenge</button>
+      </section>
+
+    </div>
+
+    <!-- Right panel: move history -->
+    <aside class="side-panel" aria-label="Move history">
+      <h2 class="panel-title">Moves</h2>
+      <div id="move-list" class="move-list" aria-live="polite" aria-label="Move history list"></div>
+    </aside>
+
+  </main>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

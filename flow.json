@@ -1,0 +1,177 @@
+{
+  "contracts": {
+    "GameAsset": {
+      "source": "cadence/contracts/core/GameAsset.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "GameItem": {
+      "source": "cadence/contracts/core/GameItem.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "GameNFT": {
+      "source": "cadence/contracts/core/GameNFT.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "GameToken": {
+      "source": "cadence/contracts/core/GameToken.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "RandomVRF": {
+      "source": "cadence/contracts/systems/RandomVRF.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "Scheduler": {
+      "source": "cadence/contracts/systems/Scheduler.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "Marketplace": {
+      "source": "cadence/contracts/systems/Marketplace.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "Tournament": {
+      "source": "cadence/contracts/systems/Tournament.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "Crafting": {
+      "source": "cadence/contracts/systems/Crafting.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "Staking": {
+      "source": "cadence/contracts/systems/Staking.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "Achievement": {
+      "source": "cadence/contracts/systems/Achievement.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "VersionRegistry": {
+      "source": "cadence/contracts/systems/VersionRegistry.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "EmergencyPause": {
+      "source": "cadence/contracts/systems/EmergencyPause.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "StakingPool": {
+      "source": "cadence/contracts/systems/StakingPool.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "Governance": {
+      "source": "cadence/contracts/governance/Governance.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "NFTLending": {
+      "source": "cadence/contracts/systems/NFTLending.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "SeasonPass": {
+      "source": "cadence/contracts/liveops/SeasonPass.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    },
+    "EquipmentAttachment": {
+      "source": "cadence/contracts/attachments/EquipmentAttachment.cdc",
+      "aliases": {
+        "testing": "0x0000000000000007"
+      }
+    }
+  },
+  "networks": {
+    "emulator": "127.0.0.1:3569",
+    "testnet": "access.devnet.nodes.onflow.org:9000",
+    "mainnet": "access.mainnet.nodes.onflow.org:9000",
+    "testing": "127.0.0.1:3569"
+  },
+  "accounts": {
+    "emulator-account": {
+      "address": "f8d6e0586b0a20c7",
+      "key": {
+        "type": "hex",
+        "index": 0,
+        "signatureAlgorithm": "ECDSA_P256",
+        "hashAlgorithm": "SHA3_256",
+        "privateKey": "7f55a0a33f51f0d37816f9ef05b1bbc82c3d6d3ab95f7cf4e24e4c3e32f34c18"
+      }
+    },
+    "testnet-account": {
+      "address": "0x1000000000000001",
+      "key": {
+        "type": "file",
+        "location": ".flow-testnet.pkey"
+      }
+    }
+  },
+  "deployments": {
+    "emulator": {
+      "emulator-account": [
+        "GameAsset",
+        "GameItem",
+        "GameNFT",
+        "GameToken",
+        "RandomVRF",
+        "Scheduler",
+        "Marketplace",
+        "Tournament",
+        "Crafting",
+        "Staking",
+        "Achievement",
+        "VersionRegistry",
+        "EmergencyPause",
+        "StakingPool",
+        "Governance",
+        "NFTLending",
+        "SeasonPass",
+        "EquipmentAttachment"
+      ]
+    },
+    "testnet": {
+      "testnet-account": [
+        "GameAsset",
+        "GameItem",
+        "GameNFT",
+        "GameToken",
+        "RandomVRF",
+        "Scheduler",
+        "Marketplace",
+        "Tournament",
+        "Crafting",
+        "Staking",
+        "Achievement",
+        "VersionRegistry"
+      ]
+    }
+  }
+}

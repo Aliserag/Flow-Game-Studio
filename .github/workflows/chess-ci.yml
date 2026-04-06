@@ -1,0 +1,56 @@
+name: Chess on Flow CI
+
+on:
+  push:
+    paths:
+      - 'examples/chess-game/**'
+  pull_request:
+    paths:
+      - 'examples/chess-game/**'
+
+jobs:
+  cadence-tests:
+    name: Cadence Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: examples/chess-game
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Flow CLI
+        run: |
+          sh -ci "$(curl -fsSL https://raw.githubusercontent.com/onflow/flow-cli/master/install.sh)"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Run ChessPiece tests
+        run: flow test cadence/tests/ChessPiece_test.cdc
+
+      - name: Run ChessGame tests
+        run: flow test cadence/tests/ChessGame_test.cdc
+
+      - name: Run end-to-end game lifecycle test
+        run: flow test cadence/tests/ChessGame_e2e_test.cdc
+
+  typescript-check:
+    name: TypeScript Type Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: examples/chess-game/client
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: examples/chess-game/client/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit

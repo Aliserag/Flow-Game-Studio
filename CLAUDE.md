@@ -5,14 +5,21 @@ Each agent owns a specific domain, enforcing separation of concerns and quality.
 
 ## Technology Stack
 
-- **Engine**: [CHOOSE: Godot 4 / Unity / Unreal Engine 5]
-- **Language**: [CHOOSE: GDScript / C# / C++ / Blueprint]
+- **Blockchain**: Flow (mainnet + testnet)
+- **Smart Contract Language**: Cadence 1.0
+- **Client SDK**: FCL (Flow Client Library) — JavaScript/TypeScript
+- **Game Engine**: [CHOOSE: Godot 4 / Unity / Unreal Engine 5] — configure with /setup-engine
+- **Game Language**: [CHOOSE after engine]
 - **Version Control**: Git with trunk-based development
-- **Build System**: [SPECIFY after choosing engine]
-- **Asset Pipeline**: [SPECIFY after choosing engine]
+- **Contract Testing**: Cadence Testing Framework (`flow test`)
+- **Local Dev**: Flow Emulator (`flow emulator`)
 
-> **Note**: Engine-specialist agents exist for Godot, Unity, and Unreal with
-> dedicated sub-specialists. Use the set matching your engine.
+> **Flow Reference Docs**: `docs/flow-reference/` — version-pinned Cadence 1.0 API snapshots.
+> Always consult these before suggesting Cadence API calls; Cadence 1.0 has significant
+> breaking changes from 0.x that the LLM may not know about.
+
+> **Cadence Contracts**: `cadence/` — production-ready contract library with VRF,
+> entitlements, scheduled transactions, and marketplace patterns.
 
 ## Project Structure
 
@@ -52,3 +59,8 @@ See `docs/COLLABORATIVE-DESIGN-PRINCIPLE.md` for full protocol and examples.
 ## Context Management
 
 @.claude/docs/context-management.md
+
+## Flow Blockchain Reference
+
+@docs/flow-reference/VERSION.md
+@.claude/docs/flow-coding-standards.md

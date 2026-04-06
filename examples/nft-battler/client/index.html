@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NFT Battler — Dark Fantasy Arena on Flow</title>
+</head>
+<body>
+
+  <!-- ── Arena Header ───────────────────────────────────────────────────── -->
+  <header class="arena-header">
+    <h1 class="arena-title">NFT Battler</h1>
+    <p class="arena-subtitle">Walletless onboarding &middot; NFT attachments &middot; On-chain battles &middot; Flow blockchain</p>
+  </header>
+
+  <main class="arena-main">
+
+    <!-- Status bar -->
+    <div id="status" role="status" aria-live="polite"></div>
+
+    <!-- ── Walletless Onboarding ─────────────────────────────────────────── -->
+    <section class="panel">
+      <h2 class="panel-title"><span class="icon" aria-hidden="true">&#128273;</span> Walletless Onboarding</h2>
+      <p class="info-text">
+        No wallet? No problem. Click below &mdash; the app generates a keypair for you and creates
+        a Flow account in the background. You own the keys; the app sponsors gas.
+        When ready, export your private key to any Flow wallet to take full custody.
+      </p>
+      <div class="button-row">
+        <button id="create-app-account-btn" class="btn btn-primary">Create App Account</button>
+      </div>
+      <div id="app-account-info"></div>
+    </section>
+
+    <!-- ── Connect Wallet ────────────────────────────────────────────────── -->
+    <section class="panel">
+      <h2 class="panel-title"><span class="icon" aria-hidden="true">&#128091;</span> Connect Wallet</h2>
+      <p class="info-text">
+        Already have a Flow wallet? Connect via FCL to sign transactions directly.
+        Make sure the emulator and Dev Wallet are running.
+      </p>
+      <div class="wallet-bar">
+        <!-- wallet-section populated by JS (connect/disconnect button + address) -->
+        <div id="wallet-section"></div>
+      </div>
+    </section>
+
+    <!-- ── Game Section (shown after wallet connect) ──────────────────────── -->
+    <div id="game-section" style="display:none;">
+
+      <!-- Account Setup -->
+      <section class="panel">
+        <h2 class="panel-title"><span class="icon" aria-hidden="true">&#9881;</span> Account Setup</h2>
+        <p class="info-text">
+          Create empty Fighter and PowerUp collections in your account storage.
+          Required once before minting or receiving any NFTs.
+        </p>
+        <p class="account-address-line">
+          Account: <span id="wallet-address">&mdash;</span>
+        </p>
+        <div class="button-row">
+          <button id="setup-account-btn" class="btn btn-secondary">Setup Collections</button>
+        </div>
+      </section>
+
+      <!-- Fighters -->
+      <section class="panel">
+        <h2 class="panel-title"><span class="icon" aria-hidden="true">&#9876;</span> Your Fighters</h2>
+        <div class="rps-legend">
+          <span><span class="dot attack"></span> Attack beats Defense</span>
+          <span><span class="dot defense"></span> Defense beats Magic</span>
+          <span><span class="dot magic"></span> Magic beats Attack</span>
+        </div>
+        <div id="fighters-list">
+          <p class="empty">Loading fighters&hellip;</p>
+        </div>
+        <div class="button-row">
+          <button id="refresh-fighters-btn" class="btn btn-secondary">Refresh</button>
+        </div>
+      </section>
+
+      <!-- Battle Arena -->
+      <section class="panel">
+        <h2 class="panel-title"><span class="icon" aria-hidden="true">&#127959;</span> Battle Arena</h2>
+        <p class="info-text">
+          Challenge one of your fighters against another. Both fighters must be in your
+          collection. Wins and losses are recorded permanently on-chain in the NFT itself.
+        </p>
+        <div id="battle-result"></div>
+        <div class="input-row">
+          <div class="field">
+            <label for="my-fighter-id">Your Fighter ID</label>
+            <input type="number" id="my-fighter-id" placeholder="0" min="0" />
+          </div>
+          <div class="field">
+            <label for="opponent-fighter-id">Opponent Fighter ID</label>
+            <input type="number" id="opponent-fighter-id" placeholder="1" min="0" />
+          </div>
+          <button id="battle-btn" class="btn btn-attack">&#9876; Battle!</button>
+        </div>
+        <p class="info-text">
+          <strong>How to get fighters:</strong> Ask the admin account to run
+          <code>mint_starter.cdc</code> for your address, or run it yourself
+          from the emulator-account in the Flow CLI.
+        </p>
+      </section>
+
+    </div><!-- /game-section -->
+
+    <!-- ── How It Works ──────────────────────────────────────────────────── -->
+    <section class="panel how-it-works">
+      <h2 class="panel-title"><span class="icon" aria-hidden="true">&#128214;</span> How It Works</h2>
+      <p class="info-text">
+        <strong>HybridCustody</strong> &mdash; The app creates and manages a Flow account for you
+        using a sponsored transaction. Your keypair is stored in localStorage. In production,
+        Flow&rsquo;s HybridCustody contracts let you reclaim full ownership later.
+      </p>
+      <p class="info-text">
+        <strong>NFT Attachments</strong> &mdash; PowerUp NFTs physically attach to Fighter NFTs
+        using Cadence&rsquo;s <code>attach</code> keyword. The <code>PowerUp.Boost</code> attachment
+        travels with the Fighter when it&rsquo;s transferred. <code>Fighter.effectivePower()</code>
+        reads <code>self[PowerUp.Boost]</code> to calculate the boosted stat at query time.
+      </p>
+      <p class="info-text">
+        <strong>On-chain battle record</strong> &mdash; Win/loss counters are mutable fields on
+        the Fighter NFT resource itself. The <code>BattleArena</code> contract mutates them
+        via a <code>BattleRecorder</code> Cadence entitlement, ensuring only authorized code
+        can update combat history.
+      </p>
+    </section>
+
+  </main>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

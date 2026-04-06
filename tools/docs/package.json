@@ -1,0 +1,17 @@
+{
+  "name": "flow-studio-docs",
+  "version": "1.0.0",
+  "description": "Contract documentation generator for Flow game studio",
+  "scripts": {
+    "generate": "ts-node generate-contract-docs.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "glob": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^5.0.0"
+  }
+}

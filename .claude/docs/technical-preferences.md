@@ -10,6 +10,21 @@
 - **Rendering**: [TO BE CONFIGURED]
 - **Physics**: [TO BE CONFIGURED]
 
+## Flow Blockchain
+
+- **Network**: Flow testnet (dev), Flow mainnet (prod)
+- **Cadence Version**: 1.0 (see `docs/flow-reference/VERSION.md`)
+- **Contract Size Budget**: 100KB per contract max
+- **Standard Contracts**: NonFungibleToken v2, FungibleToken v2, MetadataViews
+- **Randomness**: RandomBeaconHistory + commit/reveal (see `docs/flow-reference/vrf-api.md`)
+- **Access Control**: Cadence 1.0 entitlements (see `docs/flow-reference/entitlements-reference.md`)
+- **Forbidden Patterns**:
+  - Never use `auth` references without explicit entitlements (Cadence 0.x pattern)
+  - Never use `force-unwrap` (!) on optional capabilities
+  - Never hardcode account addresses — use `flow.json` aliases
+  - Never store private keys in code or config files committed to git
+  - Never use `revertibleRandom()` for high-stakes randomness without commit/reveal
+
 ## Naming Conventions
 
 - **Classes**: [TO BE CONFIGURED]

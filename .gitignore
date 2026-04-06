@@ -110,6 +110,7 @@ node_modules/
 *.key
 credentials.json
 secrets.json
+.flow-*.pkey
 
 # === Large Binary Assets (use Git LFS instead) ===
 # Uncomment and configure with Git LFS for your project:
@@ -137,3 +138,6 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 *.lnk
+.worktrees/
+examples/prize-pool/db-evm/
+examples/prize-pool/client/.env

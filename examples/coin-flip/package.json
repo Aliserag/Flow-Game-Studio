@@ -1,0 +1,12 @@
+{
+  "name": "coin-flip-on-flow",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "emulator": "flow emulator",
+    "deploy": "flow project deploy --update --network emulator",
+    "test": "flow test cadence/tests/CoinFlip_test.cdc",
+    "client:dev": "cd client && npm install && npm run dev",
+    "sponsor:start": "cd sponsor-service && npm install && npx ts-node server.ts"
+  }
+}

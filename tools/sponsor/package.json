@@ -1,0 +1,21 @@
+{
+  "name": "flow-sponsor-service",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "ts-node sponsor-service.ts",
+    "dev": "nodemon sponsor-service.ts"
+  },
+  "dependencies": {
+    "@onflow/fcl": "^1.10.0",
+    "@onflow/sdk": "^1.5.0",
+    "express": "^4.18.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "ts-node": "^10.9.0",
+    "nodemon": "^3.0.0"
+  }
+}

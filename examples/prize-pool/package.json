@@ -1,0 +1,20 @@
+{
+  "name": "prize-pool",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "npx hardhat test",
+    "compile": "npx hardhat compile",
+    "deploy-evm-cadence": "node scripts/deploy-evm-cadence.mjs",
+    "deploy-evm": "npx hardhat run scripts/deploy-evm.ts --network flow-emulator"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.0",
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.2",
+    "@types/node": "^20.0.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0"
+  }
+}
