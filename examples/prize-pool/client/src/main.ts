@@ -9,6 +9,7 @@
 /// All dynamic DOM writes use textContent / createElement — no innerHTML with
 /// untrusted data to prevent XSS.
 
+import './style.css'
 import "./fcl-config" // initialise FCL config on load
 import * as fcl from "@onflow/fcl"
 import { Contract, Signer } from "ethers"
