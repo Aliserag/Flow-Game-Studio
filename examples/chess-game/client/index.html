@@ -4,70 +4,92 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chess on Flow</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, sans-serif; background: #1a1a2e; color: #eee; display: flex; min-height: 100vh; }
-    #app { display: flex; gap: 20px; padding: 20px; width: 100%; max-width: 1100px; margin: 0 auto; align-items: flex-start; }
-    #stats-panel { width: 200px; background: #16213e; border-radius: 8px; padding: 16px; }
-    #stats-panel h3 { font-size: 14px; color: #a0a8c0; margin-bottom: 12px; }
-    #piece-stats { font-size: 13px; line-height: 1.8; }
-    #board-container { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-    #board { display: grid; grid-template-columns: repeat(8, 1fr); width: 480px; height: 480px; border: 3px solid #0f3460; border-radius: 4px; overflow: hidden; }
-    .square { display: flex; align-items: center; justify-content: center; font-size: 42px; cursor: pointer; transition: background 0.1s; position: relative; }
-    .square.light { background: #f0d9b5; }
-    .square.dark { background: #b58863; }
-    .square.selected { background: #7fc97f !important; }
-    .square.valid-move::after { content: ''; position: absolute; width: 28px; height: 28px; border-radius: 50%; background: rgba(0,0,0,0.2); }
-    .square:hover { filter: brightness(1.1); }
-    .piece { user-select: none; pointer-events: none; }
-    #status { font-size: 15px; font-weight: 600; color: #e0c97f; text-align: center; min-height: 24px; }
-    #controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
-    #controls button { background: #0f3460; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; }
-    #controls button:hover { background: #1a4b8a; }
-    #mute-btn { font-size: 20px; background: none !important; border: none; cursor: pointer; padding: 4px 8px; }
-    #history-panel { width: 180px; background: #16213e; border-radius: 8px; padding: 16px; }
-    #history-panel h3 { font-size: 14px; color: #a0a8c0; margin-bottom: 12px; }
-    #move-list { font-family: monospace; font-size: 13px; line-height: 2; max-height: 400px; overflow-y: auto; }
-    #new-game { background: #16213e; border-radius: 8px; padding: 16px; margin-top: 8px; width: 100%; }
-    #new-game input { background: #0f3460; border: none; color: white; padding: 8px 12px; border-radius: 6px; width: 100%; margin: 6px 0; font-size: 14px; }
-    #new-game input::placeholder { color: #888; }
-    #new-game button { background: #0f3460; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; width: 100%; }
-    #new-game button:hover { background: #1a4b8a; }
-    #accept-game { background: #16213e; border-radius: 8px; padding: 16px; margin-top: 8px; width: 100%; }
-    #accept-game input { background: #0f3460; border: none; color: white; padding: 8px 12px; border-radius: 6px; width: 100%; margin: 6px 0; font-size: 14px; }
-    #accept-game input::placeholder { color: #888; }
-    #accept-game button { background: #0f3460; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; width: 100%; }
-    #accept-game button:hover { background: #1a4b8a; }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
-  <div id="app">
-    <aside id="stats-panel">
-      <h3>Piece Stats</h3>
-      <div id="piece-stats">Select a piece to view stats</div>
+  <main class="app" role="main">
+
+    <!-- Left panel: piece stats / NFT metadata -->
+    <aside class="side-panel" aria-label="Piece statistics">
+      <h2 class="panel-title">Piece Stats</h2>
+      <div id="piece-stats" class="piece-stat-entry" aria-live="polite">Select a piece to view stats</div>
     </aside>
-    <div id="board-container">
-      <div id="board"></div>
-      <div id="status">Connecting...</div>
-      <div id="controls">
-        <button id="connect-btn">Connect Wallet</button>
-        <button id="resign-btn" onclick="window.chessApp?.resignGame?.()">Resign</button>
-        <button id="mute-btn" title="Toggle sound">🔊</button>
+
+    <!-- Center: board + controls + game forms -->
+    <div class="board-wrap">
+
+      <!-- Status bar -->
+      <div id="status" class="status-bar" role="status" aria-live="polite">Connecting...</div>
+
+      <!-- Chess board — board.ts sets className='chess-board' and fills children -->
+      <div id="board" role="grid" aria-label="Chess board"></div>
+
+      <!-- File coordinates -->
+      <div class="board-coords" aria-hidden="true">
+        <span class="coord">a</span>
+        <span class="coord">b</span>
+        <span class="coord">c</span>
+        <span class="coord">d</span>
+        <span class="coord">e</span>
+        <span class="coord">f</span>
+        <span class="coord">g</span>
+        <span class="coord">h</span>
       </div>
-      <div id="new-game">
-        <input id="opponent-input" placeholder="Opponent Flow address (0x...)" />
-        <button onclick="window.chessApp?.challenge?.(document.getElementById('opponent-input').value)">Challenge Player</button>
+
+      <!-- Game controls -->
+      <div id="controls" class="controls">
+        <button id="connect-btn" class="btn btn-connect" type="button" aria-label="Connect Flow wallet">
+          Connect Wallet
+        </button>
+        <button id="resign-btn" class="btn btn-resign" type="button" aria-label="Resign current game">
+          Resign
+        </button>
+        <button id="mute-btn" class="btn btn-mute" type="button" title="Toggle sound" aria-label="Toggle sound">
+          &#128266;
+        </button>
       </div>
-      <div id="accept-game">
-        <input id="game-id-input" placeholder="Game ID to accept" />
-        <button onclick="window.chessApp?.acceptChallenge?.(document.getElementById('game-id-input').value)">Accept Challenge</button>
-      </div>
+
+      <!-- Challenge a player -->
+      <section class="challenge-form" aria-label="Challenge a player">
+        <p>Challenge a Player</p>
+        <label for="opponent-input" class="visually-hidden">Opponent Flow address</label>
+        <input
+          id="opponent-input"
+          type="text"
+          placeholder="Opponent Flow address (0x...)"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Opponent Flow address"
+        />
+        <button id="challenge-btn" class="btn btn-ghost" type="button">Challenge Player</button>
+      </section>
+
+      <!-- Accept a challenge -->
+      <section class="challenge-form" aria-label="Accept a challenge">
+        <p>Accept a Challenge</p>
+        <label for="game-id-input" class="visually-hidden">Game ID to accept</label>
+        <input
+          id="game-id-input"
+          type="text"
+          placeholder="Game ID to accept"
+          autocomplete="off"
+          inputmode="numeric"
+          aria-label="Game ID to accept"
+        />
+        <button id="accept-btn" class="btn btn-ghost" type="button">Accept Challenge</button>
+      </section>
+
     </div>
-    <aside id="history-panel">
-      <h3>Moves</h3>
-      <div id="move-list"></div>
+
+    <!-- Right panel: move history -->
+    <aside class="side-panel" aria-label="Move history">
+      <h2 class="panel-title">Moves</h2>
+      <div id="move-list" class="move-list" aria-live="polite" aria-label="Move history list"></div>
     </aside>
-  </div>
+
+  </main>
+
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

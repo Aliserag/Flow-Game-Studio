@@ -1,3 +1,4 @@
+import './style.css'
 import * as fcl from '@onflow/fcl'
 import { configureFCL, getCurrentUser } from './wallet'
 import { renderBoard, createBoardState, getValidMoveTargets, applyMove } from './board'
@@ -197,5 +198,18 @@ void myAddress
 
 // Bind Connect Wallet button directly (inline onclick can't access ESM imports)
 document.getElementById('connect-btn')?.addEventListener('click', () => (fcl as unknown as { authenticate: () => void }).authenticate())
+
+// Bind game action buttons (new HTML has no inline onclick handlers)
+document.getElementById('resign-btn')?.addEventListener('click', () => { void resignGame() })
+
+document.getElementById('challenge-btn')?.addEventListener('click', () => {
+  const opponentAddr = (document.getElementById('opponent-input') as HTMLInputElement | null)?.value ?? ''
+  void challenge(opponentAddr)
+})
+
+document.getElementById('accept-btn')?.addEventListener('click', () => {
+  const gameIdStr = (document.getElementById('game-id-input') as HTMLInputElement | null)?.value ?? ''
+  void acceptChallenge(gameIdStr)
+})
 
 ;(window as unknown as Record<string, unknown>).chessApp = { startGame, challenge, acceptChallenge, resignGame, setupAccount, createChallenge }
