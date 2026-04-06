@@ -7,12 +7,8 @@
 // 4. Attach PowerUp — boosts effectivePower
 // 5. Battle two fighters — wins/losses recorded on-chain
 // 6. View battle record
-//
-// Security note: innerHTML is used only with app-generated, controlled content
-// (on-chain NFT data returned from Flow scripts). No user-supplied strings are
-// ever injected as HTML. For a production app, sanitize any user inputs with
-// DOMPurify before rendering as HTML.
 
+import './style.css'
 import "./fcl-config"
 import * as fcl from "@onflow/fcl"
 
