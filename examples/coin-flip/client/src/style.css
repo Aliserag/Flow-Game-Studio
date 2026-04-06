@@ -199,3 +199,5 @@ body {
 }
 .flip-row .flip-outcome { color: var(--neon-cyan); font-family: 'Orbitron', sans-serif; font-size: 0.75rem; }
 .flip-row .flip-outcome.lose { color: var(--neon-pink); }
+
+.empty-state { color: var(--text-muted); font-size: 0.85rem; padding: 0.5rem 0; }

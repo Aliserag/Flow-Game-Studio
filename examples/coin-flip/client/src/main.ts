@@ -83,8 +83,8 @@ const connectBtn = document.getElementById("connect-btn")    as HTMLButtonElemen
 const walletAddr = document.getElementById("wallet-address") as HTMLSpanElement
 const gameSect   = document.getElementById("game-section")   as HTMLDivElement
 const flipBtn    = document.getElementById("flip-btn")       as HTMLButtonElement
-const resultDiv  = document.getElementById("result")         as HTMLDivElement
-const historyDiv = document.getElementById("history")        as HTMLDivElement
+const resultDiv  = document.getElementById("result")         as HTMLElement
+const historyDiv = document.getElementById("history")        as HTMLElement
 const coinEl     = document.getElementById("coin")           as HTMLDivElement
 
 // ---------------------------------------------------------------------------
@@ -286,7 +286,7 @@ async function refreshHistory(): Promise<void> {
 
     if (ids.length === 0) {
       historyDiv.appendChild(
-        el("p", { style: "color:#666" }, "No flips yet.")
+        el("p", { class: "empty-state" }, "No flips yet.")
       )
       return
     }
