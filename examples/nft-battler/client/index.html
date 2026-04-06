@@ -3,14 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NFT Battler — Dark Fantasy Arena on Flow</title>
+  <title>NFT Battler — Tactical Command Terminal · Flow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
 </head>
 <body>
 
   <!-- ── Arena Header ───────────────────────────────────────────────────── -->
   <header class="arena-header">
     <h1 class="arena-title">NFT Battler</h1>
-    <p class="arena-subtitle">Walletless onboarding &middot; NFT attachments &middot; On-chain battles &middot; Flow blockchain</p>
+    <p class="arena-subtitle">Walletless onboarding &middot; NFT attachments &middot; On-chain battles &middot; Flow protocol</p>
   </header>
 
   <main class="arena-main">
@@ -27,7 +30,7 @@
         When ready, export your private key to any Flow wallet to take full custody.
       </p>
       <div class="button-row">
-        <button id="create-app-account-btn" class="btn btn-primary">Create App Account</button>
+        <button id="create-app-account-btn" class="btn btn-primary">Spawn Unit</button>
       </div>
       <div id="app-account-info"></div>
     </section>
@@ -59,7 +62,7 @@
           Account: <span id="wallet-address">&mdash;</span>
         </p>
         <div class="button-row">
-          <button id="setup-account-btn" class="btn btn-secondary">Setup Collections</button>
+          <button id="setup-account-btn" class="btn btn-secondary">Initialize Collection</button>
         </div>
       </section>
 
@@ -96,7 +99,7 @@
             <label for="opponent-fighter-id">Opponent Fighter ID</label>
             <input type="number" id="opponent-fighter-id" placeholder="1" min="0" />
           </div>
-          <button id="battle-btn" class="btn btn-attack">&#9876; Battle!</button>
+          <button id="battle-btn" class="btn btn-attack">&#9876; Engage</button>
         </div>
         <p class="info-text">
           <strong>How to get fighters:</strong> Ask the admin account to run

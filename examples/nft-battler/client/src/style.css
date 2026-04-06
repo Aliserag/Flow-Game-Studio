@@ -1,206 +1,270 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@700&family=IM+Fell+English:ital@0;1&display=swap');
+/* ═══════════════════════════════════════════════════════════════════════════
+   NFT BATTLER — TACTICAL COMMAND TERMINAL
+   Design System: Military/industrial terminal aesthetic
+   Fonts: Barlow Condensed (display) · Fira Code (data/terminal)
+   ═══════════════════════════════════════════════════════════════════════════ */
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Design Tokens ──────────────────────────────────────────────────────── */
 
 :root {
-  --bg-void:    #080508;
-  --bg-panel:   #120c14;
-  --bg-card:    #1c1020;
-  --crimson:    #c62828;
-  --gold:       #f9a825;
-  --silver:     #b0bec5;
-  --text-main:  #e8d5c4;
-  --text-muted: #7e6e5e;
-  --border:     rgba(198,40,40,0.25);
-  --hp-full:    #43a047;
-  --hp-mid:     #f9a825;
-  --hp-low:     #c62828;
-  --success:    #43a047;
-  --error:      #c62828;
-  --attack:     #e74c3c;
-  --defense:    #3498db;
-  --magic:      #9b59b6;
+  --void:      #070707;
+  --surface:   #0E0E0E;
+  --card:      #141414;
+  --terminal:  #39FF14;
+  --amber:     #FF8C00;
+  --steel:     #7A8FA8;
+  --red-alert: #FF1A1A;
+  --text:      #C8C8C8;
+  --muted:     #484848;
+  --scanline:  rgba(0, 255, 20, 0.03);
+
+  /* Derived */
+  --terminal-faint:  rgba(57, 255, 20, 0.15);
+  --terminal-border: rgba(57, 255, 20, 0.3);
+  --terminal-dim:    rgba(57, 255, 20, 0.4);
+  --terminal-glow:   rgba(57, 255, 20, 0.4);
+  --red-faint:       rgba(255, 26, 26, 0.12);
+  --amber-faint:     rgba(255, 140, 0, 0.12);
+}
+
+/* ── Base / Reset ───────────────────────────────────────────────────────── */
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--bg-void);
-  color: var(--text-main);
-  font-family: 'IM Fell English', serif;
+  background-color: var(--void);
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    var(--scanline) 2px,
+    var(--scanline) 4px
+  );
+  color: var(--text);
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem 1rem 4rem;
-  background-image:
-    radial-gradient(ellipse at 50% 0%, rgba(198,40,40,0.08) 0%, transparent 55%),
-    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23300010' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  padding: 0 0 4rem;
 }
 
-/* ── Arena Header ──────────────────────────────────────────────────────────── */
+/* ── Arena Header ───────────────────────────────────────────────────────── */
 
 .arena-header {
-  text-align: center;
-  margin-bottom: 2rem;
   width: 100%;
-  max-width: 860px;
+  background: var(--surface);
+  border-bottom: 1px solid rgba(57, 255, 20, 0.2);
+  padding: 1.5rem 2rem 1.25rem;
+  margin-bottom: 2rem;
 }
 
 .arena-title {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: clamp(1.8rem, 4vw, 3rem);
-  font-weight: 700;
-  color: var(--gold);
-  text-shadow: 0 0 20px rgba(249,168,37,0.4), 0 2px 4px rgba(0,0,0,0.8);
-  letter-spacing: 0.05em;
+  font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--terminal);
+  text-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
+  line-height: 1;
 }
 
 .arena-subtitle {
-  font-family: 'IM Fell English', serif;
-  font-style: italic;
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  margin-top: 0.4rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.5rem;
 }
 
-/* ── Layout ────────────────────────────────────────────────────────────────── */
+.arena-subtitle::before {
+  content: 'SYSTEM: ';
+  color: var(--terminal);
+  opacity: 0.6;
+}
+
+/* ── Layout ─────────────────────────────────────────────────────────────── */
 
 .arena-main {
   width: 100%;
-  max-width: 860px;
+  max-width: 880px;
+  padding: 0 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
+
+/* ── Panels ─────────────────────────────────────────────────────────────── */
 
 .panel {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  background: var(--surface);
+  border-left: 3px solid rgba(57, 255, 20, 0.4);
   padding: 1.5rem 1.75rem;
   position: relative;
-  overflow: hidden;
-}
-
-.panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 50% 0%, rgba(198,40,40,0.04) 0%, transparent 60%);
-  pointer-events: none;
 }
 
 .panel-title {
-  font-family: 'Cinzel', serif;
-  font-size: 0.75rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--terminal);
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.panel-title .icon { font-size: 1rem; }
-
-.info-text {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin-bottom: 1rem;
+.panel-title::before {
+  content: '> ';
+  color: var(--terminal);
+  opacity: 0.5;
+  font-family: 'Fira Code', monospace;
+  font-weight: 400;
 }
 
-/* ── Status bar ────────────────────────────────────────────────────────────── */
+.panel-title .icon {
+  filter: none;
+  color: var(--terminal);
+  font-size: 1rem;
+}
+
+.info-text {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.82rem;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  opacity: 0.85;
+}
+
+/* ── Status Bar ─────────────────────────────────────────────────────────── */
 
 #status {
   display: none;
-  padding: 0.75rem 1.2rem;
-  border-radius: 8px;
+  padding: 0.65rem 1.2rem;
   margin-bottom: 1rem;
-  font-family: 'Cinzel', serif;
+  font-family: 'Fira Code', monospace;
   font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  font-weight: 400;
   width: 100%;
-  max-width: 860px;
+  max-width: 880px;
 }
 
 #status.success {
-  background: rgba(67,160,71,0.12);
-  border: 1px solid rgba(67,160,71,0.4);
-  color: #66bb6a;
+  display: block;
+  color: var(--terminal);
+  border-left: 4px solid var(--terminal);
+  background: rgba(57, 255, 20, 0.04);
 }
 
 #status.error {
-  background: rgba(198,40,40,0.12);
-  border: 1px solid rgba(198,40,40,0.4);
-  color: #ef5350;
+  display: block;
+  color: var(--red-alert);
+  border-left: 4px solid var(--red-alert);
+  background: rgba(255, 26, 26, 0.04);
 }
 
-/* ── Buttons ───────────────────────────────────────────────────────────────── */
+/* ── Buttons ────────────────────────────────────────────────────────────── */
 
 .btn {
-  font-family: 'Cinzel', serif;
-  font-size: 0.82rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.9rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  border: none;
-  border-radius: 4px;
-  padding: 0.65rem 1.5rem;
-  cursor: pointer;
-  transition: all 0.2s;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
+  border-radius: 0;
+  padding: 0.55rem 1.4rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+  border: 1px solid var(--terminal);
+  background: transparent;
+  color: var(--terminal);
+  line-height: 1.2;
+}
+
+.btn:hover {
+  background: rgba(57, 255, 20, 0.12);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #6c47ff, #9b59b6);
-  color: #fff;
-  border: 1px solid rgba(156,89,182,0.4);
-  box-shadow: 0 0 8px rgba(108,71,255,0.3);
+  border-color: var(--terminal);
+  color: var(--terminal);
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(108,71,255,0.6); }
+
+.btn-primary:hover {
+  background: rgba(57, 255, 20, 0.12);
+}
 
 .btn-danger {
-  background: linear-gradient(135deg, #b71c1c, var(--crimson));
-  color: #fff;
-  border: 1px solid rgba(255,100,100,0.3);
-  box-shadow: 0 0 8px rgba(198,40,40,0.4);
+  border-color: var(--red-alert);
+  color: var(--red-alert);
 }
-.btn-danger:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(198,40,40,0.7); }
+
+.btn-danger:hover {
+  background: var(--red-faint);
+}
 
 .btn-attack {
-  background: linear-gradient(135deg, #b71c1c, var(--crimson));
-  color: #fff;
-  border: 1px solid rgba(255,100,100,0.3);
-  box-shadow: 0 0 8px rgba(198,40,40,0.4);
+  border-color: var(--red-alert);
+  color: var(--red-alert);
 }
-.btn-attack:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(198,40,40,0.7); }
+
+.btn-attack:hover {
+  background: var(--red-faint);
+}
 
 .btn-gold {
-  background: linear-gradient(135deg, #f57f17, var(--gold));
-  color: #000;
-  font-weight: 900;
+  border-color: var(--amber);
+  color: var(--amber);
 }
-.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 0 16px rgba(249,168,37,0.6); }
+
+.btn-gold:hover {
+  background: var(--amber-faint);
+}
 
 .btn-secondary {
-  background: var(--bg-card);
-  color: var(--text-main);
-  border: 1px solid var(--border);
+  border-color: var(--muted);
+  color: var(--text);
 }
-.btn-secondary:hover { transform: translateY(-1px); border-color: rgba(198,40,40,0.5); }
+
+.btn-secondary:hover {
+  border-color: var(--text);
+  background: rgba(200, 200, 200, 0.06);
+}
 
 .btn-success {
-  background: linear-gradient(135deg, #2e7d32, #43a047);
-  color: #fff;
+  border-color: var(--terminal);
+  color: var(--terminal);
 }
-.btn-success:hover { transform: translateY(-2px); box-shadow: 0 0 16px rgba(67,160,71,0.5); }
 
-.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-success:hover {
+  background: rgba(57, 255, 20, 0.12);
+}
+
+.btn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
 
 .button-row {
   display: flex;
@@ -209,7 +273,7 @@ body {
   margin-top: 0.75rem;
 }
 
-/* ── Wallet bar ────────────────────────────────────────────────────────────── */
+/* ── Wallet Bar ─────────────────────────────────────────────────────────── */
 
 .wallet-bar {
   display: flex;
@@ -223,160 +287,40 @@ body {
 }
 
 #wallet-section p {
-  font-size: 0.88rem;
-  color: var(--text-muted);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.82rem;
+  color: var(--muted);
   margin-bottom: 0;
 }
 
 #wallet-address {
-  font-family: monospace;
+  font-family: 'Fira Code', monospace;
   font-size: 0.8rem;
-  color: var(--gold);
+  color: var(--terminal);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 280px;
+  max-width: 300px;
   display: inline-block;
 }
 
-/* ── Fighter cards ─────────────────────────────────────────────────────────── */
+/* ── Account Address Line ───────────────────────────────────────────────── */
 
-#fighters-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-.fighter-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 1.25rem;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s;
-}
-
-.fighter-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 50% 0%, rgba(198,40,40,0.05) 0%, transparent 60%);
-  pointer-events: none;
-}
-
-.fighter-card:hover { transform: translateY(-3px); border-color: rgba(198,40,40,0.5); }
-
-.fighter-card.attacking {
-  animation: attack 0.4s ease-out;
-}
-
-@keyframes attack {
-  0%   { transform: translateX(0); }
-  25%  { transform: translateX(12px); box-shadow: 0 0 24px rgba(198,40,40,0.6); }
-  75%  { transform: translateX(-4px); }
-  100% { transform: translateX(0); }
-}
-
-.fighter-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.4rem;
-}
-
-.class-icon { font-size: 1.4rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); }
-
-.fighter-id {
-  margin-left: auto;
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  background: rgba(255,255,255,0.06);
-  padding: 0.1rem 0.4rem;
-  border-radius: 4px;
-  font-family: monospace;
-}
-
-.fighter-class {
-  font-family: 'Cinzel', serif;
-  font-size: 0.68rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+.account-address-line {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.82rem;
+  color: var(--muted);
   margin-bottom: 0.75rem;
-}
-
-.fighter-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.stat {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.84rem;
-}
-
-.stat-label { color: var(--text-muted); }
-
-.stat-value { font-weight: 600; font-family: monospace; }
-.stat-value.power   { color: var(--gold); }
-.stat-value.boosted { color: #66bb6a; }
-
-.powerup-badge {
-  margin-top: 0.75rem;
-  font-size: 0.76rem;
-  background: rgba(67,160,71,0.1);
-  border: 1px solid rgba(67,160,71,0.3);
-  border-radius: 6px;
-  padding: 0.3rem 0.6rem;
-  color: #66bb6a;
-}
-
-.empty {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  font-style: italic;
-  padding: 0.5rem 0;
-}
-
-/* ── Battle result banner ──────────────────────────────────────────────────── */
-
-#battle-result {
-  display: none;
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  font-family: 'Cinzel', serif;
-  font-size: 0.95rem;
-  font-weight: 700;
+  text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 1rem;
-  text-align: center;
-  animation: fadeSlide 0.35s ease;
 }
 
-#battle-result.win {
-  background: rgba(67,160,71,0.12);
-  border: 2px solid rgba(67,160,71,0.5);
-  color: #66bb6a;
-  text-shadow: 0 0 12px rgba(67,160,71,0.5);
+.account-address-line #wallet-address {
+  color: var(--terminal);
+  text-transform: none;
 }
 
-#battle-result.loss {
-  background: rgba(198,40,40,0.12);
-  border: 2px solid rgba(198,40,40,0.4);
-  color: #ef5350;
-  text-shadow: 0 0 12px rgba(198,40,40,0.5);
-}
-
-@keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Forms ─────────────────────────────────────────────────────────────────── */
+/* ── Forms / Inputs ─────────────────────────────────────────────────────── */
 
 .input-row {
   display: flex;
@@ -393,91 +337,290 @@ body {
 }
 
 label {
-  font-family: 'Cinzel', serif;
-  font-size: 0.68rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
 input[type="number"],
 input[type="text"] {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--text-main);
+  background: #0A0A0A;
+  border: 1px solid rgba(57, 255, 20, 0.3);
+  border-radius: 0;
+  color: var(--text);
   padding: 0.55rem 0.75rem;
   font-size: 0.9rem;
-  font-family: monospace;
-  width: 130px;
-  transition: border-color 0.2s;
+  font-family: 'Fira Code', monospace;
+  width: 140px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input[type="number"]::placeholder,
+input[type="text"]::placeholder {
+  color: var(--muted);
+  opacity: 0.6;
 }
 
 input:focus {
   outline: none;
-  border-color: rgba(198,40,40,0.6);
-  box-shadow: 0 0 0 2px rgba(198,40,40,0.1);
+  border-color: var(--terminal);
+  box-shadow: 0 0 0 1px rgba(57, 255, 20, 0.15);
 }
 
-/* ── Class legend ──────────────────────────────────────────────────────────── */
+/* ── Fighter Cards ──────────────────────────────────────────────────────── */
+
+#fighters-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.fighter-card {
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 3px solid var(--terminal);
+  padding: 1.25rem;
+  position: relative;
+  transition: border-color 0.2s;
+}
+
+.fighter-card:hover {
+  border-color: rgba(57, 255, 20, 0.3);
+  border-left-color: var(--terminal);
+}
+
+.fighter-card.attacking {
+  animation: attack 0.3s ease-out;
+}
+
+@keyframes attack {
+  0%   { transform: translateX(0); }
+  30%  { transform: translateX(10px); }
+  70%  { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
+}
+
+.fighter-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.class-icon {
+  font-size: 1.2rem;
+  filter: none;
+}
+
+.fighter-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  color: var(--terminal);
+  letter-spacing: 0.05em;
+}
+
+.fighter-id {
+  margin-left: auto;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.1rem 0.4rem;
+}
+
+.fighter-class {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--terminal);
+  margin-bottom: 0.75rem;
+  opacity: 0.7;
+}
+
+.fighter-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.stat-label {
+  font-family: 'Fira Code', monospace;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+}
+
+.stat-value {
+  font-family: 'Fira Code', monospace;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.stat-value.power {
+  color: var(--amber);
+  font-weight: 500;
+}
+
+.stat-value.boosted {
+  color: var(--terminal);
+}
+
+/* Power bar */
+.power-bar-track {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  margin-top: 0.5rem;
+  position: relative;
+}
+
+.power-bar-fill {
+  height: 100%;
+  background: var(--terminal);
+  transition: width 0.3s ease;
+}
+
+.powerup-badge {
+  margin-top: 0.75rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.72rem;
+  background: rgba(57, 255, 20, 0.06);
+  border-left: 2px solid var(--terminal);
+  padding: 0.3rem 0.6rem;
+  color: var(--terminal);
+}
+
+.empty {
+  font-family: 'Fira Code', monospace;
+  color: var(--muted);
+  font-size: 0.84rem;
+  padding: 0.5rem 0;
+}
+
+.empty::before {
+  content: '// ';
+  opacity: 0.5;
+}
+
+/* ── Battle Result ───────────────────────────────────────────────────────── */
+
+#battle-result {
+  display: none;
+  padding: 1rem 1.5rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  animation: fadeSlide 0.35s ease;
+}
+
+#battle-result.win {
+  display: block;
+  color: var(--terminal);
+  border-left: 4px solid var(--terminal);
+  background: rgba(57, 255, 20, 0.04);
+}
+
+#battle-result.loss {
+  display: block;
+  color: var(--red-alert);
+  border-left: 4px solid var(--red-alert);
+  background: rgba(255, 26, 26, 0.04);
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── RPS Legend ─────────────────────────────────────────────────────────── */
 
 .rps-legend {
   display: flex;
   gap: 1.25rem;
   flex-wrap: wrap;
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.76rem;
+  color: var(--muted);
   margin-bottom: 1rem;
 }
 
-.rps-legend span { display: flex; align-items: center; gap: 0.35rem; }
+.rps-legend span {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
 
 .dot {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0;
 }
-.dot.attack  { background: var(--attack); box-shadow: 0 0 4px var(--attack); }
-.dot.defense { background: var(--defense); box-shadow: 0 0 4px var(--defense); }
-.dot.magic   { background: var(--magic); box-shadow: 0 0 4px var(--magic); }
 
-/* ── App account card ──────────────────────────────────────────────────────── */
+.dot.attack  { background: var(--red-alert); }
+.dot.defense { background: var(--steel); }
+.dot.magic   { background: var(--amber); }
+
+/* ── App Account Card ───────────────────────────────────────────────────── */
 
 .app-account-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  background: var(--card);
+  border-left: 3px solid var(--terminal);
+  border-right: none;
+  border-top: none;
+  border-bottom: none;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-left: 3px solid var(--terminal);
   padding: 1rem 1.25rem;
   margin-top: 0.75rem;
 }
 
 .app-account-card.success {
-  border-color: rgba(67,160,71,0.4);
-  background: rgba(67,160,71,0.04);
+  background: rgba(57, 255, 20, 0.03);
+  border-left-color: var(--terminal);
 }
 
 .app-account-card p {
+  font-family: 'Fira Code', monospace;
   margin-bottom: 0.5rem;
-  font-size: 0.87rem;
+  font-size: 0.84rem;
+  color: var(--text);
 }
 
-/* ── Account setup address ─────────────────────────────────────────────────── */
-
-.account-address-line {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  margin-bottom: 0.75rem;
+.app-account-card strong {
+  color: var(--terminal);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-/* ── Modal ─────────────────────────────────────────────────────────────────── */
+/* ── Modal ──────────────────────────────────────────────────────────────── */
 
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.82);
+  background: rgba(0, 0, 0, 0.92);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -485,49 +628,62 @@ input:focus {
 }
 
 .modal {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid rgba(57, 255, 20, 0.3);
+  border-radius: 0;
   padding: 2rem;
-  max-width: 480px;
+  max-width: 500px;
   width: 90%;
-  box-shadow: 0 0 40px rgba(198,40,40,0.2);
+  border-left: 4px solid var(--terminal);
 }
 
 .modal h3 {
-  font-family: 'Cinzel', serif;
+  font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  color: var(--gold);
+  font-size: 1.2rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--terminal);
   margin-bottom: 1rem;
-  font-size: 1rem;
-  letter-spacing: 0.05em;
+}
+
+.modal h3::before {
+  content: '>> ';
+  opacity: 0.5;
 }
 
 .modal p {
+  font-family: 'Fira Code', monospace;
   margin-bottom: 0.75rem;
-  font-size: 0.9rem;
-  color: var(--text-muted);
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.6;
 }
 
 .key-display {
-  background: var(--bg-void);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  background: var(--void);
+  border: 1px solid rgba(57, 255, 20, 0.2);
+  border-left: 3px solid var(--amber);
   padding: 0.75rem;
   margin-bottom: 0.75rem;
   word-break: break-all;
 }
 
 .key-display code {
-  font-size: 0.76rem;
-  color: var(--gold);
-  font-family: monospace;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.74rem;
+  color: var(--amber);
 }
 
 .warning {
-  color: #ef5350 !important;
+  color: var(--red-alert) !important;
   font-size: 0.82rem !important;
-  font-style: italic;
+  font-style: normal !important;
+}
+
+.warning::before {
+  content: '[WARN] ';
+  font-weight: 500;
 }
 
 .modal .btn {
@@ -535,38 +691,40 @@ input:focus {
   margin-top: 0.5rem;
 }
 
-/* ── How It Works ──────────────────────────────────────────────────────────── */
+/* ── How It Works ───────────────────────────────────────────────────────── */
 
 .how-it-works p {
   margin-bottom: 0.75rem;
 }
 
 .how-it-works strong {
-  color: var(--gold);
-  font-family: 'Cinzel', serif;
-  font-size: 0.85em;
+  color: var(--terminal);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.95em;
+  letter-spacing: 0.05em;
 }
 
 .how-it-works code {
-  font-family: monospace;
-  font-size: 0.85em;
-  color: var(--silver);
-  background: rgba(176,190,197,0.08);
-  padding: 0.1em 0.3em;
-  border-radius: 3px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.82em;
+  color: var(--amber);
+  background: rgba(255, 140, 0, 0.07);
+  padding: 0.1em 0.35em;
 }
 
-/* ── Divider ───────────────────────────────────────────────────────────────── */
+/* ── Terminal Divider ───────────────────────────────────────────────────── */
 
 .ornament-divider {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: var(--text-muted);
-  font-size: 0.7rem;
+  color: var(--muted);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.68rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  font-family: 'Cinzel', serif;
   margin: 0.5rem 0 1rem;
 }
 
@@ -575,5 +733,66 @@ input:focus {
   content: '';
   flex: 1;
   height: 1px;
-  background: var(--border);
+  background: rgba(57, 255, 20, 0.1);
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--void);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(57, 255, 20, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(57, 255, 20, 0.4);
+}
+
+/* ── Selection ──────────────────────────────────────────────────────────── */
+
+::selection {
+  background: rgba(57, 255, 20, 0.2);
+  color: var(--terminal);
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  .arena-header {
+    padding: 1rem 1rem 0.875rem;
+  }
+
+  .arena-main {
+    padding: 0 1rem;
+  }
+
+  .panel {
+    padding: 1.25rem 1.25rem;
+  }
+
+  #fighters-list {
+    grid-template-columns: 1fr;
+  }
+
+  .input-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  input[type="number"],
+  input[type="text"] {
+    width: 100%;
+  }
+
+  .rps-legend {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }
