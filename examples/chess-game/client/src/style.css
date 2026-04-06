@@ -1,73 +1,121 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Noto+Sans+Mono:wght@400;500&display=swap');
 
+/* ─── Reset ─────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ─── Design Tokens ──────────────────────────────────────────────────────── */
 :root {
-  --bg-deep:    #1a1510;
-  --bg-panel:   #231d17;
-  --bg-card:    #2d2620;
-  --wood-lt:    #f0d9b5;
-  --wood-dk:    #b58863;
-  --wood-sel:   #7fc97f;
-  --wood-move:  rgba(0,0,0,0.18);
-  --cream:      #f5f0e8;
-  --gold:       #d4a853;
-  --text-main:  #e8d8c0;
-  --text-muted: #8b7355;
-  --border:     rgba(212,168,83,0.2);
-  --check-red:  rgba(220,50,50,0.6);
+  --chrome:    #111111;
+  --parchment: #F9F5E7;
+  --paper:     #FDFAF3;
+  --teal:      #1B4B5A;
+  --cream-sq:  #F0D9B5;
+  --gold:      #C9A84C;
+  --ink:       #1A1208;
+  --rust:      #8B2E12;
+  --fog:       #8A7A5A;
+  --wire:      #D4C8A8;
 }
 
+/* ─── Base ───────────────────────────────────────────────────────────────── */
 body {
-  background: var(--bg-deep);
-  color: var(--text-main);
-  font-family: 'Lato', sans-serif;
+  background: var(--chrome);
+  color: var(--ink);
+  font-family: 'Bodoni Moda', serif;
+  font-size: 1rem;
+  line-height: 1.7;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
 }
 
-.app { display: flex; gap: 1.25rem; width: 100%; max-width: 1100px; align-items: flex-start; }
+/* ─── App Shell — the "book spread" ─────────────────────────────────────── */
+.app {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  max-width: 1100px;
+  background: var(--parchment);
+  align-items: flex-start;
+  padding: 2rem;
+}
 
+/* ─── Side Panels ────────────────────────────────────────────────────────── */
 .side-panel {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 1.25rem;
+  background: transparent;
+  padding: 1.5rem 1.25rem;
   width: 200px;
   flex-shrink: 0;
 }
-.panel-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 0.9rem;
-  color: var(--gold);
-  letter-spacing: 0.05em;
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border);
+
+/* Left panel: thin right rule */
+.side-panel:first-child {
+  border-right: 1px solid var(--wire);
 }
 
-.board-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+/* Right panel: thin left rule */
+.side-panel:last-child {
+  border-left: 1px solid var(--wire);
+}
 
+.panel-title {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 700;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--ink);
+  letter-spacing: 0;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--wire);
+}
+
+/* ─── Board Column ───────────────────────────────────────────────────────── */
+.board-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0 1.5rem;
+}
+
+/* ─── Status Bar ─────────────────────────────────────────────────────────── */
 .status-bar {
   width: 100%;
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.6rem 1rem;
+  background: transparent;
+  border-bottom: 1px solid var(--wire);
+  padding: 0.5rem 1rem;
   text-align: center;
-  font-family: 'Playfair Display', serif;
-  font-size: 0.95rem;
-  color: var(--gold);
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: var(--ink);
   min-height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: color 0.2s, border-bottom-color 0.2s;
 }
-.status-bar.check { color: #ef5350; border-color: rgba(239,83,80,0.4); animation: checkPulse 1s ease-in-out; }
-@keyframes checkPulse { 0%,100% { box-shadow: none; } 50% { box-shadow: 0 0 16px rgba(239,83,80,0.5); } }
+
+.status-bar.check {
+  color: var(--rust);
+  border-bottom-color: var(--rust);
+  animation: checkPulse 1s ease-in-out;
+}
+
+@keyframes checkPulse {
+  0%, 100% { box-shadow: none; }
+  50%       { box-shadow: 0 2px 16px rgba(139, 46, 18, 0.28); }
+}
+
+/* ─── Board Container ────────────────────────────────────────────────────── */
+#board {
+  width: min(480px, 90vw);
+  height: min(480px, 90vw);
+}
 
 /* board.ts sets className='chess-board' and appends .square children */
 .chess-board {
@@ -75,18 +123,15 @@ body {
   grid-template-columns: repeat(8, 1fr);
   width: min(480px, 90vw);
   height: min(480px, 90vw);
-  border: 3px solid var(--bg-deep);
-  border-radius: 4px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4);
+  border: 3px solid var(--ink);
   overflow: hidden;
+  /* Editorial drop-shadow: bold offset, no blur */
+  box-shadow:
+    6px  6px  0 var(--chrome),
+    8px  8px  0 var(--wire);
 }
 
-/* Outer wrapper keeps stable dimensions before board.ts first render */
-#board {
-  width: min(480px, 90vw);
-  height: min(480px, 90vw);
-}
-
+/* ─── Squares ────────────────────────────────────────────────────────────── */
 .square {
   display: flex;
   align-items: center;
@@ -94,95 +139,292 @@ body {
   cursor: pointer;
   transition: filter 0.1s;
   position: relative;
-  font-size: clamp(28px, 5vw, 42px);
+  font-size: clamp(26px, 4.8vw, 42px);
   user-select: none;
 }
-.square.light { background: var(--wood-lt); }
-.square.dark  { background: var(--wood-dk); }
-.square.selected { background: var(--wood-sel) !important; }
+
+/* THE KEY DESIGN DECISION: deep teal dark squares + warm cream light squares */
+.square.light { background: var(--cream-sq); }
+.square.dark  { background: var(--teal); }
+
+/* Gold selection highlight */
+.square.selected { background: var(--gold) !important; }
+
+/* Valid-move dot */
 .square.valid-move::after {
   content: '';
   position: absolute;
   width: 30%;
   height: 30%;
   border-radius: 50%;
-  background: var(--wood-move);
+  background: rgba(0, 0, 0, 0.22);
+  pointer-events: none;
 }
-.square:hover { filter: brightness(1.08); }
-.piece { pointer-events: none; line-height: 1; }
 
-.board-coords { display: grid; grid-template-columns: repeat(8, 1fr); width: min(480px, 90vw); }
-.coord { text-align: center; font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); padding: 2px 0; }
+/* Hover brightening */
+.square:hover { filter: brightness(1.06); }
 
-.controls { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; justify-content: center; }
+/* No browser focus ring — board has its own selection state */
+.square:focus { outline: none; }
+
+/* ─── Piece Text Colors ───────────────────────────────────────────────────── */
+/* Pieces on teal squares read as ivory; pieces on cream squares read as near-black */
+.piece               { pointer-events: none; line-height: 1; }
+.square.light  .piece { color: var(--ink); }
+.square.dark   .piece { color: #F9F5E7; }
+.square.selected .piece { color: var(--ink); }
+
+/* ─── Board Coordinates ──────────────────────────────────────────────────── */
+.board-coords {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  width: min(480px, 90vw);
+}
+
+.coord {
+  text-align: center;
+  font-family: 'Noto Sans Mono', monospace;
+  font-weight: 400;
+  font-size: 0.6rem;
+  color: var(--fog);
+  padding: 3px 0;
+  letter-spacing: 0.04em;
+}
+
+/* ─── Game Controls ──────────────────────────────────────────────────────── */
+.controls {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Base button — editorial text-link style, no fill */
 .btn {
-  font-family: 'Lato', sans-serif;
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 400;
+  font-style: italic;
   font-size: 0.85rem;
-  font-weight: 700;
+  background: transparent;
   border: none;
-  border-radius: 6px;
-  padding: 0.55rem 1.25rem;
+  border-radius: 0;
   cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.03em;
+  transition: color 0.15s, border-bottom-color 0.15s;
+  letter-spacing: 0;
+  text-transform: none;
+  padding: 0.3rem 0.1rem;
+  line-height: 1.4;
 }
-.btn-connect { background: linear-gradient(135deg, #5c4317, var(--gold)); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-.btn-connect:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(212,168,83,0.4); }
-.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
-.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
-.btn-resign { background: rgba(139,0,0,0.3); border: 1px solid rgba(200,0,0,0.4); color: #ef9a9a; }
-.btn-resign:hover { background: rgba(180,0,0,0.5); }
-.btn-mute { background: none; border: none; font-size: 1.25rem; cursor: pointer; padding: 0.25rem 0.5rem; }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
+/* Connect Wallet — underline link style in ink */
+.btn-connect {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--ink);
+  border-radius: 0;
+  padding: 0.3rem 0.1rem;
+  color: var(--ink);
+}
+.btn-connect:hover {
+  border-bottom-color: var(--gold);
+  color: var(--gold);
+}
+
+/* Resign — rust/red link */
+.btn-resign {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--rust);
+  border-radius: 0;
+  padding: 0.3rem 0.1rem;
+  color: var(--rust);
+}
+.btn-resign:hover {
+  border-bottom-color: color-mix(in srgb, var(--rust) 70%, black);
+  color: color-mix(in srgb, var(--rust) 70%, black);
+}
+
+/* Mute — fog color link */
+.btn-mute {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.25rem 0.35rem;
+  color: var(--fog);
+  font-style: normal;
+  transition: color 0.15s;
+}
+.btn-mute:hover { color: var(--ink); }
+
+/* Ghost — teal underline link (used in challenge forms) */
+.btn-ghost {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--teal);
+  border-radius: 0;
+  padding: 0.3rem 0.1rem;
+  color: var(--teal);
+}
+.btn-ghost:hover {
+  border-bottom-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ─── Challenge / Accept Forms ───────────────────────────────────────────── */
 .challenge-form {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
+  background: transparent;
+  padding: 0.75rem 0;
   width: 100%;
   max-width: min(480px, 90vw);
+  border-top: 1px solid var(--wire);
 }
-.challenge-form p { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem; }
+
+/* Label: small bold heading */
+.challenge-form p {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 0.82rem;
+  color: var(--ink);
+  letter-spacing: 0;
+  text-transform: none;
+  margin-bottom: 0.5rem;
+}
+
+/* Input: bare editorial style — only a bottom rule */
 .challenge-form input {
   width: 100%;
-  background: var(--bg-deep);
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  color: var(--text-main);
-  padding: 0.5rem 0.75rem;
-  font-family: 'JetBrains Mono', monospace;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--wire);
+  border-radius: 0;
+  color: var(--ink);
+  padding: 0.4rem 0;
+  font-family: 'Noto Sans Mono', monospace;
   font-size: 0.8rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   outline: none;
+  transition: border-bottom-color 0.15s;
 }
-.challenge-form input:focus { border-color: var(--gold); }
-.challenge-form input::placeholder { color: var(--text-muted); }
+.challenge-form input:focus {
+  border-bottom-color: var(--teal);
+}
+.challenge-form input::placeholder {
+  color: var(--fog);
+  font-style: italic;
+}
 
+/* ─── Move List — Editorial Column ───────────────────────────────────────── */
 .move-list {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
-  line-height: 2;
+  font-family: 'Noto Sans Mono', monospace;
+  font-weight: 400;
+  font-size: 0.82rem;
+  line-height: 1.8;
   max-height: 380px;
   overflow-y: auto;
-  color: var(--text-muted);
+  color: var(--fog);
 }
-.move-entry { color: var(--text-main); }
-.move-entry.last { color: var(--gold); }
 
-.piece-stat-entry { font-size: 0.8rem; line-height: 1.9; color: var(--text-muted); }
-.piece-stat-entry strong { color: var(--text-main); }
+/* Scrollbar — minimal, parchment-toned */
+.move-list::-webkit-scrollbar {
+  width: 4px;
+}
+.move-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.move-list::-webkit-scrollbar-thumb {
+  background: var(--wire);
+  border-radius: 2px;
+}
+
+/* Move rows — paired annotation style */
+.move-row {
+  display: grid;
+  grid-template-columns: 2rem 1fr 1fr;
+  column-gap: 0.25rem;
+  padding: 0.05rem 0;
+}
+
+/* Move number — fog, right-aligned */
+.move-number {
+  color: var(--fog);
+  text-align: right;
+  padding-right: 0.35rem;
+}
+
+/* White move — ink */
+.move-white {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* Black move — teal */
+.move-black {
+  color: var(--teal);
+  font-weight: 400;
+}
+
+/* Legacy single-entry style (if board.ts uses .move-entry) */
+.move-entry {
+  color: var(--ink);
+  padding: 0.1rem 0;
+  background: rgba(0, 0, 0, 0.00);
+}
+.move-entry:nth-child(even) {
+  background: rgba(0, 0, 0, 0.025);
+}
+.move-entry.last {
+  color: var(--teal);
+  font-weight: 500;
+}
+
+/* ─── Piece Stats ────────────────────────────────────────────────────────── */
+.piece-stat-entry {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 0.82rem;
+  line-height: 1.9;
+  color: var(--fog);
+}
+
+/* Stat labels vs. values */
+.piece-stat-entry .stat-label { color: var(--fog); }
+.piece-stat-entry .stat-value { color: var(--ink); font-weight: 700; }
+.piece-stat-entry strong      { color: var(--ink); }
+
+/* NFT piece symbol — large decorative centrepiece */
+.piece-symbol-large {
+  font-size: 2rem;
+  text-align: center;
+  display: block;
+  margin: 0.5rem 0;
+  color: var(--ink);
+  line-height: 1;
+}
+
+/* NFT badge — inline teal annotation */
 .nft-badge {
   display: inline-block;
-  background: rgba(212,168,83,0.15);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 0.1rem 0.4rem;
-  font-size: 0.7rem;
-  color: var(--gold);
+  background: rgba(27, 75, 90, 0.08);
+  border: 1px solid rgba(27, 75, 90, 0.25);
+  border-radius: 2px;
+  padding: 0.1rem 0.35rem;
+  font-family: 'Noto Sans Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--teal);
   margin-left: 0.3rem;
+  letter-spacing: 0.03em;
+  vertical-align: middle;
 }
 
+/* ─── Accessibility Utility ──────────────────────────────────────────────── */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -190,7 +432,33 @@ body {
   padding: 0;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0,0,0,0);
+  clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .app {
+    flex-direction: column;
+    padding: 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .side-panel {
+    width: 100%;
+    border-right: none !important;
+    border-left: none !important;
+    border-top: 1px solid var(--wire);
+    padding: 1rem 0;
+  }
+
+  .board-wrap {
+    padding: 0;
+    width: 100%;
+  }
+
+  .controls {
+    gap: 1rem;
+  }
 }
