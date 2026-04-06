@@ -20,6 +20,11 @@ const muteBtn = document.getElementById('mute-btn')!
 
 function updateStatus(msg: string): void {
   statusEl.textContent = msg
+  if (msg.toLowerCase().includes('check')) {
+    statusEl.classList.add('check')
+  } else {
+    statusEl.classList.remove('check')
+  }
 }
 
 async function pollBoard(): Promise<void> {
@@ -35,7 +40,7 @@ async function pollBoard(): Promise<void> {
       const chess = new Chess(newFen)
       if (chess.isCheckmate()) {
         chessAudio.playCheckmate()
-        updateStatus(`Checkmate! Winner: ${data['winner']}`)
+        updateStatus(`Checkmate! Winner: ${data['winner'] as string}`)
       } else if (chess.inCheck()) {
         chessAudio.playCheck()
       }
@@ -54,7 +59,7 @@ async function pollBoard(): Promise<void> {
     }
     const statusMap: Record<number, string> = { 0: 'Pending', 1: 'Active', 2: 'Checkmate', 3: 'Stalemate', 4: 'Resigned', 5: 'Drawn', 6: 'Timed Out' }
     const chess = new Chess(newFen)
-    updateStatus(`${statusMap[data['status'] as number] ?? 'Unknown'} — ${chess.turn() === 'w' ? 'White' : 'Black'} to move`)
+    updateStatus(`${statusMap[data['status'] as number] ?? 'Unknown'} — ${(chess.turn() as string) === 'w' ? 'White' : 'Black'} to move`)
   } catch (e) {
     console.error('Poll error:', e)
   }

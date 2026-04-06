@@ -100,7 +100,6 @@ body {
 .square.light { background: var(--wood-lt); }
 .square.dark  { background: var(--wood-dk); }
 .square.selected { background: var(--wood-sel) !important; }
-.square.in-check { background: var(--check-red) !important; }
 .square.valid-move::after {
   content: '';
   position: absolute;
@@ -108,13 +107,6 @@ body {
   height: 30%;
   border-radius: 50%;
   background: var(--wood-move);
-}
-.square.valid-capture::after {
-  width: 100%;
-  height: 100%;
-  border-radius: 0;
-  border: 4px solid var(--wood-move);
-  background: transparent;
 }
 .square:hover { filter: brightness(1.08); }
 .piece { pointer-events: none; line-height: 1; }
@@ -189,4 +181,16 @@ body {
   font-size: 0.7rem;
   color: var(--gold);
   margin-left: 0.3rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
 }
