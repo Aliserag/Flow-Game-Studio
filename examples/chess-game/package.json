@@ -6,6 +6,7 @@
     "test:unit": "flow test ./cadence/tests/ChessPiece_test.cdc ./cadence/tests/ChessGame_test.cdc",
     "test:e2e": "flow test ./cadence/tests/ChessGame_e2e_test.cdc",
     "dev": "cd client && npm run dev",
-    "build": "cd client && npm run build"
+    "build": "cd client && npm run build",
+    "typecheck": "cd client && npx tsc --noEmit"
   }
 }

@@ -7,6 +7,7 @@
     "deploy": "flow project deploy --update --network emulator",
     "test": "flow test cadence/tests/CoinFlip_test.cdc",
     "client:dev": "cd client && npm install && npm run dev",
+    "client:typecheck": "cd client && npx tsc --noEmit",
     "sponsor:start": "cd sponsor-service && npm install && npx ts-node server.ts"
   }
 }
