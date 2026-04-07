@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Countdown from 'react-countdown'
 import * as fcl from '@onflow/fcl'
 import ReactModal from 'react-modal'
 
-// Transactions
+// ============================================================
+// TRANSACTIONS (unchanged)
+// ============================================================
 const BET_ON_HEAD = `
 import FungibleToken from 0xFungibleToken
 import FlowToken from 0xFlowToken
@@ -61,7 +63,9 @@ transaction(id: UInt64) {
     }
 }`
 
-// Scripts
+// ============================================================
+// SCRIPTS — existing
+// ============================================================
 const GET_TOTAL_POOL = `
 import CoinFlip from 0xCoinFlip
 access(all) fun main(): UInt64 { return CoinFlip.totalPools }`
@@ -95,9 +99,65 @@ access(all) fun main(id: UInt64): Int {
     return diff > 0 ? diff : 0
 }`
 
+// ============================================================
+// SCRIPTS — new
+// ============================================================
+
+// Pool status: returns UInt8 raw value (0=OPEN, 1=CALCULATING, 2=CLOSE)
+const GET_POOL_STATUS = `
+import CoinFlip from 0xCoinFlip
+access(all) fun main(id: UInt64): UInt8 {
+    pre { CoinFlip.totalPools >= id && id != 0: "Pool does not exist" }
+    return CoinFlip.borrowPool(id: id).status.rawValue
+}`
+
+// Toss result: returns "" | "HEAD" | "TAIL"
+const GET_TOSS_RESULT = `
+import CoinFlip from 0xCoinFlip
+access(all) fun main(id: UInt64): String {
+    pre { CoinFlip.totalPools >= id && id != 0: "Pool does not exist" }
+    return CoinFlip.borrowPool(id: id).tossResult
+}`
+
+const IS_COIN_FLIPPED = `
+import CoinFlip from 0xCoinFlip
+access(all) fun main(id: UInt64): Bool {
+    pre { CoinFlip.totalPools >= id && id != 0: "Pool does not exist" }
+    return CoinFlip.borrowPool(id: id).coinFlipped
+}`
+
+// Returns bet_amount if user has a head bet, nil otherwise
+const GET_USER_BET_HEAD = `
+import CoinFlip from 0xCoinFlip
+access(all) fun main(poolId: UInt64, user: Address): UFix64? {
+    pre { CoinFlip.totalPools >= poolId && poolId != 0: "Pool does not exist" }
+    let pool = CoinFlip.borrowPool(id: poolId)
+    if pool.headInfo[user] != nil {
+        return pool.getHeadBetUserInfo(addr: user).bet_amount
+    }
+    return nil
+}`
+
+// Returns bet_amount if user has a tail bet, nil otherwise
+const GET_USER_BET_TAIL = `
+import CoinFlip from 0xCoinFlip
+access(all) fun main(poolId: UInt64, user: Address): UFix64? {
+    pre { CoinFlip.totalPools >= poolId && poolId != 0: "Pool does not exist" }
+    let pool = CoinFlip.borrowPool(id: poolId)
+    if pool.tailInfo[user] != nil {
+        return pool.getTailBetUserInfo(_addr: user).bet_amount
+    }
+    return nil
+}`
+
 ReactModal.setAppElement('#root')
 
-const CoinTossSection = () => {
+interface CoinTossSectionProps {
+  onPoolIdChange?: (id: number) => void
+}
+
+const CoinTossSection = ({ onPoolIdChange }: CoinTossSectionProps) => {
+  // Existing state
   const [coinSide, setCoinSide] = useState('')
   const [isFlipping, setIsFlipping] = useState(false)
   const [showModal, setShowModal] = useState(false)
@@ -110,6 +170,21 @@ const CoinTossSection = () => {
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null)
   const [status, setStatus] = useState('')
 
+  // New state
+  const [poolStatus, setPoolStatus] = useState<number>(0) // 0=OPEN, 1=CALCULATING, 2=CLOSE
+  const [tossResult, setTossResult] = useState<string>('') // "" | "HEAD" | "TAIL"
+  const [userBetSide, setUserBetSide] = useState<'Head' | 'Tail' | null>(null)
+  const [userBetAmount, setUserBetAmount] = useState<number>(0)
+  const [isPollingFlip, setIsPollingFlip] = useState(false)
+  const [rewardClaimed, setRewardClaimed] = useState(false)
+
+  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Notify parent when pool ID changes
+  useEffect(() => {
+    onPoolIdChange?.(currentPoolId)
+  }, [currentPoolId, onPoolIdChange])
+
   useEffect(() => {
     getTotalPool()
   }, [])
@@ -119,12 +194,62 @@ const CoinTossSection = () => {
     getHeadVaultBalance(currentPoolId)
     getTailVaultBalance(currentPoolId)
     getPoolTotalBalance(currentPoolId)
+    fetchPoolStatus(currentPoolId)
+    fetchTossResult(currentPoolId)
+    // Reset per-pool user bet state when pool changes
+    setUserBetSide(null)
+    setUserBetAmount(0)
+    setRewardClaimed(false)
   }, [currentPoolId])
 
   useEffect(() => {
     const id = setInterval(() => getTimeLeft(currentPoolId), 3000)
     return () => clearInterval(id)
   }, [currentPoolId])
+
+  // Start/stop polling for coin flip when countdown expires
+  useEffect(() => {
+    const countdownDone = timeRemaining !== null && timeRemaining <= 0
+    const notYetFlipped = tossResult === ''
+
+    if (countdownDone && notYetFlipped && !isPollingFlip) {
+      setIsPollingFlip(true)
+      pollingIntervalRef.current = setInterval(async () => {
+        try {
+          const flipped = await fcl.query({
+            cadence: IS_COIN_FLIPPED,
+            args: (arg: Function, t: any) => [arg(String(currentPoolId), t.UInt64)],
+          })
+          if (flipped === true) {
+            // Fetch the actual result
+            await fetchTossResult(currentPoolId)
+            await fetchPoolStatus(currentPoolId)
+            await getTotalPool() // Pool ID advances after toss
+            if (pollingIntervalRef.current) {
+              clearInterval(pollingIntervalRef.current)
+              pollingIntervalRef.current = null
+            }
+            setIsPollingFlip(false)
+          }
+        } catch (e) {
+          console.error('Polling isCoinFlipped:', e)
+        }
+      }, 2000)
+    }
+
+    if (tossResult !== '' && pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current)
+      pollingIntervalRef.current = null
+      setIsPollingFlip(false)
+    }
+
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current)
+        pollingIntervalRef.current = null
+      }
+    }
+  }, [timeRemaining, tossResult, currentPoolId, isPollingFlip])
 
   const headBalFormatted = parseFloat(headBalance.toString()).toFixed(1)
   const tailBalFormatted = parseFloat(tailBalance.toString()).toFixed(1)
@@ -146,7 +271,19 @@ const CoinTossSection = () => {
   }
 
   const renderer = ({ hours, minutes, seconds, completed }: { hours: number; minutes: number; seconds: number; completed: boolean }) => {
-    if (completed) return <div className="font-mono text-neon-amber text-sm tracking-widest">Time&apos;s up! Waiting for toss...</div>
+    if (completed) {
+      if (tossResult !== '') {
+        return <div className="font-mono text-neon-green text-sm tracking-widest">Coin has landed!</div>
+      }
+      return (
+        <div className="flex flex-col items-center gap-1">
+          <div className="font-mono text-neon-amber text-sm tracking-widest">Time&apos;s up! Waiting for toss...</div>
+          {isPollingFlip && (
+            <div className="font-mono text-degen-muted text-xs animate-pulse">Checking blockchain...</div>
+          )}
+        </div>
+      )
+    }
     return (
       <div className="flex items-end gap-2">
         <div>
@@ -167,7 +304,14 @@ const CoinTossSection = () => {
     )
   }
 
+  // Determine if user won
+  const userWon =
+    (tossResult === 'HEAD' && userBetSide === 'Head') ||
+    (tossResult === 'TAIL' && userBetSide === 'Tail')
+
+  // ============================================================
   // FCL Transactions
+  // ============================================================
   const betOnHead = async (id: number, amount: string) => {
     try {
       setStatus('Submitting HEAD bet...')
@@ -178,6 +322,8 @@ const CoinTossSection = () => {
       })
       await fcl.tx(txId).onceSealed()
       setStatus('Bet placed on HEADS! ✓')
+      setUserBetSide('Head')
+      setUserBetAmount(parseFloat(amount))
       getHeadVaultBalance(id)
       getPoolTotalBalance(id)
     } catch (e: any) {
@@ -195,6 +341,8 @@ const CoinTossSection = () => {
       })
       await fcl.tx(txId).onceSealed()
       setStatus('Bet placed on TAILS! ✓')
+      setUserBetSide('Tail')
+      setUserBetAmount(parseFloat(amount))
       getTailVaultBalance(id)
       getPoolTotalBalance(id)
     } catch (e: any) {
@@ -212,12 +360,15 @@ const CoinTossSection = () => {
       })
       await fcl.tx(txId).onceSealed()
       setStatus('Reward claimed! ✓')
+      setRewardClaimed(true)
     } catch (e: any) {
       setStatus(`Error: ${e.message}`)
     }
   }
 
-  // FCL Scripts
+  // ============================================================
+  // FCL Scripts — existing
+  // ============================================================
   const getTotalPool = async () => {
     try {
       const res = await fcl.query({ cadence: GET_TOTAL_POOL })
@@ -265,11 +416,38 @@ const CoinTossSection = () => {
     } catch (e) { console.error('getTimeLeft:', e) }
   }
 
+  // ============================================================
+  // FCL Scripts — new
+  // ============================================================
+  const fetchPoolStatus = async (id: number) => {
+    try {
+      const res = await fcl.query({
+        cadence: GET_POOL_STATUS,
+        args: (arg: Function, t: any) => [arg(String(id), t.UInt64)],
+      })
+      setPoolStatus(Number(res))
+    } catch (e) { console.error('getPoolStatus:', e) }
+  }
+
+  const fetchTossResult = async (id: number) => {
+    try {
+      const res = await fcl.query({
+        cadence: GET_TOSS_RESULT,
+        args: (arg: Function, t: any) => [arg(String(id), t.UInt64)],
+      })
+      setTossResult(typeof res === 'string' ? res : '')
+    } catch (e) { console.error('getTossResult:', e) }
+  }
+
   const headPct = poolTotalBalance > 0 ? ((headBalance / poolTotalBalance) * 100).toFixed(1) : '0.0'
   const tailPct = poolTotalBalance > 0 ? ((tailBalance / poolTotalBalance) * 100).toFixed(1) : '0.0'
 
-  // suppress unused warning — claimReward is available for external use
-  void claimReward
+  // Result display helpers
+  const resultLabel = tossResult === 'HEAD' ? 'HEADS WINS!' : tossResult === 'TAIL' ? 'TAILS WINS!' : null
+  const resultColor = tossResult === 'HEAD' ? 'neon-green-text' : tossResult === 'TAIL' ? 'neon-red-text' : ''
+
+  const poolIsOpen = poolStatus === 0
+  const poolStatusLabel = poolStatus === 1 ? 'COIN FLIPPING...' : poolStatus === 2 ? 'POOL CLOSED' : null
 
   return (
     <section className="py-8 px-4">
@@ -303,12 +481,51 @@ const CoinTossSection = () => {
               />
             </div>
 
-            <button
-              onClick={() => setShowModal(true)}
-              className="w-full font-display font-bold text-sm tracking-widest bg-neon-green text-degen-black py-3 px-6 hover:shadow-neon-green hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 uppercase"
-            >
-              BUY A TICKET
-            </button>
+            {/* Result banner */}
+            {resultLabel && (
+              <div className={`font-display font-bold text-2xl tracking-widest text-center ${resultColor} border border-current px-4 py-2`}>
+                🎯 {resultLabel}
+              </div>
+            )}
+
+            {/* Pool closed / flipping indicator */}
+            {!resultLabel && !poolIsOpen && poolStatusLabel && (
+              <div className="font-display font-bold text-sm tracking-widest text-neon-amber text-center animate-pulse uppercase">
+                {poolStatusLabel}
+              </div>
+            )}
+
+            {/* Bet button — only when pool is OPEN */}
+            {poolIsOpen && (
+              <button
+                onClick={() => setShowModal(true)}
+                className="w-full font-display font-bold text-sm tracking-widest bg-neon-green text-degen-black py-3 px-6 hover:shadow-neon-green hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 uppercase"
+              >
+                BUY A TICKET
+              </button>
+            )}
+
+            {/* Claim button — when user won and hasn't claimed yet */}
+            {userWon && !rewardClaimed && poolStatus === 2 && (
+              <button
+                onClick={() => claimReward(currentPoolId)}
+                className="w-full font-display font-bold text-sm tracking-widest bg-neon-amber text-degen-black py-3 px-6 hover:shadow-neon-amber hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 uppercase"
+              >
+                CLAIM REWARD
+              </button>
+            )}
+
+            {/* Claimed badge */}
+            {userWon && rewardClaimed && (
+              <div className="font-mono text-xs text-neon-green text-center">Reward claimed ✓</div>
+            )}
+
+            {/* User bet info */}
+            {userBetSide && (
+              <p className="font-mono text-xs text-degen-muted text-center">
+                Your bet: {userBetAmount.toFixed(1)} FLOW on {userBetSide === 'Head' ? 'HEADS' : 'TAILS'}
+              </p>
+            )}
 
             {status && (
               <p className="font-mono text-xs text-degen-muted text-center max-w-[200px] leading-relaxed">{status}</p>

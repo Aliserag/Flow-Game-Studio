@@ -1,11 +1,23 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import * as fcl from '@onflow/fcl'
 import CoinTossSection from '../components/CoinTossSection'
 import Leaderboard from '../components/Leaderboard'
-import PreviousWinners from '../components/PreviousWinners'
+import PreviousWinners, { type PoolRecord } from '../components/PreviousWinners'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 
 function Home() {
+  const [currentPoolId, setCurrentPoolId] = useState(1)
+  const [userAddr, setUserAddr] = useState<string | null>(null)
+  const [pools, setPools] = useState<PoolRecord[]>([])
+
+  useEffect(() => {
+    const unsub = fcl.currentUser.subscribe((u: any) => {
+      setUserAddr(u?.addr ?? null)
+    })
+    return unsub
+  }, [])
+
   return (
     <div className="min-h-screen bg-degen-black degen-grid-bg scanlines relative font-display">
       {/* Vignette overlay */}
@@ -14,9 +26,13 @@ function Home() {
       <div className="relative z-20">
         <Header />
         <main>
-          <CoinTossSection />
-          <PreviousWinners />
-          <Leaderboard />
+          <CoinTossSection onPoolIdChange={setCurrentPoolId} />
+          <PreviousWinners
+            currentPoolId={currentPoolId}
+            userAddr={userAddr}
+            onPoolsLoaded={setPools}
+          />
+          <Leaderboard pools={pools} />
         </main>
         <Footer />
       </div>
