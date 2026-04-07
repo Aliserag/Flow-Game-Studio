@@ -49,7 +49,7 @@
       "source": "../../cadence/contracts/standards/FungibleToken.cdc",
       "aliases": {
         "emulator": "ee82856bf20e2aa6",
-        "testing": "0000000000000002"
+        "testing": "0000000000000007"
       }
     },
     "RandomBeaconHistory": {
