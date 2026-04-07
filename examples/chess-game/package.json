@@ -2,7 +2,9 @@
   "name": "chess-on-flow",
   "version": "1.0.0",
   "scripts": {
-    "test": "flow test ./cadence/tests/ChessPiece_test.cdc ./cadence/tests/ChessGame_test.cdc",
+    "test": "flow test ./cadence/tests/ChessPiece_test.cdc ./cadence/tests/ChessGame_test.cdc ./cadence/tests/ChessGame_e2e_test.cdc",
+    "test:unit": "flow test ./cadence/tests/ChessPiece_test.cdc ./cadence/tests/ChessGame_test.cdc",
+    "test:e2e": "flow test ./cadence/tests/ChessGame_e2e_test.cdc",
     "dev": "cd client && npm run dev",
     "build": "cd client && npm run build"
   }
