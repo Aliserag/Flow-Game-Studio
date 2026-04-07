@@ -3,12 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prize Pool — The Show Must Go On</title>
+  <title>Prize Pool — Holographic Casino Noir</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Yeseva+One&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 </head>
 <body>
+
+  <!-- Fixed atmosphere layers -->
+  <div class="noise-overlay" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
 
   <!-- ── Header ── -->
   <header class="pool-header">
@@ -24,7 +28,7 @@
     aria-live="polite"
   ></div>
 
-  <!-- ── Prize display ── -->
+  <!-- ── Prize display — the absolute hero ── -->
   <section class="prize-display" aria-label="Current prize pool">
     <p class="prize-label">Total Prize Pool</p>
     <p class="prize-amount" id="total-deposited">— PTK</p>

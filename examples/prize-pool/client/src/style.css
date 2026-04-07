@@ -1,4 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Yeseva+One&display=swap');
+/* ═══════════════════════════════════════════════════════════════════════════
+   Prize Pool — Holographic Casino Noir
+   A high-roller crypto casino from 2035. The jackpot is the absolute hero.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* ─────────────────────────────────────────────
    Reset & box model
@@ -6,173 +11,336 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* ─────────────────────────────────────────────
-   Design tokens — 1970s Vegas Showroom Marquee
+   Design tokens — Holographic Casino Noir 2035
 ───────────────────────────────────────────── */
 :root {
-  --night:     #060810;
-  --stage:     #0C1018;
-  --showroom:  #12161F;
-  --marquee:   #FFB800;
-  --crimson:   #CC2200;
-  --electric:  #0055DD;
-  --cream:     #FFF8E0;
-  --chrome:    #B8C4CC;
-  --muted:     #4A4840;
-  --deco:      rgba(255, 184, 0, 0.15);
+  --abyss:       #03030A;
+  --chamber:     #0A0B14;
+  --vault:       #101220;
+  --gold:        #E8C547;
+  --gold-bright: #F5D86B;
+  --gold-dim:    rgba(232, 197, 71, 0.15);
+  --crimson:     #C41E3A;
+  --crimson-dim: rgba(196, 30, 58, 0.6);
+  --sapphire:    #1A4ED8;
+  --sapphire-dim:rgba(26, 78, 216, 0.6);
+  --silver:      #C4CAD4;
+  --muted:       #3A3D4A;
+  --cream:       #FAF0E6;
 
-  --font-display: 'Yeseva One', Georgia, serif;
-  --font-data:    'IBM Plex Mono', 'Courier New', monospace;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-data:    'JetBrains Mono', 'Courier New', monospace;
 }
 
 /* ─────────────────────────────────────────────
-   Body — deep night with warm stage lighting
+   Noise overlay — adds grain texture to the void
+───────────────────────────────────────────── */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
+/* ─────────────────────────────────────────────
+   Vignette — radial dark falloff from edges
+───────────────────────────────────────────── */
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    rgba(3, 3, 10, 0.75) 100%
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Body — near-black abyss, deep navy radial bloom
 ───────────────────────────────────────────── */
 body {
-  background-color: var(--night);
+  background-color: var(--abyss);
   background-image:
-    radial-gradient(ellipse 70% 40% at 50% 10%, rgba(255, 184, 0, 0.06) 0%, transparent 60%);
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(26, 78, 216, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 30% at 50% 100%, rgba(232, 197, 71, 0.04) 0%, transparent 60%);
   color: var(--cream);
   font-family: var(--font-data);
+  font-weight: 400;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2.5rem 1rem 4rem;
+  padding: 3rem 1rem 5rem;
 }
 
-/* ─────────────────────────────────────────────
-   Star field pseudo-element on body
-───────────────────────────────────────────── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image:
-    radial-gradient(1px 1px at 15% 20%, rgba(255,248,224,0.25) 0%, transparent 100%),
-    radial-gradient(1px 1px at 72% 8%,  rgba(255,248,224,0.20) 0%, transparent 100%),
-    radial-gradient(1px 1px at 40% 35%, rgba(255,248,224,0.15) 0%, transparent 100%),
-    radial-gradient(1px 1px at 88% 42%, rgba(255,248,224,0.18) 0%, transparent 100%),
-    radial-gradient(1px 1px at 5%  60%, rgba(255,248,224,0.12) 0%, transparent 100%),
-    radial-gradient(1px 1px at 55% 75%, rgba(255,248,224,0.10) 0%, transparent 100%),
-    radial-gradient(1px 1px at 30% 90%, rgba(255,248,224,0.08) 0%, transparent 100%),
-    radial-gradient(1px 1px at 92% 80%, rgba(255,248,224,0.14) 0%, transparent 100%);
-}
-
-/* Stack body children above the star field */
+/* Stack all body children above the fixed overlays */
 body > * { position: relative; z-index: 1; }
+.noise-overlay,
+.vignette { z-index: 0; }
 
 /* ─────────────────────────────────────────────
    Header
 ───────────────────────────────────────────── */
 .pool-header {
   text-align: center;
-  margin-bottom: 2.5rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid rgba(255, 184, 0, 0.25);
+  margin-bottom: 3rem;
+  padding-bottom: 2.5rem;
   width: 100%;
   max-width: 960px;
+  position: relative;
 }
 
-/* Keyframe: slow warm breathing pulse on the title */
-@keyframes marqueeShimmer {
+/* Decorative bottom rule on header */
+.pool-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(232, 197, 71, 0.15) 20%,
+    rgba(232, 197, 71, 0.5) 50%,
+    rgba(232, 197, 71, 0.15) 80%,
+    transparent
+  );
+}
+
+/* Keyframe: breathing gold shimmer on the title */
+@keyframes titleShimmer {
   0%, 100% {
     text-shadow:
-      0 0 30px rgba(255, 184, 0, 0.6),
-      0 0 60px rgba(255, 184, 0, 0.3),
-      0 0 100px rgba(255, 184, 0, 0.1),
-      2px 2px 0 rgba(0, 0, 0, 0.5);
+      0 0 25px rgba(232, 197, 71, 0.5),
+      0 0 55px rgba(232, 197, 71, 0.2),
+      0 0 100px rgba(232, 197, 71, 0.08);
+    color: var(--gold);
   }
-  50% {
+  33% {
     text-shadow:
-      0 0 40px rgba(255, 184, 0, 0.85),
-      0 0 80px rgba(255, 184, 0, 0.45),
-      0 0 140px rgba(255, 184, 0, 0.2),
-      2px 2px 0 rgba(0, 0, 0, 0.5);
+      0 0 35px rgba(245, 216, 107, 0.75),
+      0 0 75px rgba(245, 216, 107, 0.35),
+      0 0 140px rgba(245, 216, 107, 0.15),
+      0 2px 0 rgba(0, 0, 0, 0.6);
+    color: var(--gold-bright);
+  }
+  66% {
+    text-shadow:
+      0 0 20px rgba(232, 197, 71, 0.4),
+      0 0 45px rgba(232, 197, 71, 0.15),
+      0 0 90px rgba(232, 197, 71, 0.06);
+    color: var(--gold);
   }
 }
 
 .pool-title {
   font-family: var(--font-display);
+  font-weight: 900;
   font-size: clamp(3.5rem, 8vw, 7rem);
   line-height: 0.95;
-  color: var(--marquee);
-  letter-spacing: 0.02em;
-  text-shadow:
-    0 0 30px rgba(255, 184, 0, 0.6),
-    0 0 60px rgba(255, 184, 0, 0.3),
-    0 0 100px rgba(255, 184, 0, 0.1),
-    2px 2px 0 rgba(0, 0, 0, 0.5);
-  animation: marqueeShimmer 4s ease-in-out infinite;
+  letter-spacing: 0.03em;
+  color: var(--gold);
+  animation: titleShimmer 5s ease-in-out infinite;
 }
 
 .pool-subtitle {
   font-family: var(--font-data);
-  font-size: 0.7rem;
-  letter-spacing: 0.3em;
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.35em;
   text-transform: uppercase;
-  color: var(--chrome);
-  margin-top: 0.75rem;
+  color: var(--silver);
+  opacity: 0.6;
+  margin-top: 1rem;
 }
 
 /* ─────────────────────────────────────────────
-   Prize display — hero strip
+   Status message
+───────────────────────────────────────────── */
+.status-message {
+  font-family: var(--font-data);
+  font-size: 0.8rem;
+  font-weight: 400;
+  padding: 0.65rem 1.25rem;
+  margin-bottom: 1.5rem;
+  display: none;
+  width: 100%;
+  max-width: 960px;
+  line-height: 1.65;
+  background: transparent;
+}
+
+.status-message.status-success {
+  display: block;
+  border-left: 3px solid #00BB55;
+  color: #00CC66;
+  background: rgba(0, 187, 85, 0.04);
+}
+
+.status-message.status-error {
+  display: block;
+  border-left: 3px solid var(--crimson);
+  color: #FF4455;
+  background: rgba(196, 30, 58, 0.05);
+}
+
+.status-message.status-info {
+  display: block;
+  border-left: 3px solid var(--gold);
+  color: var(--silver);
+  background: rgba(232, 197, 71, 0.04);
+}
+
+/* ─────────────────────────────────────────────
+   Prize display — the absolute hero
 ───────────────────────────────────────────── */
 
-/* Keyframe: same breathing shimmer for the prize amount */
+/* Keyframe: multi-layer shimmer cycling dim → blazing gold */
 @keyframes prizeShimmer {
-  0%, 100% {
+  0% {
     text-shadow:
-      0 0 30px rgba(255, 184, 0, 0.55),
-      0 0 70px rgba(255, 184, 0, 0.25),
-      0 0 120px rgba(255, 184, 0, 0.08);
+      0 0 40px rgba(232, 197, 71, 0.45),
+      0 0 80px rgba(232, 197, 71, 0.18),
+      0 0 150px rgba(232, 197, 71, 0.07);
+    color: var(--gold);
+  }
+  25% {
+    text-shadow:
+      0 0 60px rgba(245, 216, 107, 0.85),
+      0 0 120px rgba(245, 216, 107, 0.45),
+      0 0 220px rgba(245, 216, 107, 0.2),
+      0 0 350px rgba(232, 197, 71, 0.08);
+    color: var(--gold-bright);
   }
   50% {
     text-shadow:
-      0 0 45px rgba(255, 184, 0, 0.8),
-      0 0 100px rgba(255, 184, 0, 0.4),
-      0 0 180px rgba(255, 184, 0, 0.15);
+      0 0 30px rgba(232, 197, 71, 0.35),
+      0 0 65px rgba(232, 197, 71, 0.14),
+      0 0 120px rgba(232, 197, 71, 0.05);
+    color: var(--gold);
+  }
+  75% {
+    text-shadow:
+      0 0 55px rgba(245, 216, 107, 0.75),
+      0 0 110px rgba(245, 216, 107, 0.38),
+      0 0 200px rgba(245, 216, 107, 0.16),
+      0 0 320px rgba(232, 197, 71, 0.06);
+    color: var(--gold-bright);
+  }
+  100% {
+    text-shadow:
+      0 0 40px rgba(232, 197, 71, 0.45),
+      0 0 80px rgba(232, 197, 71, 0.18),
+      0 0 150px rgba(232, 197, 71, 0.07);
+    color: var(--gold);
   }
 }
 
 .prize-display {
-  background: var(--stage);
-  border-top: 1px solid rgba(255, 184, 0, 0.2);
-  border-bottom: 1px solid rgba(255, 184, 0, 0.2);
-  padding: 2.5rem 3rem;
-  text-align: center;
-  margin-bottom: 1.5rem;
   width: 100%;
-  max-width: 480px;
+  max-width: 960px;
+  text-align: center;
+  padding: 3.5rem 2rem;
+  margin-bottom: 2rem;
   position: relative;
+  background: radial-gradient(
+    ellipse 60% 80% at 50% 50%,
+    rgba(232, 197, 71, 0.055) 0%,
+    transparent 70%
+  );
   overflow: hidden;
+}
+
+/* Top decorative divider */
+.prize-display::before {
+  content: '◆ ─────────────────────────────────── ◆';
+  position: absolute;
+  top: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-data);
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  color: rgba(232, 197, 71, 0.25);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Bottom decorative divider */
+.prize-display::after {
+  content: '◆ ─────────────────────────────────── ◆';
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-data);
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  color: rgba(232, 197, 71, 0.25);
+  white-space: nowrap;
+  pointer-events: none;
 }
 
 .prize-label {
   font-family: var(--font-data);
-  font-size: 0.65rem;
-  letter-spacing: 0.4em;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.5em;
   text-transform: uppercase;
-  color: var(--chrome);
-  margin-bottom: 0.5rem;
+  color: var(--silver);
+  opacity: 0.5;
+  margin-bottom: 0.75rem;
 }
 
+/* The prize amount — most dominant element on the page */
 .prize-amount {
   font-family: var(--font-display);
-  font-size: clamp(4rem, 10vw, 8rem);
+  font-weight: 900;
+  font-size: clamp(5rem, 12vw, 10rem);
   line-height: 1;
-  color: var(--marquee);
-  letter-spacing: 0.01em;
-  animation: prizeShimmer 4s ease-in-out infinite;
+  letter-spacing: -0.01em;
+  color: var(--gold);
+  animation: prizeShimmer 6s ease-in-out infinite;
+  position: relative;
+  display: inline-block;
+}
+
+/* Gold underline glow beneath the prize number */
+.prize-amount::before {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--gold-dim) 20%,
+    rgba(232, 197, 71, 0.6) 50%,
+    var(--gold-dim) 80%,
+    transparent
+  );
+  filter: blur(1px);
 }
 
 .prize-currency {
   font-family: var(--font-data);
-  font-size: 0.8rem;
-  color: var(--chrome);
-  margin-top: 0.4rem;
-  letter-spacing: 0.12em;
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--silver);
+  opacity: 0.4;
+  margin-top: 1.25rem;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
 }
 
@@ -181,69 +349,45 @@ body > * { position: relative; z-index: 1; }
 ───────────────────────────────────────────── */
 .pool-stats {
   display: flex;
-  gap: 0.75rem;
-  margin-bottom: 1.75rem;
+  gap: 0.625rem;
+  margin-bottom: 2rem;
   width: 100%;
-  max-width: 480px;
+  max-width: 960px;
   flex-wrap: wrap;
 }
 
 .stat-chip {
   flex: 1;
-  min-width: 96px;
-  background: var(--showroom);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  padding: 0.75rem 1rem;
+  min-width: 100px;
+  background: var(--chamber);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.875rem 1rem;
   text-align: center;
+  transition: border-color 0.2s ease, transform 0.18s ease, box-shadow 0.2s ease;
+  cursor: default;
+}
+
+.stat-chip:hover {
+  border-color: rgba(232, 197, 71, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(232, 197, 71, 0.07);
 }
 
 .stat-chip .label {
   font-family: var(--font-data);
-  font-size: 0.65rem;
-  letter-spacing: 0.15em;
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
 .stat-chip .value {
   font-family: var(--font-data);
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-weight: 500;
+  font-size: 1.05rem;
   color: var(--cream);
-  margin-top: 0.3rem;
-}
-
-/* ─────────────────────────────────────────────
-   Status message
-───────────────────────────────────────────── */
-.status-message {
-  font-family: var(--font-data);
-  font-size: 0.82rem;
-  padding: 0.65rem 1.25rem;
-  margin-bottom: 1.25rem;
-  display: none;
-  width: 100%;
-  max-width: 480px;
-  line-height: 1.6;
-  background: transparent;
-}
-
-.status-message.status-success {
-  display: block;
-  border-left: 4px solid #00BB44;
-  color: #00BB44;
-}
-
-.status-message.status-error {
-  display: block;
-  border-left: 4px solid var(--crimson);
-  color: #FF5533;
-}
-
-.status-message.status-info {
-  display: block;
-  border-left: 4px solid var(--marquee);
-  color: var(--chrome);
+  margin-top: 0.35rem;
 }
 
 /* ─────────────────────────────────────────────
@@ -252,141 +396,185 @@ body > * { position: relative; z-index: 1; }
 .panels-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 1.25rem;
   width: 100%;
   max-width: 960px;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.5rem;
 }
 
 @media (max-width: 720px) {
   .panels-layout { grid-template-columns: 1fr; }
-  .pool-stats { flex-direction: column; }
+  .pool-stats    { flex-direction: column; }
 }
 
 /* ─────────────────────────────────────────────
-   Panels — stage set aesthetic, no rounded corners
+   Panels — glass morphism + class-specific accents
 ───────────────────────────────────────────── */
 .panel {
-  background: var(--stage);
+  background: rgba(10, 11, 20, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 0;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: box-shadow 0.25s ease;
 }
 
-/* EVM / MetaMask panel — crimson left border */
+.panel:hover {
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* EVM / MetaMask panel — crimson top accent */
 .panel:first-child {
-  border-left: 4px solid var(--crimson);
-  box-shadow: inset 0 0 40px rgba(204, 34, 0, 0.04);
+  border-top: 1px solid var(--crimson-dim);
+  box-shadow: inset 0 1px 0 rgba(196, 30, 58, 0.15);
 }
 
-/* Flow / Cadence panel — electric blue left border */
+/* Flow / Cadence panel — sapphire top accent */
 .panel:last-child {
-  border-left: 4px solid var(--electric);
-  box-shadow: inset 0 0 40px rgba(0, 85, 221, 0.04);
+  border-top: 1px solid var(--sapphire-dim);
+  box-shadow: inset 0 1px 0 rgba(26, 78, 216, 0.15);
 }
 
 .panel-header {
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1.1rem 1.4rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.875rem;
+  position: relative;
+}
+
+/* Horizontal divider with diamond ornament */
+.panel-header::after {
+  content: '◇';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.08);
+  line-height: 1;
+  background: var(--chamber);
+  padding: 0 0.4rem;
+  z-index: 1;
+}
+
+.panel-header::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 1.4rem;
+  right: 1.4rem;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .panel-header h2 {
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-weight: 700;
+  font-size: 1.05rem;
   color: var(--cream);
   line-height: 1.2;
 }
 
 .panel-body {
-  padding: 1.25rem;
+  padding: 1.4rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
 /* ─────────────────────────────────────────────
-   Badges — theater credentials
+   Badges
 ───────────────────────────────────────────── */
 .badge {
   font-family: var(--font-data);
-  font-weight: 600;
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
+  font-weight: 500;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  padding: 3px 9px;
+  padding: 3px 8px;
   flex-shrink: 0;
+  border-radius: 0;
 }
 
 .badge-evm {
-  color: var(--crimson);
-  border: 1px solid var(--crimson);
-  background: transparent;
+  color: #FF5570;
+  border: 1px solid rgba(196, 30, 58, 0.5);
+  background: rgba(196, 30, 58, 0.08);
 }
 
 .badge-flow {
-  color: var(--electric);
-  border: 1px solid var(--electric);
-  background: transparent;
+  color: #5588FF;
+  border: 1px solid rgba(26, 78, 216, 0.5);
+  background: rgba(26, 78, 216, 0.08);
 }
 
 .badge-admin {
-  color: var(--marquee);
-  border: 1px solid var(--marquee);
-  background: transparent;
+  color: var(--gold);
+  border: 1px solid rgba(232, 197, 71, 0.4);
+  background: rgba(232, 197, 71, 0.06);
 }
 
 /* ─────────────────────────────────────────────
-   Feature note
+   Feature note — context card
 ───────────────────────────────────────────── */
 .feature-note {
   font-family: var(--font-data);
-  font-size: 0.8rem;
+  font-size: 0.76rem;
+  font-weight: 400;
   font-style: italic;
-  color: var(--chrome);
-  line-height: 1.65;
-  padding: 0.75rem 1rem;
-  background: rgba(0, 0, 0, 0.25);
-  border-left: 2px solid rgba(255, 184, 0, 0.2);
+  color: var(--silver);
+  opacity: 0.65;
+  line-height: 1.7;
+  padding: 0.875rem 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 2px solid rgba(232, 197, 71, 0.15);
 }
 
 .feature-note strong {
   font-style: normal;
   color: var(--cream);
+  opacity: 1;
 }
 
 .feature-note code {
   font-style: normal;
-  color: var(--marquee);
-  background: rgba(255, 184, 0, 0.1);
-  padding: 1px 4px;
+  color: var(--gold);
+  background: rgba(232, 197, 71, 0.08);
+  padding: 1px 5px;
 }
 
 /* ─────────────────────────────────────────────
    Wallet status box
 ───────────────────────────────────────────── */
 .wallet-status-box {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 184, 0, 0.2);
-  padding: 0.75rem 1rem;
-  font-size: 0.82rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(232, 197, 71, 0.12);
+  padding: 0.875rem 1rem;
+  font-size: 0.8rem;
 }
 
 .wallet-status-box .label {
   font-family: var(--font-data);
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.35rem;
 }
 
-/* "NOW PLAYING" connected indicator dot */
+/* Pulsing dot — live indicator */
 .wallet-status-box .label::before {
-  content: '● ';
-  color: var(--marquee);
-  animation: blink 2s step-end infinite;
+  content: '●  ';
+  color: var(--gold);
+  animation: pulseOpacity 2.5s ease-in-out infinite;
+}
+
+@keyframes pulseOpacity {
+  0%, 100% { opacity: 0.9; }
+  50%       { opacity: 0.25; }
 }
 
 @keyframes blink {
@@ -396,214 +584,323 @@ body > * { position: relative; z-index: 1; }
 
 .wallet-addr {
   font-family: var(--font-data);
-  font-size: 0.78rem;
-  color: var(--marquee);
+  font-size: 0.76rem;
+  font-weight: 400;
+  color: var(--gold);
   word-break: break-all;
+  opacity: 0.85;
 }
 
 /* ─────────────────────────────────────────────
-   Deposit form — betting slip aesthetic
+   Deposit form
 ───────────────────────────────────────────── */
 .deposit-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.45rem;
 }
 
 .deposit-group label {
   font-family: var(--font-data);
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--chrome);
+  color: var(--silver);
+  opacity: 0.6;
 }
 
 .deposit-group input {
   width: 100%;
-  background: var(--showroom);
-  border: 1px dashed rgba(255, 184, 0, 0.3);
+  background: var(--vault);
+  border: 1px solid rgba(232, 197, 71, 0.18);
   color: var(--cream);
-  padding: 0.65rem 1rem;
-  font-size: 0.9rem;
+  padding: 0.7rem 1rem;
+  font-size: 0.88rem;
   font-family: var(--font-data);
-  transition: border-color 0.2s;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   outline: none;
 }
 
 .deposit-group input:focus {
-  border-color: var(--marquee);
-  border-style: solid;
+  border-color: rgba(232, 197, 71, 0.55);
+  box-shadow: 0 0 0 1px rgba(232, 197, 71, 0.12);
 }
 
 .deposit-group input::placeholder {
   color: var(--muted);
+  opacity: 0.6;
 }
 
 /* ─────────────────────────────────────────────
-   Buttons
+   Buttons — golden shimmer sweep on hover
 ───────────────────────────────────────────── */
 .btn {
   font-family: var(--font-data);
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   border: none;
-  padding: 0.75rem 1.75rem;
+  padding: 0.8rem 1.75rem;
   cursor: pointer;
-  transition: box-shadow 0.15s, transform 0.15s;
+  transition: box-shadow 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
   display: inline-block;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
 }
 
-/* MetaMask / Deposit — crimson poster button */
+/* Shimmer sweep pseudo-element */
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(232, 197, 71, 0.18) 50%,
+    transparent 80%
+  );
+  transform: skewX(-15deg);
+  transition: left 0s;
+  pointer-events: none;
+}
+
+.btn:hover:not(:disabled)::after {
+  left: 160%;
+  transition: left 0.5s ease;
+}
+
+/* MetaMask / Deposit — deep crimson gradient */
 .btn-enter {
-  background: var(--crimson);
+  background: linear-gradient(135deg, #9B1530 0%, #6B0E22 60%, #4A0A18 100%);
   color: var(--cream);
-  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 2px 12px rgba(196, 30, 58, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .btn-enter:hover:not(:disabled) {
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
-  transform: translate(-1px, -1px);
+  border-color: rgba(232, 197, 71, 0.45);
+  box-shadow:
+    0 4px 20px rgba(196, 30, 58, 0.4),
+    0 0 0 1px rgba(232, 197, 71, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
 }
 
-/* Flow wallet — electric blue poster button */
+/* Flow wallet — deep sapphire gradient */
 .btn-pick {
-  background: var(--electric);
+  background: linear-gradient(135deg, #1040AA 0%, #0B2B72 60%, #081C4D 100%);
   color: var(--cream);
-  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 2px 12px rgba(26, 78, 216, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .btn-pick:hover:not(:disabled) {
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
-  transform: translate(-1px, -1px);
+  border-color: rgba(232, 197, 71, 0.45);
+  box-shadow:
+    0 4px 20px rgba(26, 78, 216, 0.4),
+    0 0 0 1px rgba(232, 197, 71, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
 }
 
-/* Ghost — transparent, chrome border */
+/* Ghost — minimal, silver border */
 .btn-ghost {
   background: transparent;
-  border: 1px solid var(--chrome);
-  color: var(--cream);
-  box-shadow: none;
+  border-color: rgba(196, 202, 212, 0.2);
+  color: var(--silver);
+  opacity: 0.75;
 }
 
 .btn-ghost:hover:not(:disabled) {
-  border-color: var(--marquee);
-  color: var(--marquee);
+  border-color: rgba(232, 197, 71, 0.4);
+  color: var(--gold);
+  opacity: 1;
 }
 
-/* Admin — marquee gold */
+/* Admin — gold button */
 .btn-admin {
-  background: var(--marquee);
-  color: var(--night);
+  background: linear-gradient(135deg, #C8A832 0%, #9A7E1E 100%);
+  color: var(--abyss);
   font-weight: 700;
-  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+  border-color: transparent;
+  box-shadow:
+    0 2px 14px rgba(232, 197, 71, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .btn-admin:hover:not(:disabled) {
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
-  transform: translate(-1px, -1px);
+  border-color: rgba(245, 216, 107, 0.6);
+  box-shadow:
+    0 4px 24px rgba(232, 197, 71, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
 }
 
 /* Small variant */
 .btn-sm {
   padding: 0.4rem 0.875rem;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
 }
 
 .btn:disabled {
-  opacity: 0.35;
+  opacity: 0.28;
   cursor: not-allowed;
   transform: none !important;
 }
 
 /* ─────────────────────────────────────────────
-   Trophy cards — winning ticket stubs
+   Trophy cards — award plaques
 ───────────────────────────────────────────── */
 .trophies-container {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.5rem;
 }
 
 .trophies-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
 }
 
 .trophies-header strong {
   font-family: var(--font-data);
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--cream);
+  letter-spacing: 0.12em;
+  color: var(--silver);
+  opacity: 0.7;
+}
+
+/* Keyframe: gold shimmer sweep on trophy card hover */
+@keyframes goldSweep {
+  0%   { left: -100%; }
+  100% { left: 160%;  }
 }
 
 .trophy-card {
-  background: var(--showroom);
-  border: 1px dashed rgba(255, 184, 0, 0.3);
-  padding: 0.75rem 1rem;
+  background: var(--chamber);
+  border: 1px solid rgba(232, 197, 71, 0.18);
+  padding: 0.875rem 1rem;
   display: flex;
-  gap: 0.875rem;
+  gap: 1rem;
   align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.trophy-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(232, 197, 71, 0.06) 50%,
+    transparent 80%
+  );
+  transform: skewX(-10deg);
+  pointer-events: none;
+}
+
+.trophy-card:hover {
+  border-color: rgba(232, 197, 71, 0.4);
+  box-shadow: 0 4px 20px rgba(232, 197, 71, 0.06);
+}
+
+.trophy-card:hover::before {
+  animation: goldSweep 0.6s ease forwards;
+}
+
+/* Trophy icon — CSS gold ring effect */
 .trophy-icon {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   line-height: 1;
   flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(232, 197, 71, 0.06);
+  border: 1px solid rgba(232, 197, 71, 0.3);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 2px var(--chamber),
+    0 0 0 3px rgba(232, 197, 71, 0.12),
+    0 0 16px rgba(232, 197, 71, 0.08);
 }
 
 .trophy-details {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  font-size: 0.78rem;
+  gap: 4px;
+  font-size: 0.76rem;
   font-family: var(--font-data);
 }
 
 .trophy-details strong {
-  font-size: 0.85rem;
-  color: var(--marquee);
-  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--gold);
+  font-weight: 500;
 }
 
 .trophy-block {
   color: var(--muted);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   letter-spacing: 0.04em;
 }
 
 /* ─────────────────────────────────────────────
-   Admin panel
+   Admin panel — gold top border, subtle glow bg
 ───────────────────────────────────────────── */
 #admin-panel {
   width: 100%;
   max-width: 960px;
-  background: rgba(255, 184, 0, 0.03);
-  border: 1px solid rgba(255, 184, 0, 0.3);
-  padding: 1.75rem;
+  background: rgba(10, 11, 20, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(232, 197, 71, 0.2);
+  border-top: 2px solid rgba(232, 197, 71, 0.5);
+  padding: 2rem;
   margin-bottom: 1.75rem;
+  position: relative;
+  box-shadow:
+    0 0 40px rgba(232, 197, 71, 0.04),
+    inset 0 1px 0 rgba(232, 197, 71, 0.08);
 }
 
 #admin-panel h3 {
   font-family: var(--font-display);
-  font-size: 1.3rem;
-  color: var(--marquee);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--gold);
   letter-spacing: 0.02em;
   margin-bottom: 0.5rem;
 }
 
 #admin-panel .admin-desc {
   font-family: var(--font-data);
-  font-size: 0.78rem;
-  color: rgba(184, 196, 204, 0.7);
-  margin-bottom: 1.5rem;
-  line-height: 1.7;
+  font-size: 0.76rem;
+  color: var(--silver);
+  opacity: 0.5;
+  margin-bottom: 1.75rem;
+  line-height: 1.75;
 }
 
 .admin-grid {
@@ -621,30 +918,32 @@ body > * { position: relative; z-index: 1; }
 
 .admin-field label {
   font-family: var(--font-data);
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 184, 0, 0.7);
+  color: rgba(232, 197, 71, 0.6);
 }
 
 .admin-field input {
-  background: var(--showroom);
-  border: 1px dashed rgba(255, 184, 0, 0.25);
+  background: var(--vault);
+  border: 1px solid rgba(232, 197, 71, 0.14);
   color: var(--cream);
   padding: 0.6rem 0.875rem;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-family: var(--font-data);
-  transition: border-color 0.2s;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   outline: none;
 }
 
 .admin-field input:focus {
-  border-color: var(--marquee);
-  border-style: solid;
+  border-color: rgba(232, 197, 71, 0.45);
+  box-shadow: 0 0 0 1px rgba(232, 197, 71, 0.1);
 }
 
 .admin-field input::placeholder {
   color: var(--muted);
+  opacity: 0.5;
 }
 
 /* ─────────────────────────────────────────────
@@ -653,21 +952,66 @@ body > * { position: relative; z-index: 1; }
 .empty-state {
   font-family: var(--font-data);
   font-style: italic;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--muted);
   text-align: center;
-  padding: 1.5rem 0;
+  padding: 1.75rem 0;
+  opacity: 0.65;
 }
 
 .text-muted {
   font-family: var(--font-data);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--muted);
+  opacity: 0.8;
 }
 
 .tx-link {
   font-family: var(--font-data);
-  font-size: 0.75rem;
-  color: var(--electric);
+  font-size: 0.72rem;
+  color: var(--sapphire);
   word-break: break-all;
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+}
+
+.tx-link:hover { opacity: 1; }
+
+/* ─────────────────────────────────────────────
+   Mobile responsive
+───────────────────────────────────────────── */
+@media (max-width: 720px) {
+  body {
+    padding: 2rem 0.875rem 3.5rem;
+  }
+
+  .pool-title {
+    font-size: clamp(3rem, 14vw, 5.5rem);
+  }
+
+  .prize-display {
+    padding: 2.5rem 1.25rem;
+  }
+
+  .prize-amount {
+    font-size: clamp(4rem, 18vw, 7rem);
+  }
+
+  .prize-display::before,
+  .prize-display::after {
+    display: none;
+  }
+
+  .panel-header h2 {
+    font-size: 0.95rem;
+  }
+
+  #admin-panel {
+    padding: 1.25rem;
+  }
+
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
 }
