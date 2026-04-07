@@ -19,12 +19,17 @@
         "testing": "0000000000000007"
       }
     },
-    "RandomBeaconHistory": {
-      "source": "../../cadence/contracts/standards/RandomBeaconHistory.cdc",
+    "FungibleToken": {
+      "source": "../../cadence/contracts/standards/FungibleToken.cdc",
       "aliases": {
-        "emulator": "f8d6e0586b0a20c7",
-        "testnet": "8c5303eaa26202d6",
-        "mainnet": "d7431fd358660d73",
+        "emulator": "ee82856bf20e2aa6",
+        "testing": "0000000000000007"
+      }
+    },
+    "FlowToken": {
+      "source": "../../cadence/contracts/standards/FlowToken.cdc",
+      "aliases": {
+        "emulator": "0ae53cb6e3f42a79",
         "testing": "0000000000000007"
       }
     }

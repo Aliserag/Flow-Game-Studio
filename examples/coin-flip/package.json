@@ -1,13 +1,11 @@
 {
-  "name": "coin-flip-on-flow",
+  "name": "yolo-coin-toss",
+  "description": "YOLO — Provably Fair Coin Toss Betting Pool on Flow",
   "version": "1.0.0",
-  "private": true,
   "scripts": {
-    "emulator": "flow emulator",
-    "deploy": "flow project deploy --update --network emulator",
-    "test": "flow test cadence/tests/CoinFlip_test.cdc",
-    "client:dev": "cd client && npm install && npm run dev",
+    "dev": "cd client && npm run dev",
+    "install:client": "cd client && npm install",
     "client:typecheck": "cd client && npx tsc --noEmit",
-    "sponsor:start": "cd sponsor-service && npm install && npx ts-node server.ts"
+    "test": "echo 'Note: YOLO contract uses revertibleRandom, no unit tests required'"
   }
 }

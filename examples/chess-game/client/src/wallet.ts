@@ -2,7 +2,7 @@ import * as fcl from '@onflow/fcl'
 
 export function configureFCL(): void {
   fcl.config({
-    'accessNode.api': 'http://localhost:8080',
+    'accessNode.api': 'http://localhost:8888',
     'flow.network': 'emulator',
     'discovery.wallet': 'http://localhost:8701/fcl/authn',
     'app.detail.title': 'Chess on Flow',

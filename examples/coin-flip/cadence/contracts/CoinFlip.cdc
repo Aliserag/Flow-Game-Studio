@@ -1,251 +1,456 @@
-/// CoinFlip — provably fair coin flip using Flow's RandomBeaconHistory VRF.
-///
-/// Pattern: commit/reveal
-///   1. Player submits SHA3_256(secret ++ playerAddress) as a commitment hash.
-///      The current block height is recorded as the commit block.
-///   2. At least one block must pass so that block's randomness is sealed.
-///   3. Player reveals the secret; the contract fetches
-///      RandomBeaconHistory.sourceOfRandomness(atBlockHeight: commitBlock),
-///      XORs it with the secret, and determines heads (true) or tails (false).
-///
-/// Cadence 1.0 — no `pub`/`priv`, no 0.x patterns.
-import RandomBeaconHistory from "RandomBeaconHistory"
+import FungibleToken from 0xFungibleToken
+import FlowToken from 0xFlowToken
 
+/// CoinFlip — YOLO betting pool on Flow blockchain
+///
+/// Users bet FLOW tokens on HEAD or TAIL in time-limited pools.
+/// After endTime, admin tosses using revertibleRandom(), losers' tokens
+/// go to pool vault, winners claim proportional share + original bet.
 access(all) contract CoinFlip {
 
-    // -------------------------------------------------------------------------
-    // Events
-    // -------------------------------------------------------------------------
+    // ========================================================================
+    // EVENTS
+    // ========================================================================
+    access(all) event BetOnHead(id: UInt64, address: Address, amount: UFix64)
+    access(all) event BetOnTail(id: UInt64, address: Address, amount: UFix64)
+    access(all) event NewPoolCreated(id: UInt64)
+    access(all) event RewardClaimed(id: UInt64, address: Address, amount: UFix64)
+    access(all) event ContractInitialized()
 
-    /// Fired when a player submits a commit hash.
-    access(all) event FlipCommitted(
-        player: Address,
-        flipId: UInt64,
-        commitBlockHeight: UInt64
-    )
+    // ========================================================================
+    // STATE
+    // ========================================================================
+    access(all) var totalPools: UInt64
 
-    /// Fired when a flip is revealed and the result is determined.
-    access(all) event FlipRevealed(
-        player: Address,
-        flipId: UInt64,
-        result: Bool,
-        playerChoice: Bool,
-        won: Bool
-    )
+    /// Entitlement required to update winning share calculations
+    access(all) entitlement UpdateWinnings
 
-    // -------------------------------------------------------------------------
-    // State
-    // -------------------------------------------------------------------------
+    access(all) enum PoolStatus: UInt8 {
+        access(all) case OPEN
+        access(all) case CALCULATING
+        access(all) case CLOSE
+    }
 
-    /// Monotonically increasing ID assigned to each new commit.
-    access(all) var nextFlipId: UInt64
+    // ========================================================================
+    // USER STRUCTS
+    // ========================================================================
+    access(all) struct HeadBet_User {
+        access(all) let choice: String
+        access(all) let bet_amount: UFix64
+        access(all) var claim_amount: UFix64
+        access(all) var rewardClaimed: Bool
 
-    /// Lifetime statistics.
-    access(all) var totalFlips: UInt64
-    access(all) var totalWins: UInt64
+        init(_choise: String, b_amount: UFix64) {
+            self.choice = _choise
+            self.bet_amount = b_amount
+            self.claim_amount = 0.0
+            self.rewardClaimed = false
+        }
 
-    /// player address → flip ID → Commit
-    access(all) var commits: {Address: {UInt64: Commit}}
+        access(all) fun setClaimAmount(newAmount: UFix64) {
+            self.claim_amount = newAmount
+        }
 
-    // -------------------------------------------------------------------------
-    // Types
-    // -------------------------------------------------------------------------
-
-    /// Represents a single coin-flip lifecycle from commit to resolution.
-    ///
-    /// Fields are all set at construction time.  The contract stores the
-    /// unresolved form first (isResolved=false, result=nil, won=nil), then
-    /// replaces it with a resolved copy after reveal.
-    access(all) struct Commit {
-        /// SHA3_256(secret ++ playerAddress) submitted by the player.
-        access(all) let commitHash: [UInt8]
-
-        /// Block height at which the commit was recorded.
-        access(all) let commitBlockHeight: UInt64
-
-        /// Whether reveal() has been called for this flip.
-        access(all) let isResolved: Bool
-
-        /// Nil until revealed; true = heads, false = tails.
-        access(all) let result: Bool?
-
-        /// What the player chose (true = heads, false = tails).
-        access(all) let playerChoice: Bool
-
-        /// Nil until revealed; true if playerChoice == result.
-        access(all) let won: Bool?
-
-        init(
-            commitHash: [UInt8],
-            commitBlockHeight: UInt64,
-            playerChoice: Bool,
-            isResolved: Bool,
-            result: Bool?,
-            won: Bool?
-        ) {
-            self.commitHash = commitHash
-            self.commitBlockHeight = commitBlockHeight
-            self.playerChoice = playerChoice
-            self.isResolved = isResolved
-            self.result = result
-            self.won = won
+        access(all) fun setRewardClaimed(newValue: Bool) {
+            self.rewardClaimed = newValue
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Public contract functions
-    // -------------------------------------------------------------------------
+    access(all) struct TailBet_User {
+        access(all) let choice: String
+        access(all) let bet_amount: UFix64
+        access(all) var claim_amount: UFix64
+        access(all) var rewardClaimed: Bool
 
-    /// Record a commitment from `player`.
-    ///
-    /// - Parameter player: Address of the player (signer of commit_flip.cdc).
-    /// - Parameter commitHash: SHA3_256(secret ++ playerAddress) as raw bytes.
-    /// - Parameter playerChoice: true = heads, false = tails.
-    /// - Returns: The flip ID assigned to this commit.
-    access(all) fun commit(
-        player: Address,
-        commitHash: [UInt8],
-        playerChoice: Bool
-    ): UInt64 {
-        let flipId = self.nextFlipId
-        self.nextFlipId = self.nextFlipId + 1
+        init(_choise: String, b_amount: UFix64) {
+            self.choice = _choise
+            self.bet_amount = b_amount
+            self.claim_amount = 0.0
+            self.rewardClaimed = false
+        }
 
-        let newCommit = Commit(
-            commitHash: commitHash,
-            commitBlockHeight: getCurrentBlock().height,
-            playerChoice: playerChoice,
-            isResolved: false,
-            result: nil,
-            won: nil
-        )
+        access(all) fun setClaimAmount(newAmount: UFix64) {
+            self.claim_amount = newAmount
+        }
 
-        // Build or update the player's commit map.
-        // We must read, mutate, then write back because dictionary subscript
-        // returns a copy in Cadence.
-        if self.commits[player] == nil {
-            self.commits[player] = {flipId: newCommit}
+        access(all) fun setRewardClaimed(newValue: Bool) {
+            self.rewardClaimed = newValue
+        }
+    }
+
+    // ========================================================================
+    // POOL RESOURCE
+    // ========================================================================
+    access(all) resource Pool {
+        access(all) let id: UInt64
+        access(all) var status: PoolStatus
+        access(all) var headInfo: {Address: CoinFlip.HeadBet_User}
+        access(all) var tailInfo: {Address: CoinFlip.TailBet_User}
+        access(mapping Identity) let headVault: @FlowToken.Vault
+        access(mapping Identity) let tailVault: @FlowToken.Vault
+        access(mapping Identity) let poolVault: @FlowToken.Vault
+        access(all) var startTime: UFix64
+        access(all) var endTime: UFix64
+        access(all) var tossResult: String
+        access(all) var coinFlipped: Bool
+        access(all) var h_winningShare: {Address: UFix64}
+        access(all) var t_winningShare: {Address: UFix64}
+
+        init() {
+            self.id = CoinFlip.totalPools
+            self.status = PoolStatus.OPEN
+            self.headInfo = {}
+            self.tailInfo = {}
+            self.headVault <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>())
+            self.tailVault <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>())
+            self.poolVault <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>())
+            self.startTime = getCurrentBlock().timestamp
+            // 300 seconds (5 min) for emulator demos; 86400 for production
+            self.endTime = self.startTime + 300.0
+            self.tossResult = ""
+            self.coinFlipped = false
+            self.h_winningShare = {}
+            self.t_winningShare = {}
+        }
+
+        access(all) view fun getStatus(): PoolStatus {
+            return self.status
+        }
+
+        access(all) view fun getHeadBetUserInfo(addr: Address): &CoinFlip.HeadBet_User {
+            return &self.headInfo[addr]!
+        }
+
+        access(all) view fun getTailBetUserInfo(_addr: Address): &CoinFlip.TailBet_User {
+            return &self.tailInfo[_addr]!
+        }
+
+        access(CoinFlip.UpdateWinnings) fun set_h_winningShare(address: Address, newValue: UFix64) {
+            self.h_winningShare[address] = newValue
+        }
+
+        access(CoinFlip.UpdateWinnings) fun set_t_winningShare(address: Address, newValue: UFix64) {
+            self.t_winningShare[address] = newValue
+        }
+
+        access(all) fun setTossResult(newValue: String) {
+            self.tossResult = newValue
+        }
+
+        access(all) fun setCoinFlipped(newValue: Bool) {
+            self.coinFlipped = newValue
+        }
+
+        access(all) fun setStatus(newValue: CoinFlip.PoolStatus) {
+            self.status = newValue
+        }
+
+        access(all) view fun getTailBalance(): UFix64 {
+            let a = self.tailInfo
+            let b = a.keys
+            let c = a.length
+            var i = 0
+            var sum = 0.0
+            while i < c {
+                let d = a[b[i]]?.bet_amount!
+                sum = sum + d
+                i = i + 1
+            }
+            return sum
+        }
+
+        access(all) view fun getHeadBalance(): UFix64 {
+            let a = self.headInfo
+            let b = a.keys
+            let c = a.length
+            var i = 0
+            var sum = 0.0
+            while i < c {
+                let d = a[b[i]]?.bet_amount!
+                sum = sum + d
+                i = i + 1
+            }
+            return sum
+        }
+
+        access(all) view fun getPoolTotalBalance(): UFix64 {
+            return self.getHeadBalance() + self.getTailBalance()
+        }
+
+        access(all) fun betOnHead(_addr: Address, poolId: UInt64, amount: @FlowToken.Vault) {
+            pre {
+                amount.balance == UFix64(UInt64(amount.balance)): "Bet must be a whole number of FLOW"
+                amount.balance > 0.0: "Bet amount cannot be zero"
+                getCurrentBlock().timestamp <= self.endTime: "Pool betting window has closed"
+                self.status == PoolStatus.OPEN: "Pool is not open"
+            }
+            let betAmount: UFix64 = UFix64(UInt64(amount.balance))
+            self.headVault.deposit(from: <- amount)
+            if self.headInfo[_addr] == nil {
+                self.headInfo[_addr] = CoinFlip.HeadBet_User(_choise: "HEAD", b_amount: betAmount)
+            } else {
+                let pre_amount = self.getHeadBetUserInfo(addr: _addr).bet_amount
+                self.headInfo[_addr] = CoinFlip.HeadBet_User(_choise: "HEAD", b_amount: pre_amount + betAmount)
+            }
+            emit BetOnHead(id: poolId, address: _addr, amount: betAmount)
+        }
+
+        access(all) fun betOnTail(_addr: Address, poolId: UInt64, amount: @FlowToken.Vault) {
+            pre {
+                amount.balance == UFix64(UInt64(amount.balance)): "Bet must be a whole number of FLOW"
+                amount.balance > 0.0: "Bet amount cannot be zero"
+                getCurrentBlock().timestamp <= self.endTime: "Pool betting window has closed"
+                self.status == PoolStatus.OPEN: "Pool is not open"
+            }
+            let betAmount = UFix64(UInt64(amount.balance))
+            self.tailVault.deposit(from: <- amount)
+            if self.tailInfo[_addr] == nil {
+                self.tailInfo[_addr] = CoinFlip.TailBet_User(_choise: "TAIL", b_amount: betAmount)
+            } else {
+                let pre_amount = self.getTailBetUserInfo(_addr: _addr).bet_amount
+                self.tailInfo[_addr] = CoinFlip.TailBet_User(_choise: "TAIL", b_amount: pre_amount + betAmount)
+            }
+            emit BetOnTail(id: poolId, address: _addr, amount: betAmount)
+        }
+    }
+
+    // ========================================================================
+    // ADMIN RESOURCE — stored at /storage/CoinFlipGameManager
+    // ========================================================================
+    access(all) resource Admin {
+        access(all) let ownedPools: @{UInt64: Pool}
+
+        access(contract) fun createPool() {
+            CoinFlip.totalPools = CoinFlip.totalPools + 1
+            let newPool <- create Pool()
+            self.ownedPools[newPool.id] <-! newPool
+            emit NewPoolCreated(id: CoinFlip.totalPools)
+        }
+
+        access(all) view fun borrowPool(id: UInt64): &Pool? {
+            return &self.ownedPools[id]
+        }
+
+        access(all) view fun borrowEntitlementPool(id: UInt64): auth(CoinFlip.UpdateWinnings) &Pool? {
+            return (&self.ownedPools[id] as auth(CoinFlip.UpdateWinnings) &Pool?)!
+        }
+
+        access(all) view fun borrowWithdrawEntitlement(id: UInt64): auth(FungibleToken.Withdraw) &Pool? {
+            return (&self.ownedPools[id] as auth(FungibleToken.Withdraw) &Pool?)!
+        }
+
+        access(all) view fun getPoolIDs(): [UInt64] {
+            return self.ownedPools.keys
+        }
+
+        access(all) view fun isCoinFlipped(id: UInt64): Bool {
+            let poolRef = self.borrowPool(id: id) ?? panic("Pool not found")
+            return poolRef.coinFlipped
+        }
+
+        access(all) view fun poolEndTime(id: UInt64): UFix64 {
+            let poolRef = self.borrowPool(id: id) ?? panic("Pool not found")
+            return poolRef.endTime
+        }
+
+        access(contract) fun headUsersWinningShare(id: UInt64) {
+            let poolRef = self.borrowEntitlementPool(id: id) ?? panic("Pool not found")
+            let totalBalance = poolRef.headVault.balance
+            let keys = poolRef.headInfo.keys
+            var i = 0
+            while i < poolRef.headInfo.length {
+                let address = keys[i]
+                let betAmount = poolRef.getHeadBetUserInfo(addr: address).bet_amount
+                poolRef.set_h_winningShare(address: address, newValue: (betAmount / totalBalance) * 100.0)
+                i = i + 1
+            }
+        }
+
+        access(contract) fun tailUsersWinningShare(id: UInt64) {
+            let poolRef = self.borrowEntitlementPool(id: id) ?? panic("Pool not found")
+            let totalBalance = poolRef.tailVault.balance
+            let keys = poolRef.tailInfo.keys
+            var i = 0
+            while i < poolRef.tailInfo.length {
+                let address = keys[i]
+                let betAmount = poolRef.getTailBetUserInfo(_addr: address).bet_amount
+                poolRef.set_t_winningShare(address: address, newValue: (betAmount / totalBalance) * 100.0)
+                i = i + 1
+            }
+        }
+
+        access(all) fun tossCoin(id: UInt64) {
+            pre {
+                !self.isCoinFlipped(id: id): "Coin already flipped for this pool"
+                getCurrentBlock().timestamp >= self.poolEndTime(id: id): "Pool betting window not ended yet"
+            }
+
+            let poolRef = self.borrowPool(id: id) ?? panic("Pool not found")
+            let tokenPoolRef = self.borrowWithdrawEntitlement(id: id) ?? panic("Pool not found")
+
+            let randomNumber: UInt64 = CoinFlip.getRandom(min: 1, max: 2)
+
+            if randomNumber == 1 {
+                poolRef.setTossResult(newValue: "HEAD")
+                self.headUsersWinningShare(id: id)
+                let balance = poolRef.tailVault.balance
+                let rewards: @FlowToken.Vault <- tokenPoolRef.tailVault.withdraw(amount: balance) as! @FlowToken.Vault
+                poolRef.poolVault.deposit(from: <- rewards)
+                CoinFlip.headClaimReward(poolId: id)
+            } else {
+                poolRef.setTossResult(newValue: "TAIL")
+                self.tailUsersWinningShare(id: id)
+                let balance = poolRef.headVault.balance
+                let rewards <- tokenPoolRef.headVault.withdraw(amount: balance) as! @FlowToken.Vault
+                poolRef.poolVault.deposit(from: <- rewards)
+                CoinFlip.tailClaimReward(poolId: id)
+            }
+            self.createPool()
+        }
+
+        init() {
+            self.ownedPools <- {}
+        }
+    }
+
+    // ========================================================================
+    // INTERNAL HELPERS — called by tossCoin after result determined
+    // ========================================================================
+    access(contract) fun headClaimReward(poolId: UInt64) {
+        let poolRef = self.borrowPool(id: poolId)
+        for addr in poolRef.headInfo.keys {
+            let user = poolRef.getHeadBetUserInfo(addr: addr)
+            let betAmount = user.bet_amount
+            let share = poolRef.h_winningShare[addr]!
+            let reward = poolRef.getTailBalance() * share / 100.0
+            user.setClaimAmount(newAmount: betAmount + reward)
+        }
+        poolRef.setCoinFlipped(newValue: true)
+        poolRef.setStatus(newValue: PoolStatus.CLOSE)
+    }
+
+    access(contract) fun tailClaimReward(poolId: UInt64) {
+        let poolRef = self.borrowPool(id: poolId)
+        for addr in poolRef.tailInfo.keys {
+            let user = poolRef.getTailBetUserInfo(_addr: addr)
+            let betAmount = user.bet_amount
+            let share = poolRef.t_winningShare[addr]!
+            let reward = poolRef.getHeadBalance() * share / 100.0
+            user.setClaimAmount(newAmount: betAmount + reward)
+        }
+        poolRef.setCoinFlipped(newValue: true)
+        poolRef.setStatus(newValue: PoolStatus.CLOSE)
+    }
+
+    // ========================================================================
+    // PUBLIC RANDOMNESS
+    // ========================================================================
+    access(all) fun getRandom(min: UInt64, max: UInt64): UInt64 {
+        let rand: UInt64 = revertibleRandom<UInt64>(modulo: UInt64.max)
+        return (rand % (max + 1 - min)) + min
+    }
+
+    // ========================================================================
+    // PUBLIC ACCESSORS
+    // ========================================================================
+    access(all) view fun borrowAdmin(): &Admin {
+        return self.account.storage.borrow<&CoinFlip.Admin>(from: /storage/CoinFlipGameManager)!
+    }
+
+    access(all) view fun borrowPool(id: UInt64): &Pool {
+        return self.borrowAdmin().borrowPool(id: id) ?? panic("Pool not found: ".concat(id.toString()))
+    }
+
+    access(all) view fun borrowWithdrawEntitlement(id: UInt64): auth(FungibleToken.Withdraw) &CoinFlip.Pool {
+        return self.borrowAdmin().borrowWithdrawEntitlement(id: id) ?? panic("Pool not found: ".concat(id.toString()))
+    }
+
+    access(all) view fun getAllPoolId(): [UInt64] {
+        return self.borrowAdmin().getPoolIDs()
+    }
+
+    // ========================================================================
+    // CLAIM REWARD — called by winners after tossCoin
+    // ========================================================================
+    access(all) fun claimReward(poolId: UInt64, userAddress: Address) {
+        pre {
+            getCurrentBlock().timestamp >= self.borrowPool(id: poolId).endTime: "Pool still open"
+            self.borrowPool(id: poolId).coinFlipped: "Coin not tossed yet"
+            self.borrowPool(id: poolId).headInfo[userAddress] != nil ||
+                self.borrowPool(id: poolId).tailInfo[userAddress] != nil: "You did not participate"
+            self.borrowPool(id: poolId).headInfo[userAddress]?.choice == self.borrowPool(id: poolId).tossResult ||
+                self.borrowPool(id: poolId).tailInfo[userAddress]?.choice == self.borrowPool(id: poolId).tossResult: "You lost — better luck next pool"
+            // FIX: check rewardClaimed for the correct side (head OR tail bettor)
+            (self.borrowPool(id: poolId).headInfo[userAddress]?.rewardClaimed ?? false) == false &&
+                (self.borrowPool(id: poolId).tailInfo[userAddress]?.rewardClaimed ?? false) == false: "Reward already claimed"
+        }
+
+        let result = self.borrowPool(id: poolId).tossResult
+
+        if result == "HEAD" {
+            let poolRef = self.borrowPool(id: poolId)
+            let poolWithdrawRef = self.borrowWithdrawEntitlement(id: poolId)
+            let user = poolRef.getHeadBetUserInfo(addr: userAddress)
+            let user_betAmount = user.bet_amount
+            let claim_amount = user.claim_amount
+            let reward_amount = claim_amount - user_betAmount
+            user.setRewardClaimed(newValue: true)
+
+            let bet_amount <- poolWithdrawRef.headVault.withdraw(amount: user_betAmount) as! @FlowToken.Vault
+            let reward <- poolWithdrawRef.poolVault.withdraw(amount: reward_amount) as! @FlowToken.Vault
+
+            if reward.balance > 0.0 {
+                let platformFee_fromBet <- bet_amount.withdraw(amount: bet_amount.balance * 0.01) as! @FlowToken.Vault
+                let platformFee_fromReward <- reward.withdraw(amount: reward.balance * 0.01) as! @FlowToken.Vault
+                let platformVault = CoinFlip.account.capabilities.borrow<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+                    ?? panic("Could not borrow platform vault receiver")
+                platformVault.deposit(from: <- platformFee_fromBet)
+                platformVault.deposit(from: <- platformFee_fromReward)
+            }
+
+            let userReceiver = getAccount(userAddress).capabilities.borrow<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+                ?? panic("User does not have a Flow Token receiver set up")
+            userReceiver.deposit(from: <- bet_amount)
+            userReceiver.deposit(from: <- reward)
+            emit RewardClaimed(id: poolId, address: userAddress, amount: claim_amount)
+
         } else {
-            var playerMap = self.commits[player]!
-            playerMap[flipId] = newCommit
-            self.commits[player] = playerMap
+            let poolRef = self.borrowPool(id: poolId)
+            let poolWithdrawRef = self.borrowWithdrawEntitlement(id: poolId)
+            let user = poolRef.getTailBetUserInfo(_addr: userAddress)
+            let user_betAmount = user.bet_amount
+            let claim_amount = user.claim_amount
+            let reward_amount = claim_amount - user_betAmount
+            user.setRewardClaimed(newValue: true)
+
+            let bet_amount <- poolWithdrawRef.tailVault.withdraw(amount: user_betAmount) as! @FlowToken.Vault
+            let reward <- poolWithdrawRef.poolVault.withdraw(amount: reward_amount) as! @FlowToken.Vault
+
+            if reward.balance > 0.0 {
+                let platformFee_fromBet <- bet_amount.withdraw(amount: bet_amount.balance * 0.01) as! @FlowToken.Vault
+                let platformFee_fromReward <- reward.withdraw(amount: reward.balance * 0.01) as! @FlowToken.Vault
+                let platformVault = CoinFlip.account.capabilities.borrow<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+                    ?? panic("Could not borrow platform vault receiver")
+                platformVault.deposit(from: <- platformFee_fromBet)
+                platformVault.deposit(from: <- platformFee_fromReward)
+            }
+
+            let userReceiver = getAccount(userAddress).capabilities.borrow<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+                ?? panic("User does not have a Flow Token receiver set up")
+            userReceiver.deposit(from: <- bet_amount)
+            userReceiver.deposit(from: <- reward)
+            emit RewardClaimed(id: poolId, address: userAddress, amount: claim_amount)
         }
-
-        self.totalFlips = self.totalFlips + 1
-
-        emit FlipCommitted(
-            player: player,
-            flipId: flipId,
-            commitBlockHeight: newCommit.commitBlockHeight
-        )
-
-        return flipId
     }
 
-    /// Reveal the secret for a previously committed flip.
-    ///
-    /// Verification steps:
-    ///   1. Commit must exist and not yet be resolved.
-    ///   2. Current block height must be strictly greater than commitBlockHeight
-    ///      so the beacon randomness for that block is sealed.
-    ///   3. XOR the beacon value with `secret` and take modulo 2.
-    ///      0 → heads (true), 1 → tails (false).
-    ///
-    /// - Parameter player: Address of the player.
-    /// - Parameter flipId: ID returned from `commit()`.
-    /// - Parameter secret: The secret UInt256 used to generate the commitHash.
-    /// - Returns: true if the player won, false otherwise.
-    access(all) fun reveal(
-        player: Address,
-        flipId: UInt64,
-        secret: UInt256
-    ): Bool {
-        let playerMap = self.commits[player]
-            ?? panic("No commits found for player")
-        let existingCommit = playerMap[flipId]
-            ?? panic("Flip ID not found for player")
-
-        if existingCommit.isResolved {
-            panic("Flip already resolved")
-        }
-
-        let currentHeight = getCurrentBlock().height
-        if currentHeight <= existingCommit.commitBlockHeight {
-            panic("Must wait at least one block after commit before revealing")
-        }
-
-        // Fetch the sealed randomness for the commit block.
-        let randomSource = RandomBeaconHistory.sourceOfRandomness(
-            atBlockHeight: existingCommit.commitBlockHeight
-        )
-
-        // Convert [UInt8] beacon value to UInt256 for arithmetic.
-        // The real RandomBeaconHistory returns 32 bytes; we interpret them big-endian.
-        var beaconUInt256: UInt256 = 0
-        for byte in randomSource.value {
-            beaconUInt256 = (beaconUInt256 << 8) | UInt256(byte)
-        }
-
-        // Derive result: XOR beacon value with player secret, modulo 2.
-        // 0 → heads (true), 1 → tails (false).
-        let combined: UInt256 = beaconUInt256 ^ secret
-        let flipResult: Bool = (combined % 2) == 0
-
-        let flipWon = flipResult == existingCommit.playerChoice
-
-        // Replace the existing commit with a resolved copy.
-        // Read map → mutate → write back (Cadence dictionary copy semantics).
-        let resolvedCommit = Commit(
-            commitHash: existingCommit.commitHash,
-            commitBlockHeight: existingCommit.commitBlockHeight,
-            playerChoice: existingCommit.playerChoice,
-            isResolved: true,
-            result: flipResult,
-            won: flipWon
-        )
-        var updatedMap = self.commits[player]!
-        updatedMap[flipId] = resolvedCommit
-        self.commits[player] = updatedMap
-
-        if flipWon {
-            self.totalWins = self.totalWins + 1
-        }
-
-        emit FlipRevealed(
-            player: player,
-            flipId: flipId,
-            result: flipResult,
-            playerChoice: existingCommit.playerChoice,
-            won: flipWon
-        )
-
-        return flipWon
-    }
-
-    // -------------------------------------------------------------------------
-    // Read-only accessors (for scripts — return value copies, not references)
-    // -------------------------------------------------------------------------
-
-    /// Return a single Commit, or nil if not found.
-    access(all) fun getFlip(player: Address, flipId: UInt64): Commit? {
-        if let playerMap = self.commits[player] {
-            return playerMap[flipId]
-        }
-        return nil
-    }
-
-    /// Return all Commits for a player (empty dict if none).
-    access(all) fun getFlipsForPlayer(player: Address): {UInt64: Commit} {
-        return self.commits[player] ?? {}
-    }
-
-    // -------------------------------------------------------------------------
-    // init
-    // -------------------------------------------------------------------------
-
+    // ========================================================================
+    // INIT
+    // ========================================================================
     init() {
-        self.nextFlipId = 0
-        self.totalFlips = 0
-        self.totalWins = 0
-        self.commits = {}
+        self.totalPools = 0
+        let admin: @Admin <- create Admin()
+        admin.createPool()
+        self.account.storage.save(<- admin, to: /storage/CoinFlipGameManager)
+        emit ContractInitialized()
     }
 }
