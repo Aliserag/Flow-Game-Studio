@@ -1,6 +1,6 @@
-import FungibleToken from 0xFungibleToken
-import FlowToken from 0xFlowToken
-import CoinFlip from 0xCoinFlip
+import "FungibleToken"
+import "FlowToken"
+import "CoinFlip"
 
 transaction(id: UInt64) {
     let buyer: Address

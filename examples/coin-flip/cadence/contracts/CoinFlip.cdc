@@ -1,5 +1,5 @@
-import FungibleToken from 0xFungibleToken
-import FlowToken from 0xFlowToken
+import "FungibleToken"
+import "FlowToken"
 
 /// CoinFlip — YOLO betting pool on Flow blockchain
 ///

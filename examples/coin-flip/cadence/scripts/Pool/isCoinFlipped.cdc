@@ -1,4 +1,4 @@
-import CoinFlip from 0xCoinFlip
+import "CoinFlip"
 
 access(all) fun main(id: UInt64): Bool {
     pre { CoinFlip.totalPools >= id && id != 0: "Pool does not exist" }
