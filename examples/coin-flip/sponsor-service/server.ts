@@ -20,13 +20,12 @@ import { SHA3 } from "sha3"
 // Config — emulator service account (safe for local dev)
 // ---------------------------------------------------------------------------
 
-const SERVICE_ADDRESS = "0xf8d6e0586b0a20c7"
-const SERVICE_PRIVATE_KEY = "2eae2f31cb5b756151fa11d82949763b73e28b92f8cc26c97d5bf4620e60d8b6"
-const SERVICE_KEY_ID = 0
-
-// In production, load from env:
-// const SERVICE_ADDRESS    = process.env.PAYER_ADDRESS   ?? ""
-// const SERVICE_PRIVATE_KEY = process.env.PAYER_PRIVATE_KEY ?? ""
+// Production: set PAYER_ADDRESS and PAYER_PRIVATE_KEY env vars.
+// Defaults fall back to the well-known Flow emulator service account — safe for
+// local dev only; never use these defaults on testnet or mainnet.
+const SERVICE_ADDRESS = process.env.PAYER_ADDRESS ?? "0xf8d6e0586b0a20c7"
+const SERVICE_PRIVATE_KEY = process.env.PAYER_PRIVATE_KEY ?? "2eae2f31cb5b756151fa11d82949763b73e28b92f8cc26c97d5bf4620e60d8b6"
+const SERVICE_KEY_ID = Number(process.env.PAYER_KEY_ID ?? "0")
 
 // ---------------------------------------------------------------------------
 // Signing helper

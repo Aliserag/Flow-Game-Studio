@@ -143,6 +143,15 @@ All hooks fail gracefully if optional tools are missing — nothing breaks, you 
    - `/setup-engine godot 4.6` — configure your engine if you already know
    - `/project-stage-detect` — analyze an existing project
 
+## Security — Emulator Keys
+
+The `flow.json` files and `sponsor-service/server.ts` in the example games contain keys for the **Flow local emulator**. These are the [publicly documented default emulator accounts](https://developers.flow.com/tools/emulator) that every Flow project uses — they hold no real funds and are meaningless outside a local emulator.
+
+**Before deploying to testnet or mainnet:**
+- Replace emulator keys with keys stored in `.flow-testnet.pkey` / `.flow-mainnet.pkey` (already in `.gitignore`)
+- Set `PAYER_ADDRESS` and `PAYER_PRIVATE_KEY` env vars for the sponsor service
+- The `testnet-account` entry in `flow.json` already uses the file-based pattern as a model
+
 ## Upgrading
 
 Already using an older version of this template? See [UPGRADING.md](UPGRADING.md)

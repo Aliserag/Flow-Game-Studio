@@ -1,6 +1,11 @@
-# Dungeon Crawler Arena — Reference Implementation
+# Dungeon Crawler Arena — Cadence Pattern Reference
 
-This mini-game demonstrates every Flow pattern from the game studio plan:
+> **⚠️ This is a Cadence reference, not a runnable example.**
+> The contracts and transactions here demonstrate advanced Flow patterns.
+> There is no complete client app or test suite yet.
+> See the four runnable examples: `coin-flip`, `nft-battler`, `chess-game`, `prize-pool`.
+
+This reference shows how to combine every Flow pattern from the game studio plan:
 
 | Feature | Contract / Pattern Used |
 |---------|------------------------|
@@ -11,14 +16,16 @@ This mini-game demonstrates every Flow pattern from the game studio plan:
 | Emergency pause | EmergencyPause.assertNotPaused() |
 | Player governance | Governance vote to change rewards |
 
-## How to Run
+## Files
 
-1. Start emulator: `flow emulator`
-2. Deploy all contracts: `flow project deploy --network emulator`
-3. Run tests: `flow test examples/dungeon-crawler/cadence/tests/`
-4. Run client: `cd examples/dungeon-crawler/client && npm start`
+| File | Description |
+|------|-------------|
+| `cadence/contracts/DungeonCrawler.cdc` | Main contract combining VRF, NFT checks, token rewards |
+| `cadence/transactions/enter_dungeon.cdc` | Commit phase — player submits secret + dungeon level |
+| `cadence/transactions/reveal_combat_result.cdc` | Reveal phase — VRF resolves combat outcome |
+| `cadence/scripts/get_dungeon_state.cdc` | Read dungeon state for a player |
 
-## Game Loop
+## Intended Game Loop
 
 1. Player calls `enter_dungeon.cdc` with a secret and dungeon level (1-3)
 2. Client waits 1 block (minimum)
