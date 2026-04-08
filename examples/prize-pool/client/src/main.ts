@@ -397,7 +397,7 @@ getEl("refresh-trophies-btn").addEventListener("click", () => {
 // ─── Initial state ────────────────────────────────────────────────────────────
 if (!CONFIG.PRIZE_POOL_ADDRESS || !CONFIG.TOKEN_ADDRESS) {
   showStatus(
-    "Contract addresses not configured. Set VITE_PRIZE_POOL_ADDRESS and VITE_TOKEN_ADDRESS in .env",
-    "error"
+    "Demo mode — deploy contracts and set VITE_PRIZE_POOL_ADDRESS + VITE_TOKEN_ADDRESS in .env to enable live play",
+    "info"
   )
 }
