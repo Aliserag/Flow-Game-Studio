@@ -104,47 +104,52 @@ access(all) fun main(id: UInt64): Int {
 // ============================================================
 
 // Pool status: returns UInt8 raw value (0=OPEN, 1=CALCULATING, 2=CLOSE)
+// Uses getStatus() getter — status field is access(contract)
 const GET_POOL_STATUS = `
 import CoinFlip from 0xCoinFlip
 access(all) fun main(id: UInt64): UInt8 {
     pre { CoinFlip.totalPools >= id && id != 0: "Pool does not exist" }
-    return CoinFlip.borrowPool(id: id).status.rawValue
+    return CoinFlip.borrowPool(id: id).getStatus().rawValue
 }`
 
 // Toss result: returns "" | "HEAD" | "TAIL"
+// Uses getTossResult() getter — tossResult field is access(contract)
 const GET_TOSS_RESULT = `
 import CoinFlip from 0xCoinFlip
 access(all) fun main(id: UInt64): String {
     pre { CoinFlip.totalPools >= id && id != 0: "Pool does not exist" }
-    return CoinFlip.borrowPool(id: id).tossResult
+    return CoinFlip.borrowPool(id: id).getTossResult()
 }`
 
+// Uses isCoinFlipped() getter — coinFlipped field is access(contract)
 const IS_COIN_FLIPPED = `
 import CoinFlip from 0xCoinFlip
 access(all) fun main(id: UInt64): Bool {
     pre { CoinFlip.totalPools >= id && id != 0: "Pool does not exist" }
-    return CoinFlip.borrowPool(id: id).coinFlipped
+    return CoinFlip.borrowPool(id: id).isCoinFlipped()
 }`
 
 // Returns bet_amount if user has a head bet, nil otherwise
+// Uses hasHeadBet() getter — headInfo dict is access(contract)
 const GET_USER_BET_HEAD = `
 import CoinFlip from 0xCoinFlip
 access(all) fun main(poolId: UInt64, user: Address): UFix64? {
     pre { CoinFlip.totalPools >= poolId && poolId != 0: "Pool does not exist" }
     let pool = CoinFlip.borrowPool(id: poolId)
-    if pool.headInfo[user] != nil {
+    if pool.hasHeadBet(addr: user) {
         return pool.getHeadBetUserInfo(addr: user).bet_amount
     }
     return nil
 }`
 
 // Returns bet_amount if user has a tail bet, nil otherwise
+// Uses hasTailBet() getter — tailInfo dict is access(contract)
 const GET_USER_BET_TAIL = `
 import CoinFlip from 0xCoinFlip
 access(all) fun main(poolId: UInt64, user: Address): UFix64? {
     pre { CoinFlip.totalPools >= poolId && poolId != 0: "Pool does not exist" }
     let pool = CoinFlip.borrowPool(id: poolId)
-    if pool.tailInfo[user] != nil {
+    if pool.hasTailBet(addr: user) {
         return pool.getTailBetUserInfo(_addr: user).bet_amount
     }
     return nil

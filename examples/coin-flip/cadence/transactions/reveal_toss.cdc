@@ -1,8 +1,8 @@
-/// commit_toss.cdc — Phase 1 of the two-phase toss protocol.
+/// reveal_toss.cdc — Phase 2 of the two-phase toss protocol.
 ///
-/// Records the current block height on the pool. The randomness for this block
-/// is sealed one block later, preventing validator revert attacks.
-/// Call reveal_toss.cdc (phase 2) in the next block or later.
+/// Fetches sealed RandomBeaconHistory randomness for the committed block height,
+/// resolves the pool outcome, and creates the next pool automatically.
+/// Must be called at least one block after commit_toss (toss.cdc).
 import "CoinFlip"
 
 transaction(id: UInt64) {
@@ -14,6 +14,6 @@ transaction(id: UInt64) {
     }
 
     execute {
-        self.adminRef.commitToss(id: id)
+        self.adminRef.tossCoin(id: id)
     }
 }

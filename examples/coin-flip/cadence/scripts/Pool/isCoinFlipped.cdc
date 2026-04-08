@@ -2,5 +2,5 @@ import "CoinFlip"
 
 access(all) fun main(id: UInt64): Bool {
     pre { CoinFlip.totalPools >= id && id != 0: "Pool does not exist" }
-    return CoinFlip.borrowPool(id: id).coinFlipped
+    return CoinFlip.borrowPool(id: id).isCoinFlipped()
 }
