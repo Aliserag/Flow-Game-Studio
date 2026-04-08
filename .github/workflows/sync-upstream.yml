@@ -1,0 +1,137 @@
+name: Sync upstream
+
+# Runs daily and on manual trigger.
+# When upstream (Donchitos/Claude-Code-Game-Studios) has new commits:
+#   - Clean merge → auto-pushed to main
+#   - Conflicts   → PR opened for manual resolution
+#
+# This fork adds Flow blockchain features on top of the upstream studio
+# framework. We never PR back to upstream.
+
+on:
+  schedule:
+    - cron: '0 7 * * *'   # 07:00 UTC daily
+  workflow_dispatch:        # Manual trigger from Actions tab
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/Donchitos/Claude-Code-Game-Studios.git
+          git fetch upstream
+
+      - name: Check how far behind we are
+        id: delta
+        run: |
+          BEHIND=$(git rev-list --count HEAD..upstream/main)
+          echo "behind=$BEHIND" >> "$GITHUB_OUTPUT"
+          echo "Upstream is $BEHIND commit(s) ahead"
+
+      - name: Nothing to do
+        if: steps.delta.outputs.behind == '0'
+        run: echo "Fork is already up-to-date with upstream."
+
+      # ── Happy path: clean merge ──────────────────────────────────────────
+      - name: Attempt merge
+        if: steps.delta.outputs.behind != '0'
+        id: merge
+        run: |
+          COMMIT_LOG=$(git log HEAD..upstream/main --oneline | head -30)
+          BEHIND=${{ steps.delta.outputs.behind }}
+          git merge upstream/main \
+            --no-edit \
+            -m "chore: sync upstream $(date +%Y-%m-%d) [auto] — ${BEHIND} commit(s)"
+        continue-on-error: true
+
+      - name: Push merged changes
+        if: >
+          steps.delta.outputs.behind != '0' &&
+          steps.merge.outcome == 'success'
+        run: git push origin main
+
+      - name: Report clean sync
+        if: >
+          steps.delta.outputs.behind != '0' &&
+          steps.merge.outcome == 'success'
+        env:
+          BEHIND: ${{ steps.delta.outputs.behind }}
+        run: echo "✅ Synced ${BEHIND} upstream commit(s) into main cleanly."
+
+      # ── Conflict path: open a PR ─────────────────────────────────────────
+      - name: Abort failed merge
+        if: >
+          steps.delta.outputs.behind != '0' &&
+          steps.merge.outcome == 'failure'
+        run: git merge --abort || true
+
+      - name: Create conflict-resolution branch
+        if: >
+          steps.delta.outputs.behind != '0' &&
+          steps.merge.outcome == 'failure'
+        id: branch
+        run: |
+          BRANCH="sync/upstream-$(date +%Y%m%d-%H%M)"
+          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
+          git checkout -b "$BRANCH"
+          # Merge with conflict markers so the PR shows exactly what to resolve
+          git merge upstream/main --no-edit || true
+          git add -A
+          git commit -m "chore: upstream sync with conflicts — needs manual resolution" || true
+          git push origin "$BRANCH"
+
+      - name: Capture upstream log for PR body
+        if: >
+          steps.delta.outputs.behind != '0' &&
+          steps.merge.outcome == 'failure'
+        id: log
+        run: |
+          # Store in a file to avoid shell injection via commit messages
+          git log HEAD..upstream/main --oneline | head -30 > /tmp/upstream-log.txt
+          echo "Captured $(wc -l < /tmp/upstream-log.txt) upstream commits"
+
+      - name: Open conflict-resolution PR
+        if: >
+          steps.delta.outputs.behind != '0' &&
+          steps.merge.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ steps.branch.outputs.branch }}
+        run: |
+          UPSTREAM_LOG=$(cat /tmp/upstream-log.txt)
+          gh pr create \
+            --title "chore: sync upstream $(date +%Y-%m-%d) — conflicts need resolution" \
+            --body "## Upstream sync — manual conflict resolution required
+
+Upstream ([Donchitos/Claude-Code-Game-Studios](https://github.com/Donchitos/Claude-Code-Game-Studios)) has new commits that conflict with our Flow additions.
+
+**How to resolve:**
+1. Check out this branch locally: \`git checkout ${BRANCH}\`
+2. Open conflicted files (look for \`<<<<<<<\` markers)
+3. Keep our Flow-specific code; integrate any upstream improvements
+4. Commit the resolution and push — this PR will auto-update
+
+**Upstream commits in this batch:**
+\`\`\`
+${UPSTREAM_LOG}
+\`\`\`
+
+> This fork is a standalone Flow-feature layer on top of the upstream studio framework. We do not PR back to upstream." \
+            --base main \
+            --head "$BRANCH"
