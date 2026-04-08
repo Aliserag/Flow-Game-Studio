@@ -105,8 +105,8 @@ access(all) contract CoinFlip {
             self.tailVault <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>())
             self.poolVault <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>())
             self.startTime = getCurrentBlock().timestamp
-            // 3600 seconds (1 hour) for testnet; 86400 for mainnet
-            self.endTime = self.startTime + 3600.0
+            // 60 seconds for testing; 3600 for testnet; 86400 for mainnet
+            self.endTime = self.startTime + 60.0
             self.tossResult = ""
             self.coinFlipped = false
             self.h_winningShare = {}
@@ -225,6 +225,11 @@ access(all) contract CoinFlip {
             let newPool <- create Pool()
             self.ownedPools[newPool.id] <-! newPool
             emit NewPoolCreated(id: CoinFlip.totalPools)
+        }
+
+        /// Admin-callable pool creation — for dev/testing or when a pool needs manual reset
+        access(all) fun adminCreatePool() {
+            self.createPool()
         }
 
         access(all) view fun borrowPool(id: UInt64): &Pool? {
