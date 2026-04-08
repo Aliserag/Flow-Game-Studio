@@ -37,8 +37,11 @@ dist/
 .godot/
 *.translation
 export_presets.cfg
-# Uncomment if using Godot:
-# *.import
+*.import
+# GUT test results / temp files
+.gut_temp/
+# Godot HTML5 export output (use builds/ for distribution)
+prototypes/*/build/
 
 # === Engine: Unity ===
 [Ll]ibrary/
