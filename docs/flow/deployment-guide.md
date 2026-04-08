@@ -8,7 +8,7 @@ How to take an example game from the local emulator to Flow testnet (and eventua
 
 Flow testnet accounts are free and created through the **Flow Faucet**.
 
-1. Go to **https://testnet-faucet.onflow.org/**
+1. Go to **https://faucet.flow.com/fund-account**
 2. Click **Create Account**
 3. The faucet generates a key pair in your browser and creates an account on testnet
 4. **Save your private key immediately** — it is shown only once
@@ -215,7 +215,7 @@ These are pre-deployed by the Flow team — you don't deploy them yourself.
 
 | Resource | URL |
 |----------|-----|
-| **Testnet Faucet** (create account + get FLOW) | https://testnet-faucet.onflow.org/ |
+| **Testnet Faucet** (create account + get FLOW) | https://faucet.flow.com/fund-account |
 | **Flow Diver** (testnet block explorer) | https://www.flowdiver.io/?network=testnet |
 | **Flow Playground** (browser-based Cadence sandbox) | https://play.flow.com/ |
 | **FCL Documentation** | https://developers.flow.com/tools/clients/fcl-js |

@@ -153,7 +153,7 @@ The `flow.json` files and `sponsor-service/server.ts` in the example games conta
 - The `testnet-account` entry in `flow.json` already uses the file-based pattern as a model
 
 **→ Full step-by-step guide:** [`docs/flow/deployment-guide.md`](docs/flow/deployment-guide.md)
-Covers: creating a testnet account, the [Flow Faucet](https://testnet-faucet.onflow.org/), updating `flow.json`, FCL config, contract addresses, and the block explorer.
+Covers: creating a testnet account, the [Flow Faucet](https://faucet.flow.com/fund-account), updating `flow.json`, FCL config, contract addresses, and the block explorer.
 
 ## Upgrading
 

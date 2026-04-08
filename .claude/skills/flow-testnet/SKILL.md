@@ -11,7 +11,7 @@ allowed-tools: Read, Glob, Grep, Write, Edit, Bash
 Full testnet deployment workflow.
 
 **Prerequisites:**
-- Testnet account funded via https://testnet-faucet.onflow.org
+- Testnet account funded via https://faucet.flow.com/fund-account
 - Account address in `.env` as `FLOW_TESTNET_ADDRESS`
 - Key file at `.flow-testnet.pkey` (gitignored)
 

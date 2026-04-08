@@ -50,7 +50,7 @@ flow accounts create --network emulator
 ```
 
 **Testnet:**
-1. Direct user to https://testnet-faucet.onflow.org to create an account and get FLOW tokens
+1. Direct user to https://faucet.flow.com/fund-account to create an account and get FLOW tokens
 2. Ask for their testnet address
 3. Ask for their private key (remind them: never commit to git)
 4. Write to `.env` (not `.env.example`)
