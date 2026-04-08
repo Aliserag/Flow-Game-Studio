@@ -152,6 +152,9 @@ The `flow.json` files and `sponsor-service/server.ts` in the example games conta
 - Set `PAYER_ADDRESS` and `PAYER_PRIVATE_KEY` env vars for the sponsor service
 - The `testnet-account` entry in `flow.json` already uses the file-based pattern as a model
 
+**→ Full step-by-step guide:** [`docs/flow/deployment-guide.md`](docs/flow/deployment-guide.md)
+Covers: creating a testnet account, the [Flow Faucet](https://testnet-faucet.onflow.org/), updating `flow.json`, FCL config, contract addresses, and the block explorer.
+
 ## Upgrading
 
 Already using an older version of this template? See [UPGRADING.md](UPGRADING.md)
