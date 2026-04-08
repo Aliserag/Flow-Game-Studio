@@ -9,6 +9,16 @@
     "emulator-account": {
       "address": "f8d6e0586b0a20c7",
       "key": "2eae2f31cb5b756151fa11d82949763b73e28b92f8cc26c97d5bf4620e60d8b6"
+    },
+    "testnet-account": {
+      "address": "eb24b78eb89a2076",
+      "key": {
+        "type": "hex",
+        "index": 0,
+        "signatureAlgorithm": "ECDSA_P256",
+        "hashAlgorithm": "SHA3_256",
+        "privateKey": "9dfc8c94aa46617af609c08bbcf624e2d744d1dc8b288bafcdf3d2446fc8895c"
+      }
     }
   },
   "contracts": {
@@ -16,27 +26,33 @@
       "source": "./cadence/contracts/CoinFlip.cdc",
       "aliases": {
         "emulator": "f8d6e0586b0a20c7",
-        "testing": "0000000000000007"
+        "testing": "0000000000000007",
+        "testnet": "eb24b78eb89a2076"
       }
     },
     "FungibleToken": {
       "source": "../../cadence/contracts/standards/FungibleToken.cdc",
       "aliases": {
         "emulator": "ee82856bf20e2aa6",
-        "testing": "0000000000000007"
+        "testing": "0000000000000007",
+        "testnet": "9a0766d93b6608b7"
       }
     },
     "FlowToken": {
       "source": "../../cadence/contracts/standards/FlowToken.cdc",
       "aliases": {
         "emulator": "0ae53cb6e3f42a79",
-        "testing": "0000000000000007"
+        "testing": "0000000000000007",
+        "testnet": "7e60df042a9c0868"
       }
     }
   },
   "deployments": {
     "emulator": {
       "emulator-account": ["CoinFlip"]
+    },
+    "testnet": {
+      "testnet-account": ["CoinFlip"]
     }
   }
 }

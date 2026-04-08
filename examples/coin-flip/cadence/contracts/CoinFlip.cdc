@@ -105,8 +105,8 @@ access(all) contract CoinFlip {
             self.tailVault <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>())
             self.poolVault <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>())
             self.startTime = getCurrentBlock().timestamp
-            // 300 seconds (5 min) for emulator demos; 86400 for production
-            self.endTime = self.startTime + 300.0
+            // 3600 seconds (1 hour) for testnet; 86400 for mainnet
+            self.endTime = self.startTime + 3600.0
             self.tossResult = ""
             self.coinFlipped = false
             self.h_winningShare = {}

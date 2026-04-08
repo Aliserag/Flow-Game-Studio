@@ -28,8 +28,8 @@ export default function Admin() {
 
   useEffect(() => { fcl.currentUser.subscribe(setUser) }, [])
 
-  // Only show to admin (emulator account)
-  const adminAddresses = ['0xf8d6e0586b0a20c7']
+  // Only show to admin (testnet deployer account)
+  const adminAddresses = ['0xeb24b78eb89a2076']
   if (!(user?.loggedIn && user.addr && adminAddresses.includes(user.addr))) {
     return (
       <div className="min-h-screen bg-degen-black degen-grid-bg scanlines">
