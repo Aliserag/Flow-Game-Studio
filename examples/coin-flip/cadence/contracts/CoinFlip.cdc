@@ -31,8 +31,8 @@ access(all) contract CoinFlip {
     // ========================================================================
     access(all) var totalPools: UInt64
 
-    /// Entitlement required to update winning share calculations.
-    access(all) entitlement UpdateWinnings
+    // UpdateWinnings entitlement removed — h/t winningShare is access(contract) var,
+    // only modifiable from within the contract.
 
     access(all) enum PoolStatus: UInt8 {
         access(all) case OPEN
@@ -121,27 +121,23 @@ access(all) contract CoinFlip {
         access(contract) var tossResult: String
         access(contract) var coinFlipped: Bool
 
-        /// Block height committed by the admin for randomness reveal.
-        /// nil until commitToss() is called.
-        access(contract) var committedBlockHeight: UInt64?
-
-        access(CoinFlip.UpdateWinnings) var h_winningShare: {Address: UFix64}
-        access(CoinFlip.UpdateWinnings) var t_winningShare: {Address: UFix64}
+        /// Only contract code may modify winning shares — prevents external manipulation.
+        access(contract) var h_winningShare: {Address: UFix64}
+        access(contract) var t_winningShare: {Address: UFix64}
 
         init() {
             self.id = CoinFlip.totalPools
             self.status = PoolStatus.OPEN
             self.headInfo = {}
             self.tailInfo = {}
-            self.headVault <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>())
-            self.tailVault <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>())
-            self.poolVault <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>())
+            self.headVault <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>()) as! @FlowToken.Vault
+            self.tailVault <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>()) as! @FlowToken.Vault
+            self.poolVault <- FlowToken.createEmptyVault(vaultType: Type<@FlowToken.Vault>()) as! @FlowToken.Vault
             self.startTime = getCurrentBlock().timestamp
             // 60 seconds for testing; 3600 for testnet; 86400 for mainnet
             self.endTime = self.startTime + 60.0
             self.tossResult = ""
             self.coinFlipped = false
-            self.committedBlockHeight = nil
             self.h_winningShare = {}
             self.t_winningShare = {}
         }
@@ -163,9 +159,15 @@ access(all) contract CoinFlip {
             return self.coinFlipped
         }
 
-        /// Block height committed for randomness (nil until commitToss called).
+        /// Block height committed for randomness (nil if not committed or already revealed).
+        /// Encoded in tossResult as a decimal string during the CALCULATING phase.
+        /// Pool fields cannot be added in upgrades, so tossResult doubles as commit storage.
         access(all) view fun getCommittedHeight(): UInt64? {
-            return self.committedBlockHeight
+            let r = self.tossResult
+            if r == "" || r == "HEAD" || r == "TAIL" {
+                return nil
+            }
+            return UInt64.fromString(r)
         }
 
         /// Whether a given address has a head bet.
@@ -198,11 +200,11 @@ access(all) contract CoinFlip {
 
         // ── Entitlement-gated setters ─────────────────────────────────────
 
-        access(CoinFlip.UpdateWinnings) fun set_h_winningShare(address: Address, newValue: UFix64) {
+        access(contract) fun set_h_winningShare(address: Address, newValue: UFix64) {
             self.h_winningShare[address] = newValue
         }
 
-        access(CoinFlip.UpdateWinnings) fun set_t_winningShare(address: Address, newValue: UFix64) {
+        access(contract) fun set_t_winningShare(address: Address, newValue: UFix64) {
             self.t_winningShare[address] = newValue
         }
 
@@ -219,10 +221,6 @@ access(all) contract CoinFlip {
 
         access(contract) fun setStatus(newValue: CoinFlip.PoolStatus) {
             self.status = newValue
-        }
-
-        access(contract) fun setCommittedHeight(newValue: UInt64) {
-            self.committedBlockHeight = newValue
         }
 
         // ── Balance helpers ───────────────────────────────────────────────
@@ -291,7 +289,9 @@ access(all) contract CoinFlip {
     // NEVER published or exposed via a public borrow function.
     // ========================================================================
     access(all) resource Admin {
-        access(all) let ownedPools: @{UInt64: Pool}
+        /// Identity mapping allows entitled callers (e.g. auth(FungibleToken.Withdraw))
+        /// to get similarly-entitled pool references. Unentitled callers still get &Pool.
+        access(mapping Identity) let ownedPools: @{UInt64: Pool}
 
         /// Internal pool creation. Called from commitToss after a toss completes.
         access(contract) fun createPool() {
@@ -306,15 +306,16 @@ access(all) contract CoinFlip {
             return &self.ownedPools[id]
         }
 
-        /// Pool reference with UpdateWinnings entitlement for share calculations.
-        access(contract) view fun borrowEntitlementPool(id: UInt64): auth(CoinFlip.UpdateWinnings) &Pool? {
-            return &self.ownedPools[id] as auth(CoinFlip.UpdateWinnings) &Pool?
+        /// Pool reference for winning share calculations (access(contract) setters on Pool).
+        access(contract) view fun borrowEntitlementPool(id: UInt64): &Pool? {
+            return &self.ownedPools[id]
         }
 
-        /// Pool reference with Withdraw entitlement for fund movements.
-        /// access(contract) — only called from tossCoin (Admin) and claimReward (contract).
-        access(contract) view fun borrowWithdrawEntitlement(id: UInt64): auth(FungibleToken.Withdraw) &Pool? {
-            return &self.ownedPools[id] as auth(FungibleToken.Withdraw) &Pool?
+        /// Pool reference for fund movements — requires FungibleToken.Withdraw entitlement.
+        /// The Identity mapping on ownedPools propagates FungibleToken.Withdraw through to
+        /// the returned &Pool, enabling withdraw calls on vault fields.
+        access(FungibleToken.Withdraw) view fun borrowWithdrawEntitlement(id: UInt64): auth(FungibleToken.Withdraw) &Pool? {
+            return &self.ownedPools[id]
         }
 
         access(all) view fun getPoolIDs(): [UInt64] {
@@ -344,8 +345,11 @@ access(all) contract CoinFlip {
                 getCurrentBlock().timestamp >= self.poolEndTime(id: id): "Pool betting window not ended yet"
             }
             let poolRef = self.borrowPool(id: id) ?? panic("Pool not found")
+            assert(poolRef.getTossResult() == "", message: "Toss already committed or completed")
             let height = getCurrentBlock().height
-            poolRef.setCommittedHeight(newValue: height)
+            // Encode height in tossResult — no new fields allowed in upgrades.
+            // getCommittedHeight() decodes this back to UInt64 for the reveal step.
+            poolRef.setTossResult(newValue: height.toString())
             poolRef.setStatus(newValue: PoolStatus.CALCULATING)
             emit TossCommitted(id: id, atBlockHeight: height)
         }
@@ -355,11 +359,11 @@ access(all) contract CoinFlip {
         /// Must be called at least one block after commitToss().
         access(all) fun tossCoin(id: UInt64) {
             let poolRef = self.borrowPool(id: id) ?? panic("Pool not found")
-            pre {
-                !self.isCoinFlipped(id: id): "Coin already flipped for this pool"
-                poolRef.getCommittedHeight() != nil: "Must call commitToss first"
-                getCurrentBlock().height > poolRef.getCommittedHeight()!: "Must wait at least 1 block after commit"
-            }
+            // Enforce two-phase sequence invariants via assert (pre{} cannot follow let statements).
+            assert(!self.isCoinFlipped(id: id), message: "Coin already flipped for this pool")
+            assert(poolRef.getCommittedHeight() != nil, message: "Must call commitToss first")
+            assert(getCurrentBlock().height > poolRef.getCommittedHeight()!,
+                message: "Must wait at least 1 block after commit")
 
             let committedHeight = poolRef.getCommittedHeight()!
 
@@ -375,7 +379,9 @@ access(all) contract CoinFlip {
                 | (UInt64(b[6]) << 8)  |  UInt64(b[7])
             let randomNumber: UInt64 = (raw ^ id) % 2 + 1  // 1 = HEAD, 2 = TAIL
 
-            let tokenPoolRef = self.borrowWithdrawEntitlement(id: id) ?? panic("Pool not found")
+            // Use contract-level helper which borrows Admin with auth(FungibleToken.Withdraw)
+            // from storage — tossCoin is access(all) so self lacks that entitlement here.
+            let tokenPoolRef = CoinFlip.borrowWithdrawEntitlement(id: id)
 
             if randomNumber == 1 {
                 poolRef.setTossResult(newValue: "HEAD")
@@ -392,13 +398,14 @@ access(all) contract CoinFlip {
                 poolRef.poolVault.deposit(from: <- rewards)
                 CoinFlip.tailClaimReward(poolId: id)
             }
+            // tossResult is now "HEAD" or "TAIL" — getCommittedHeight() returns nil, preventing replay.
             self.createPool()
         }
 
         /// Calculate each head bettor's proportional share.
         /// Guard: if no head bettors, skip (no division by zero).
         access(contract) fun headUsersWinningShare(id: UInt64) {
-            let poolRef = self.borrowEntitlementPool(id: id) ?? panic("Pool not found")
+            let poolRef = self.borrowPool(id: id) ?? panic("Pool not found")
             let totalBalance = poolRef.headVault.balance
             if totalBalance == 0.0 {
                 return  // no head bettors — nothing to distribute
@@ -416,7 +423,7 @@ access(all) contract CoinFlip {
         /// Calculate each tail bettor's proportional share.
         /// Guard: if no tail bettors, skip (no division by zero).
         access(contract) fun tailUsersWinningShare(id: UInt64) {
-            let poolRef = self.borrowEntitlementPool(id: id) ?? panic("Pool not found")
+            let poolRef = self.borrowPool(id: id) ?? panic("Pool not found")
             let totalBalance = poolRef.tailVault.balance
             if totalBalance == 0.0 {
                 return  // no tail bettors — nothing to distribute
@@ -475,11 +482,12 @@ access(all) contract CoinFlip {
         return self.account.storage.borrow<&CoinFlip.Admin>(from: /storage/CoinFlipGameManager)!
     }
 
-    /// Internal: borrow Pool with Withdraw entitlement.
-    /// Only used by claimReward (contract code) to process fund movements.
+    /// Internal: borrow Pool with FungibleToken.Withdraw entitlement for vault fund movements.
+    /// Borrows Admin from storage with auth(FungibleToken.Withdraw) so the Identity-mapped
+    /// vault fields return auth(FungibleToken.Withdraw) references enabling withdraw calls.
     access(contract) view fun borrowWithdrawEntitlement(id: UInt64): auth(FungibleToken.Withdraw) &CoinFlip.Pool {
-        return self.borrowAdmin().borrowWithdrawEntitlement(id: id)
-            ?? panic("Pool not found: ".concat(id.toString()))
+        let admin = self.account.storage.borrow<auth(FungibleToken.Withdraw) &CoinFlip.Admin>(from: /storage/CoinFlipGameManager)!
+        return admin.borrowWithdrawEntitlement(id: id) ?? panic("Pool not found: ".concat(id.toString()))
     }
 
     /// Public read-only pool reference. Exposes only view functions and
@@ -519,22 +527,31 @@ access(all) contract CoinFlip {
             let rewardAmount = claimAmount - userBetAmount
             user.setRewardClaimed(newValue: true)
 
-            let betVault <- poolWithdrawRef.headVault.withdraw(amount: userBetAmount) as! @FlowToken.Vault
-            let rewardVault <- poolWithdrawRef.poolVault.withdraw(amount: rewardAmount) as! @FlowToken.Vault
-
-            if rewardVault.balance > 0.0 {
-                let feeFromBet <- betVault.withdraw(amount: betVault.balance * 0.01) as! @FlowToken.Vault
-                let feeFromReward <- rewardVault.withdraw(amount: rewardVault.balance * 0.01) as! @FlowToken.Vault
-                let platformVault = CoinFlip.account.capabilities.borrow<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+            if rewardAmount > 0.0 {
+                // Compute fees upfront and withdraw net + fee directly from pool vaults.
+                // Avoids calling withdraw on a locally-owned @FlowToken.Vault, which
+                // would require creating an authorized reference to a local resource.
+                let feeFromBet = userBetAmount * 0.01
+                let feeFromReward = rewardAmount * 0.01
+                let betVault <- poolWithdrawRef.headVault.withdraw(amount: userBetAmount - feeFromBet) as! @FlowToken.Vault
+                let betFeeVault <- poolWithdrawRef.headVault.withdraw(amount: feeFromBet) as! @FlowToken.Vault
+                let rewardVault <- poolWithdrawRef.poolVault.withdraw(amount: rewardAmount - feeFromReward) as! @FlowToken.Vault
+                let rewardFeeVault <- poolWithdrawRef.poolVault.withdraw(amount: feeFromReward) as! @FlowToken.Vault
+                let platformVault = CoinFlip.account.capabilities.borrow<&FlowToken.Vault>(/public/flowTokenReceiver)
                     ?? panic("Could not borrow platform vault receiver")
-                platformVault.deposit(from: <- feeFromBet)
-                platformVault.deposit(from: <- feeFromReward)
+                platformVault.deposit(from: <- betFeeVault)
+                platformVault.deposit(from: <- rewardFeeVault)
+                let userReceiver = getAccount(userAddress).capabilities.borrow<&FlowToken.Vault>(/public/flowTokenReceiver)
+                    ?? panic("User does not have a Flow Token receiver set up")
+                userReceiver.deposit(from: <- betVault)
+                userReceiver.deposit(from: <- rewardVault)
+            } else {
+                // No reward (no bettors on losing side) — return the bet, no fee.
+                let betVault <- poolWithdrawRef.headVault.withdraw(amount: userBetAmount) as! @FlowToken.Vault
+                let userReceiver = getAccount(userAddress).capabilities.borrow<&FlowToken.Vault>(/public/flowTokenReceiver)
+                    ?? panic("User does not have a Flow Token receiver set up")
+                userReceiver.deposit(from: <- betVault)
             }
-
-            let userReceiver = getAccount(userAddress).capabilities.borrow<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
-                ?? panic("User does not have a Flow Token receiver set up")
-            userReceiver.deposit(from: <- betVault)
-            userReceiver.deposit(from: <- rewardVault)
             emit RewardClaimed(id: poolId, address: userAddress, amount: claimAmount)
 
         } else {
@@ -546,22 +563,28 @@ access(all) contract CoinFlip {
             let rewardAmount = claimAmount - userBetAmount
             user.setRewardClaimed(newValue: true)
 
-            let betVault <- poolWithdrawRef.tailVault.withdraw(amount: userBetAmount) as! @FlowToken.Vault
-            let rewardVault <- poolWithdrawRef.poolVault.withdraw(amount: rewardAmount) as! @FlowToken.Vault
-
-            if rewardVault.balance > 0.0 {
-                let feeFromBet <- betVault.withdraw(amount: betVault.balance * 0.01) as! @FlowToken.Vault
-                let feeFromReward <- rewardVault.withdraw(amount: rewardVault.balance * 0.01) as! @FlowToken.Vault
-                let platformVault = CoinFlip.account.capabilities.borrow<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+            if rewardAmount > 0.0 {
+                let feeFromBet = userBetAmount * 0.01
+                let feeFromReward = rewardAmount * 0.01
+                let betVault <- poolWithdrawRef.tailVault.withdraw(amount: userBetAmount - feeFromBet) as! @FlowToken.Vault
+                let betFeeVault <- poolWithdrawRef.tailVault.withdraw(amount: feeFromBet) as! @FlowToken.Vault
+                let rewardVault <- poolWithdrawRef.poolVault.withdraw(amount: rewardAmount - feeFromReward) as! @FlowToken.Vault
+                let rewardFeeVault <- poolWithdrawRef.poolVault.withdraw(amount: feeFromReward) as! @FlowToken.Vault
+                let platformVault = CoinFlip.account.capabilities.borrow<&FlowToken.Vault>(/public/flowTokenReceiver)
                     ?? panic("Could not borrow platform vault receiver")
-                platformVault.deposit(from: <- feeFromBet)
-                platformVault.deposit(from: <- feeFromReward)
+                platformVault.deposit(from: <- betFeeVault)
+                platformVault.deposit(from: <- rewardFeeVault)
+                let userReceiver = getAccount(userAddress).capabilities.borrow<&FlowToken.Vault>(/public/flowTokenReceiver)
+                    ?? panic("User does not have a Flow Token receiver set up")
+                userReceiver.deposit(from: <- betVault)
+                userReceiver.deposit(from: <- rewardVault)
+            } else {
+                // No reward (no bettors on losing side) — return the bet, no fee.
+                let betVault <- poolWithdrawRef.tailVault.withdraw(amount: userBetAmount) as! @FlowToken.Vault
+                let userReceiver = getAccount(userAddress).capabilities.borrow<&FlowToken.Vault>(/public/flowTokenReceiver)
+                    ?? panic("User does not have a Flow Token receiver set up")
+                userReceiver.deposit(from: <- betVault)
             }
-
-            let userReceiver = getAccount(userAddress).capabilities.borrow<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
-                ?? panic("User does not have a Flow Token receiver set up")
-            userReceiver.deposit(from: <- betVault)
-            userReceiver.deposit(from: <- rewardVault)
             emit RewardClaimed(id: poolId, address: userAddress, amount: claimAmount)
         }
     }
