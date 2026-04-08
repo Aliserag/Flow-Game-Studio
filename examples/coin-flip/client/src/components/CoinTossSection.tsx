@@ -215,7 +215,10 @@ const CoinTossSection = ({ onPoolIdChange }: CoinTossSectionProps) => {
   // Start/stop polling for coin flip when countdown expires
   useEffect(() => {
     const countdownDone = timeRemaining !== null && timeRemaining <= 0
-    const notYetFlipped = tossResult === ''
+    // During CALCULATING phase, tossResult holds the committed block height as a decimal
+    // string (e.g. "12345678"). The coin is not yet flipped until tossResult is "HEAD"/"TAIL".
+    const coinLanded = tossResult === 'HEAD' || tossResult === 'TAIL'
+    const notYetFlipped = !coinLanded
 
     if (countdownDone && notYetFlipped && !isPollingFlip) {
       setIsPollingFlip(true)
@@ -242,7 +245,7 @@ const CoinTossSection = ({ onPoolIdChange }: CoinTossSectionProps) => {
       }, 2000)
     }
 
-    if (tossResult !== '' && pollingIntervalRef.current) {
+    if (coinLanded && pollingIntervalRef.current) {
       clearInterval(pollingIntervalRef.current)
       pollingIntervalRef.current = null
       setIsPollingFlip(false)
@@ -277,7 +280,7 @@ const CoinTossSection = ({ onPoolIdChange }: CoinTossSectionProps) => {
 
   const renderer = ({ hours, minutes, seconds, completed }: { hours: number; minutes: number; seconds: number; completed: boolean }) => {
     if (completed) {
-      if (tossResult !== '') {
+      if (tossResult === 'HEAD' || tossResult === 'TAIL') {
         return <div className="font-mono text-neon-green text-sm tracking-widest">Coin has landed!</div>
       }
       return (

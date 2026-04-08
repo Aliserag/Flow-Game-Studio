@@ -6,26 +6,29 @@ import * as fcl from '@onflow/fcl'
 // ============================================================
 
 // Pool status raw value: 0=OPEN, 1=CALCULATING, 2=CLOSE
+// Uses getStatus() getter — status field is access(contract)
 const GET_POOL_STATUS = `
 import CoinFlip from 0xCoinFlip
 access(all) fun main(id: UInt64): UInt8 {
     pre { CoinFlip.totalPools >= id && id != 0: "Pool does not exist" }
-    return CoinFlip.borrowPool(id: id).status.rawValue
+    return CoinFlip.borrowPool(id: id).getStatus().rawValue
 }`
 
-// Toss result: "" | "HEAD" | "TAIL"
+// Toss result: "" | "HEAD" | "TAIL" (block height string during CALCULATING — treat as "")
+// Uses getTossResult() getter — tossResult field is access(contract)
 const GET_TOSS_RESULT = `
 import CoinFlip from 0xCoinFlip
 access(all) fun main(id: UInt64): String {
     pre { CoinFlip.totalPools >= id && id != 0: "Pool does not exist" }
-    return CoinFlip.borrowPool(id: id).tossResult
+    return CoinFlip.borrowPool(id: id).getTossResult()
 }`
 
+// Uses isCoinFlipped() getter — coinFlipped field is access(contract)
 const IS_COIN_FLIPPED = `
 import CoinFlip from 0xCoinFlip
 access(all) fun main(id: UInt64): Bool {
     pre { CoinFlip.totalPools >= id && id != 0: "Pool does not exist" }
-    return CoinFlip.borrowPool(id: id).coinFlipped
+    return CoinFlip.borrowPool(id: id).isCoinFlipped()
 }`
 
 const GET_HEAD_BALANCE = `
