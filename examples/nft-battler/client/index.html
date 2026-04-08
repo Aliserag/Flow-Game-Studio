@@ -6,17 +6,85 @@
   <title>NFT Battler — Digital Arena · Flow Protocol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
 </head>
 <body>
 
-  <!-- Grid background (positioned fixed, z-index 0) -->
-  <div class="grid-bg" aria-hidden="true"></div>
+  <!-- Hexagonal grid background (fixed, z-index 0) -->
+  <div class="hex-bg" aria-hidden="true">
+    <svg class="hex-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <defs>
+        <pattern id="hex-pattern" x="0" y="0" width="56" height="97" patternUnits="userSpaceOnUse">
+          <polygon points="28,1 55,15 55,42 28,56 1,42 1,15" fill="none" stroke="#FF4500" stroke-width="0.4" opacity="0.18"/>
+          <polygon points="28,49 55,63 55,90 28,104 1,90 1,63" fill="none" stroke="#FF4500" stroke-width="0.4" opacity="0.18"/>
+          <polygon points="0,15 -27,1 -27,28" fill="none" stroke="#FF4500" stroke-width="0.4" opacity="0.18"/>
+          <polygon points="56,15 83,1 83,28" fill="none" stroke="#FF4500" stroke-width="0.4" opacity="0.18"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#hex-pattern)"/>
+    </svg>
+  </div>
 
-  <!-- ── Arena Header ───────────────────────────────────────────────────── -->
+  <!-- Ticker bar -->
+  <div class="ticker-bar" aria-hidden="true">
+    <div class="ticker-track">
+      <span class="ticker-item">SEASON 01 LIVE</span>
+      <span class="ticker-sep">&#9679;</span>
+      <span class="ticker-item">FLOW TESTNET</span>
+      <span class="ticker-sep">&#9679;</span>
+      <span class="ticker-item">ATTACK BEATS DEFENSE</span>
+      <span class="ticker-sep">&#9679;</span>
+      <span class="ticker-item">DEFENSE BEATS MAGIC</span>
+      <span class="ticker-sep">&#9679;</span>
+      <span class="ticker-item">MAGIC BEATS ATTACK</span>
+      <span class="ticker-sep">&#9679;</span>
+      <span class="ticker-item">ON-CHAIN BATTLE RECORDS</span>
+      <span class="ticker-sep">&#9679;</span>
+      <span class="ticker-item">NFT ATTACHMENTS ENABLED</span>
+      <span class="ticker-sep">&#9679;</span>
+      <span class="ticker-item">WALLETLESS ONBOARDING ACTIVE</span>
+      <span class="ticker-sep">&#9679;</span>
+      <!-- Duplicate for seamless loop -->
+      <span class="ticker-item">SEASON 01 LIVE</span>
+      <span class="ticker-sep">&#9679;</span>
+      <span class="ticker-item">FLOW TESTNET</span>
+      <span class="ticker-sep">&#9679;</span>
+      <span class="ticker-item">ATTACK BEATS DEFENSE</span>
+      <span class="ticker-sep">&#9679;</span>
+      <span class="ticker-item">DEFENSE BEATS MAGIC</span>
+      <span class="ticker-sep">&#9679;</span>
+      <span class="ticker-item">MAGIC BEATS ATTACK</span>
+      <span class="ticker-sep">&#9679;</span>
+      <span class="ticker-item">ON-CHAIN BATTLE RECORDS</span>
+      <span class="ticker-sep">&#9679;</span>
+      <span class="ticker-item">NFT ATTACHMENTS ENABLED</span>
+      <span class="ticker-sep">&#9679;</span>
+      <span class="ticker-item">WALLETLESS ONBOARDING ACTIVE</span>
+      <span class="ticker-sep">&#9679;</span>
+    </div>
+  </div>
+
+  <!-- Arena Header -->
   <header class="arena-header">
-    <h1 class="arena-title">NFT Battler</h1>
-    <p class="arena-subtitle">Walletless onboarding &middot; NFT attachments &middot; On-chain battles &middot; Flow protocol</p>
+    <div class="header-inner">
+      <div class="broadcast-badge">
+        <span class="live-dot"></span>
+        <span class="broadcast-text">LIVE</span>
+      </div>
+      <h1 class="arena-title">
+        <span class="title-white">NFT</span><span class="title-accent"> BATTLER</span>
+      </h1>
+      <div class="broadcast-info">
+        <span>LIVE</span>
+        <span class="bcast-sep">&#9679;</span>
+        <span>FLOW TESTNET</span>
+        <span class="bcast-sep">&#9679;</span>
+        <span>SEASON 01</span>
+      </div>
+      <p class="arena-subtitle">Walletless Onboarding &middot; NFT Attachments &middot; On-Chain Battles &middot; Flow Protocol</p>
+    </div>
+    <div class="header-corner-tl" aria-hidden="true"></div>
+    <div class="header-corner-tr" aria-hidden="true"></div>
   </header>
 
   <main class="arena-main">
@@ -24,23 +92,35 @@
     <!-- Status bar -->
     <div id="status" role="status" aria-live="polite"></div>
 
-    <!-- ── Walletless Onboarding ─────────────────────────────────────────── -->
-    <section class="panel">
-      <h2 class="panel-title"><span class="icon" aria-hidden="true">&#128273;</span> Walletless Onboarding</h2>
+    <!-- Walletless Onboarding -->
+    <section class="panel panel-onboarding">
+      <div class="panel-accent-bar"></div>
+      <h2 class="panel-title">
+        <span class="panel-title-icon" aria-hidden="true">&#128273;</span>
+        Walletless Onboarding
+        <span class="panel-tag">NO WALLET REQUIRED</span>
+      </h2>
       <p class="info-text">
         No wallet? No problem. Click below &mdash; the app generates a keypair for you and creates
         a Flow account in the background. You own the keys; the app sponsors gas.
         When ready, export your private key to any Flow wallet to take full custody.
       </p>
       <div class="button-row">
-        <button id="create-app-account-btn" class="btn btn-primary">Spawn Unit</button>
+        <button id="create-app-account-btn" class="btn btn-primary">
+          <span class="btn-icon" aria-hidden="true">&#9889;</span> Spawn Unit
+        </button>
       </div>
       <div id="app-account-info"></div>
     </section>
 
-    <!-- ── Connect Wallet ────────────────────────────────────────────────── -->
-    <section class="panel">
-      <h2 class="panel-title"><span class="icon" aria-hidden="true">&#128091;</span> Connect Wallet</h2>
+    <!-- Connect Wallet -->
+    <section class="panel panel-wallet">
+      <div class="panel-accent-bar"></div>
+      <h2 class="panel-title">
+        <span class="panel-title-icon" aria-hidden="true">&#128091;</span>
+        Connect Wallet
+        <span class="panel-tag">FCL AUTH</span>
+      </h2>
       <p class="info-text">
         Already have a Flow wallet? Connect via FCL to sign transactions directly.
         Make sure the emulator and Dev Wallet are running.
@@ -51,43 +131,63 @@
       </div>
     </section>
 
-    <!-- ── Game Section (shown after wallet connect) ──────────────────────── -->
+    <!-- Game Section (shown after wallet connect) -->
     <div id="game-section" style="display:none;">
 
       <!-- Account Setup -->
-      <section class="panel">
-        <h2 class="panel-title"><span class="icon" aria-hidden="true">&#9881;</span> Account Setup</h2>
+      <section class="panel panel-setup">
+        <div class="panel-accent-bar"></div>
+        <h2 class="panel-title">
+          <span class="panel-title-icon" aria-hidden="true">&#9881;</span>
+          Account Setup
+          <span class="panel-tag">REQUIRED ONCE</span>
+        </h2>
         <p class="info-text">
           Create empty Fighter and PowerUp collections in your account storage.
           Required once before minting or receiving any NFTs.
         </p>
         <p class="account-address-line">
-          Account: <span id="wallet-address">&mdash;</span>
+          <span class="addr-label">Account:</span>
+          <span id="wallet-address" class="addr-value">&mdash;</span>
         </p>
         <div class="button-row">
-          <button id="setup-account-btn" class="btn btn-secondary">Initialize Collection</button>
+          <button id="setup-account-btn" class="btn btn-secondary">
+            <span class="btn-icon" aria-hidden="true">&#9881;</span> Initialize Collection
+          </button>
         </div>
       </section>
 
       <!-- Fighters -->
-      <section class="panel">
-        <h2 class="panel-title"><span class="icon" aria-hidden="true">&#9876;</span> Your Fighters</h2>
+      <section class="panel panel-fighters">
+        <div class="panel-accent-bar"></div>
+        <h2 class="panel-title">
+          <span class="panel-title-icon" aria-hidden="true">&#9876;</span>
+          Your Fighters
+          <span class="panel-tag">NFT ROSTER</span>
+        </h2>
         <div class="rps-legend">
-          <span><span class="dot attack"></span> Attack beats Defense</span>
-          <span><span class="dot defense"></span> Defense beats Magic</span>
-          <span><span class="dot magic"></span> Magic beats Attack</span>
+          <span class="legend-item"><span class="dot attack"></span> Attack beats Defense</span>
+          <span class="legend-item"><span class="dot defense"></span> Defense beats Magic</span>
+          <span class="legend-item"><span class="dot magic"></span> Magic beats Attack</span>
         </div>
         <div id="fighters-list">
           <p class="empty">Loading fighters&hellip;</p>
         </div>
         <div class="button-row">
-          <button id="refresh-fighters-btn" class="btn btn-secondary">Refresh</button>
+          <button id="refresh-fighters-btn" class="btn btn-secondary">
+            <span class="btn-icon" aria-hidden="true">&#8635;</span> Refresh Roster
+          </button>
         </div>
       </section>
 
       <!-- Battle Arena -->
-      <section class="panel">
-        <h2 class="panel-title"><span class="icon" aria-hidden="true">&#127959;</span> Battle Arena</h2>
+      <section class="panel panel-battle">
+        <div class="panel-accent-bar panel-accent-attack"></div>
+        <h2 class="panel-title">
+          <span class="panel-title-icon" aria-hidden="true">&#127959;</span>
+          Battle Arena
+          <span class="panel-tag panel-tag-live">&#9679; LIVE</span>
+        </h2>
         <p class="info-text">
           Challenge one of your fighters against another. Both fighters must be in your
           collection. Wins and losses are recorded permanently on-chain in the NFT itself.
@@ -95,44 +195,77 @@
         <div id="battle-result"></div>
         <div class="input-row">
           <div class="field">
-            <label for="my-fighter-id">Your Fighter ID</label>
+            <label for="my-fighter-id">
+              <span class="field-label-prefix">YOUR</span>
+              Fighter ID
+            </label>
             <input type="number" id="my-fighter-id" placeholder="0" min="0" />
           </div>
+          <div class="versus-divider" aria-hidden="true">VS</div>
           <div class="field">
-            <label for="opponent-fighter-id">Opponent Fighter ID</label>
+            <label for="opponent-fighter-id">
+              <span class="field-label-prefix">OPPONENT</span>
+              Fighter ID
+            </label>
             <input type="number" id="opponent-fighter-id" placeholder="1" min="0" />
           </div>
-          <button id="battle-btn" class="btn btn-attack">&#9876; Engage</button>
         </div>
-        <p class="info-text">
-          <strong>How to get fighters:</strong> Ask the admin account to run
-          <code>mint_starter.cdc</code> for your address, or run it yourself
-          from the emulator-account in the Flow CLI.
+        <div class="battle-action-row">
+          <button id="battle-btn" class="btn btn-attack">
+            <span class="btn-icon" aria-hidden="true">&#9876;</span> Engage
+          </button>
+        </div>
+        <p class="info-text info-text-sm">
+          <strong>Get fighters:</strong> Ask the admin account to run
+          <code>mint_starter.cdc</code> for your address, or run it from
+          the emulator-account in the Flow CLI.
         </p>
       </section>
 
     </div><!-- /game-section -->
 
-    <!-- ── How It Works ──────────────────────────────────────────────────── -->
+    <!-- How It Works -->
     <section class="panel how-it-works">
-      <h2 class="panel-title"><span class="icon" aria-hidden="true">&#128214;</span> How It Works</h2>
-      <p class="info-text">
-        <strong>HybridCustody</strong> &mdash; The app creates and manages a Flow account for you
-        using a sponsored transaction. Your keypair is stored in localStorage. In production,
-        Flow&rsquo;s HybridCustody contracts let you reclaim full ownership later.
-      </p>
-      <p class="info-text">
-        <strong>NFT Attachments</strong> &mdash; PowerUp NFTs physically attach to Fighter NFTs
-        using Cadence&rsquo;s <code>attach</code> keyword. The <code>PowerUp.Boost</code> attachment
-        travels with the Fighter when it&rsquo;s transferred. <code>Fighter.effectivePower()</code>
-        reads <code>self[PowerUp.Boost]</code> to calculate the boosted stat at query time.
-      </p>
-      <p class="info-text">
-        <strong>On-chain battle record</strong> &mdash; Win/loss counters are mutable fields on
-        the Fighter NFT resource itself. The <code>BattleArena</code> contract mutates them
-        via a <code>BattleRecorder</code> Cadence entitlement, ensuring only authorized code
-        can update combat history.
-      </p>
+      <div class="panel-accent-bar panel-accent-frost"></div>
+      <h2 class="panel-title">
+        <span class="panel-title-icon" aria-hidden="true">&#128214;</span>
+        How It Works
+        <span class="panel-tag">TECH OVERVIEW</span>
+      </h2>
+      <div class="how-grid">
+        <div class="how-item">
+          <div class="how-item-num">01</div>
+          <div class="how-item-body">
+            <strong>HybridCustody</strong>
+            <p class="info-text">
+              The app creates and manages a Flow account using a sponsored transaction. Your keypair is stored
+              in localStorage. Flow&rsquo;s HybridCustody contracts let you reclaim full ownership later.
+            </p>
+          </div>
+        </div>
+        <div class="how-item">
+          <div class="how-item-num">02</div>
+          <div class="how-item-body">
+            <strong>NFT Attachments</strong>
+            <p class="info-text">
+              PowerUp NFTs physically attach to Fighter NFTs using Cadence&rsquo;s <code>attach</code> keyword.
+              The <code>PowerUp.Boost</code> attachment travels with the Fighter when transferred.
+              <code>Fighter.effectivePower()</code> reads <code>self[PowerUp.Boost]</code> at query time.
+            </p>
+          </div>
+        </div>
+        <div class="how-item">
+          <div class="how-item-num">03</div>
+          <div class="how-item-body">
+            <strong>On-Chain Battle Record</strong>
+            <p class="info-text">
+              Win/loss counters are mutable fields on the Fighter NFT resource. The <code>BattleArena</code>
+              contract mutates them via a <code>BattleRecorder</code> Cadence entitlement &mdash; only authorized
+              code can update combat history.
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
 
   </main>

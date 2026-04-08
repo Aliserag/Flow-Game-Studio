@@ -6,13 +6,17 @@
   <title>Chess on Flow — Grand Master · On-Chain Tournament</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inconsolata:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 </head>
 <body>
 
   <header class="game-header" role="banner">
-    <h1 class="game-title">Chess <span class="on-flow">on Flow</span></h1>
-    <p class="game-tagline">On-chain games · VRF color assignment · NFT pieces</p>
+    <div class="title-lockup">
+      <span class="title-piece" aria-hidden="true">♛</span>
+      <h1 class="game-title">Chess<span class="on-flow">on Flow</span></h1>
+      <span class="title-piece" aria-hidden="true">♛</span>
+    </div>
+    <p class="match-info" aria-label="Match context">Grand Master Match &middot; Flow Testnet &middot; NFT Pieces</p>
   </header>
 
   <main class="app" role="main">
@@ -26,13 +30,16 @@
     <!-- Center: board + controls + game forms -->
     <div class="board-wrap">
 
-      <!-- Status bar -->
+      <!-- Status bar — tournament clock display -->
       <div id="status" class="status-bar" role="status" aria-live="polite">Connecting...</div>
 
-      <!-- Chess board — board.ts sets className='chess-board' and fills children -->
-      <div id="board" role="grid" aria-label="Chess board"></div>
+      <!-- Board frame for decorative border treatment -->
+      <div class="board-frame">
+        <!-- Chess board — board.ts sets className='chess-board' and fills children -->
+        <div id="board" role="grid" aria-label="Chess board"></div>
+      </div>
 
-      <!-- File coordinates -->
+      <!-- File coordinates (a–h) below the board -->
       <div class="board-coords" aria-hidden="true">
         <span class="coord">a</span>
         <span class="coord">b</span>

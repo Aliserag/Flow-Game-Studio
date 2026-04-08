@@ -1,64 +1,83 @@
-/* ── Sovereign Vault — Prize Pool ── */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=DM+Mono:wght@400;500&display=swap');
+/* ── Sovereign Vault — Prize Pool · Dark Edition ── */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 /* ── Design tokens ── */
 :root {
-  /* Light palette */
-  --parchment:  #FAF7F0;
-  --paper:      #F4F0E6;
-  --linen:      #EDE8DC;
-  --ash:        #D8D2C4;
-  --warm-grey:  #AFA89A;
-  --charcoal:   #2A2620;
-  --ink:        #181410;
+  /* Dark vault palette */
+  --obsidian:      #0D0B08;
+  --vault:         #141210;
+  --vault-mid:     #1C1916;
+  --vault-raised:  #221F1B;
+  --vault-border:  #2E2A25;
+  --vault-line:    rgba(255,255,255,0.06);
 
-  /* EVM / crimson accent */
-  --crimson:     #8B1A1A;
-  --crimson-mid: #A02020;
-  --crimson-dim: rgba(139,26,26,0.08);
-  --crimson-line: rgba(139,26,26,0.25);
+  /* Gold — the primary precious metal */
+  --gold:          #D4A017;
+  --gold-bright:   #E8B830;
+  --gold-dim:      rgba(212,160,23,0.12);
+  --gold-line:     rgba(212,160,23,0.3);
+  --gold-glow:     rgba(212,160,23,0.6);
 
-  /* Flow / sapphire accent */
-  --sapphire:    #1A2B6D;
-  --sapphire-mid:#22387A;
-  --sapphire-dim: rgba(26,43,109,0.07);
-  --sapphire-line: rgba(26,43,109,0.25);
+  /* EVM — bronze / copper accent */
+  --copper:        #B87333;
+  --copper-bright: #D08040;
+  --copper-dim:    rgba(184,115,51,0.12);
+  --copper-line:   rgba(184,115,51,0.35);
 
-  /* Gold */
-  --gold:        #9A7820;
-  --gold-light:  #B89030;
-  --gold-dim:    rgba(154,120,32,0.1);
+  /* Flow — royal blue-silver */
+  --flow-blue:     #4A90D9;
+  --flow-blue-bright: #6AAAF0;
+  --flow-blue-dim: rgba(74,144,217,0.10);
+  --flow-blue-line: rgba(74,144,217,0.35);
 
-  /* Fonts */
-  --serif:  'Cinzel', 'Palatino Linotype', serif;
-  --mono:   'DM Mono', 'Courier New', monospace;
+  /* Status */
+  --success:       #4CAF50;
+  --success-dim:   rgba(76,175,80,0.10);
+  --error:         #CF4444;
+  --error-dim:     rgba(207,68,68,0.10);
+  --steel:         #5D8FAF;
+  --steel-dim:     rgba(93,143,175,0.10);
+
+  /* Typography */
+  --display: 'Cinzel Decorative', 'Palatino Linotype', serif;
+  --mono:    'IBM Plex Mono', 'Courier New', monospace;
+
+  /* Text hierarchy */
+  --text-primary:   #EDE0C4;
+  --text-secondary: #A89878;
+  --text-muted:     #6B5E48;
+  --text-gold:      var(--gold);
 }
 
 /* ── Reset & base ── */
-*, *::before, *::after { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
 
 body {
-  margin: 0;
-  background: var(--parchment);
-  color: var(--charcoal);
-  font-family: var(--serif);
+  background: var(--obsidian);
+  color: var(--text-primary);
+  font-family: var(--mono);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--linen); }
-::-webkit-scrollbar-thumb { background: var(--ash); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--vault); }
+::-webkit-scrollbar-thumb { background: var(--vault-border); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold-line); }
 
-/* ── Atmosphere (minimal on light theme) ── */
+/* ── Atmosphere layers ── */
 .noise-overlay {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 1000;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 .vignette {
@@ -66,138 +85,240 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 999;
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(20,15,10,0.12) 100%);
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
 }
 
 /* ── Header ── */
 .pool-header {
   text-align: center;
-  padding: 2.5rem 1rem 1.75rem;
-  border-bottom: 2px solid var(--ink);
+  padding: 2.8rem 1rem 2rem;
+  background: var(--vault);
   position: relative;
-  background: var(--parchment);
+  overflow: hidden;
+}
+
+/* Gold ruled lines above and below header */
+.pool-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
 .pool-header::after {
   content: '';
   position: absolute;
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 2px;
-  background: var(--gold);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-line), transparent);
+}
+
+/* Inner radial spotlight behind title */
+.pool-header-inner {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, rgba(212,160,23,0.04) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .pool-title {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-weight: 900;
-  font-size: clamp(2.8rem, 6vw, 4.5rem);
-  letter-spacing: 0.25em;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--ink);
+  color: var(--text-primary);
   line-height: 1;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.75rem;
+  position: relative;
+  /* Nameplate gold shimmer */
+  background: linear-gradient(180deg, #F0D870 0%, #D4A017 40%, #A07810 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 12px rgba(212,160,23,0.25));
 }
 
 .pool-subtitle {
   font-family: var(--mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.18em;
-  color: var(--warm-grey);
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  color: var(--text-muted);
   text-transform: uppercase;
+  position: relative;
 }
 
 /* ── Status message ── */
 .status-message {
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   letter-spacing: 0.06em;
-  padding: 0.6rem 1.5rem;
-  background: var(--linen);
-  border-bottom: 1px solid var(--ash);
-  color: var(--charcoal);
+  padding: 0.55rem 1.5rem;
+  background: var(--vault);
+  color: var(--text-secondary);
   text-align: center;
-  min-height: 2.2rem;
+  min-height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-bottom: 1px solid var(--vault-border);
+  transition: background 0.2s, border-color 0.2s;
 }
 
-/* ── Prize display ── */
+.status-message.status-info {
+  background: var(--steel-dim);
+  border-left: 3px solid var(--steel);
+  border-bottom-color: rgba(93,143,175,0.2);
+  color: #8AB8D4;
+}
+
+.status-message.status-success {
+  background: rgba(212,160,23,0.06);
+  border-left: 3px solid var(--gold);
+  border-bottom-color: var(--gold-line);
+  color: var(--gold-bright);
+}
+
+.status-message.status-error {
+  background: var(--error-dim);
+  border-left: 3px solid var(--error);
+  border-bottom-color: rgba(207,68,68,0.2);
+  color: #E07070;
+}
+
+/* ── Prize display — THE HERO ── */
 .prize-display {
   text-align: center;
-  padding: 3rem 1rem 2rem;
-  border-bottom: 1px solid var(--ash);
+  padding: 4rem 2rem 3rem;
   position: relative;
-  background: var(--paper);
+  overflow: hidden;
+  background: var(--vault);
+  border-bottom: 1px solid var(--vault-border);
+}
+
+/* Radial spotlight behind prize */
+.prize-display::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 60%, rgba(212,160,23,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Decorative corner ornaments (CSS-only frame) */
+.prize-display::after {
+  content: '';
+  position: absolute;
+  top: 1.5rem; left: 50%;
+  transform: translateX(-50%);
+  width: min(500px, 80vw);
+  height: calc(100% - 3rem);
+  border: 1px solid var(--gold-line);
+  box-shadow:
+    inset 0 0 0 6px var(--vault),
+    inset 0 0 0 7px rgba(212,160,23,0.08),
+    0 0 30px rgba(212,160,23,0.06);
+  pointer-events: none;
 }
 
 .prize-label {
   font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.3em;
+  font-size: 0.58rem;
+  letter-spacing: 0.4em;
   text-transform: uppercase;
-  color: var(--warm-grey);
-  margin-bottom: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 .prize-amount {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-weight: 900;
-  font-size: clamp(3.5rem, 10vw, 7rem);
+  font-size: clamp(3.5rem, 10vw, 8rem);
   line-height: 1;
-  color: var(--ink);
   letter-spacing: -0.02em;
   display: block;
-  animation: prize-breathe 4s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+  /* Gold gradient text */
+  background: linear-gradient(180deg, #F5E070 0%, #D4A017 35%, #A07810 70%, #C8920A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(212,160,23,0.4));
+  animation: vault-glow 4s ease-in-out infinite;
 }
 
 .prize-currency {
   font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.2em;
-  color: var(--warm-grey);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: var(--text-muted);
   text-transform: uppercase;
-  margin-top: 0.75rem;
+  margin-top: 1rem;
+  position: relative;
+  z-index: 1;
 }
 
-/* ── Pool stats ── */
+/* ── Pool stats chips ── */
 .pool-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 0;
-  border-bottom: 1px solid var(--ash);
-  background: var(--parchment);
+  background: var(--obsidian);
+  border-bottom: 1px solid var(--vault-border);
 }
 
 .stat-chip {
   flex: 1;
-  min-width: 100px;
-  padding: 1rem 1.5rem;
-  border-right: 1px solid var(--ash);
+  min-width: 120px;
+  padding: 1.1rem 1.5rem;
+  border-right: 1px solid var(--vault-border);
   text-align: center;
-  transition: background 0.15s;
+  position: relative;
+  background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(0,0,0,0.15));
+  transition: background 0.18s;
 }
 
 .stat-chip:last-child { border-right: none; }
-.stat-chip:hover { background: var(--linen); }
+
+.stat-chip:hover {
+  background: linear-gradient(145deg, rgba(212,160,23,0.04), rgba(0,0,0,0.1));
+}
+
+/* Gold top accent on hover */
+.stat-chip::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20%; right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-line), transparent);
+  opacity: 0;
+  transition: opacity 0.18s;
+}
+.stat-chip:hover::before { opacity: 1; }
 
 .stat-chip .label {
   font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.2em;
+  font-size: 0.55rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--warm-grey);
+  color: var(--text-muted);
   display: block;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.35rem;
 }
 
 .stat-chip .value {
-  font-family: var(--serif);
-  font-size: 1.2rem;
+  font-family: var(--display);
+  font-size: 1.15rem;
   font-weight: 700;
-  color: var(--charcoal);
+  color: var(--gold);
   display: block;
 }
 
@@ -208,44 +329,62 @@ body {
   gap: 0;
   max-width: 1100px;
   margin: 0 auto;
-  border-bottom: 1px solid var(--ash);
+  border-bottom: 1px solid var(--vault-border);
 }
 
 @media (max-width: 720px) {
   .panels-layout { grid-template-columns: 1fr; }
 }
 
+/* ── Panels ── */
 .panel {
-  background: var(--paper);
-  border-right: 1px solid var(--ash);
+  background: var(--vault);
+  border-right: 1px solid var(--vault-border);
   position: relative;
+  overflow: hidden;
 }
 
 .panel:last-child { border-right: none; }
 
+/* Soft radial glow inside panels */
+.panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+.panel:first-child {
+  border-top: 2px solid var(--copper);
+}
+.panel:first-child::before {
+  background: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(184,115,51,0.06) 0%, transparent 60%);
+}
+
+.panel:last-child {
+  border-top: 2px solid var(--flow-blue);
+}
+.panel:last-child::before {
+  background: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(74,144,217,0.06) 0%, transparent 60%);
+}
+
 .panel-header {
   padding: 1.25rem 1.75rem 1rem;
-  border-bottom: 1px solid var(--ash);
+  border-bottom: 1px solid var(--vault-border);
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: var(--parchment);
-}
-
-/* EVM panel left border */
-.panel:first-child {
-  border-top: 3px solid var(--crimson);
-}
-.panel:last-child {
-  border-top: 3px solid var(--sapphire);
+  background: rgba(0,0,0,0.2);
+  position: relative;
 }
 
 .panel-header h2 {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: 0.06em;
-  color: var(--ink);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  color: var(--text-primary);
   text-transform: uppercase;
 }
 
@@ -254,144 +393,176 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Badges ── */
 .badge {
   font-family: var(--mono);
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   font-weight: 500;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  padding: 0.25em 0.6em;
+  padding: 0.25em 0.65em;
   border: 1px solid;
+  flex-shrink: 0;
 }
 
 .badge-evm {
-  color: var(--crimson);
-  border-color: var(--crimson-line);
-  background: var(--crimson-dim);
+  color: var(--copper-bright);
+  border-color: var(--copper-line);
+  background: var(--copper-dim);
 }
 
 .badge-flow {
-  color: var(--sapphire);
-  border-color: var(--sapphire-line);
-  background: var(--sapphire-dim);
+  color: var(--flow-blue-bright);
+  border-color: var(--flow-blue-line);
+  background: var(--flow-blue-dim);
 }
 
 .badge-admin {
   color: var(--gold);
-  border-color: rgba(154,120,32,0.35);
+  border-color: var(--gold-line);
   background: var(--gold-dim);
 }
 
 /* ── Feature note ── */
 .feature-note {
   font-family: var(--mono);
-  font-size: 0.72rem;
-  line-height: 1.7;
-  color: var(--warm-grey);
-  padding: 0.75rem 1rem;
-  background: var(--linen);
-  border-left: 2px solid var(--ash);
+  font-size: 0.68rem;
+  line-height: 1.75;
+  color: var(--text-muted);
+  padding: 0.8rem 1rem;
+  background: rgba(0,0,0,0.25);
+  border-left: 2px solid var(--vault-border);
 }
 
 .feature-note strong {
-  color: var(--charcoal);
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 .feature-note code {
-  background: var(--parchment);
-  border: 1px solid var(--ash);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--vault-border);
   padding: 0.1em 0.35em;
   font-size: 0.9em;
-  color: var(--charcoal);
+  color: var(--text-secondary);
+  font-family: var(--mono);
 }
 
 /* ── Buttons ── */
 .btn {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 0.75rem;
-  letter-spacing: 0.18em;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   cursor: pointer;
   border: 1px solid;
-  padding: 0.7rem 1.5rem;
-  transition: all 0.15s ease;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.18s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Shimmer overlay on buttons */
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  transition: left 0.4s ease;
+  pointer-events: none;
+}
+.btn:hover::after { left: 150%; }
+
+/* MetaMask / EVM — deep copper metallic */
 .btn-enter {
-  background: var(--crimson);
-  color: #FAF7F0;
-  border-color: var(--crimson);
+  background: linear-gradient(145deg, #C87830, #A06020, #8A4A10);
+  color: #F5E8D0;
+  border-color: var(--copper);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 2px 8px rgba(0,0,0,0.4);
 }
 .btn-enter:hover {
-  background: var(--crimson-mid);
-  box-shadow: 0 2px 12px rgba(139,26,26,0.3);
+  background: linear-gradient(145deg, #D88840, #B07030, #9A5A20);
+  box-shadow: 0 0 20px rgba(184,115,51,0.35), 0 1px 0 rgba(255,255,255,0.08) inset;
+  border-color: var(--copper-bright);
 }
 
+/* Flow wallet — royal blue gradient */
 .btn-pick {
-  background: var(--sapphire);
-  color: #FAF7F0;
-  border-color: var(--sapphire);
+  background: linear-gradient(145deg, #3A70B9, #2858A0, #1A4080);
+  color: #D0E8F8;
+  border-color: var(--flow-blue);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 2px 8px rgba(0,0,0,0.4);
 }
 .btn-pick:hover {
-  background: var(--sapphire-mid);
-  box-shadow: 0 2px 12px rgba(26,43,109,0.3);
+  background: linear-gradient(145deg, #5A90D9, #3870C0, #2860A0);
+  box-shadow: 0 0 20px rgba(74,144,217,0.35), 0 1px 0 rgba(255,255,255,0.08) inset;
+  border-color: var(--flow-blue-bright);
 }
 
+/* Ghost — minimal dark */
 .btn-ghost {
   background: transparent;
-  color: var(--charcoal);
-  border-color: var(--ash);
+  color: var(--text-muted);
+  border-color: var(--vault-border);
 }
 .btn-ghost:hover {
-  border-color: var(--charcoal);
-  background: var(--linen);
+  border-color: var(--gold-line);
+  color: var(--text-secondary);
+  background: var(--gold-dim);
 }
 
+/* Admin — gold text on dark, gold border */
 .btn-admin {
-  background: var(--ink);
-  color: var(--gold-light);
-  border-color: var(--ink);
+  background: var(--obsidian);
+  color: var(--gold);
+  border-color: var(--gold-line);
+  letter-spacing: 0.15em;
 }
 .btn-admin:hover {
-  background: var(--charcoal);
-  box-shadow: 0 2px 12px rgba(24,20,16,0.4);
+  background: var(--gold-dim);
+  box-shadow: 0 0 16px rgba(212,160,23,0.2);
+  border-color: var(--gold);
+  color: var(--gold-bright);
 }
 
 .btn-sm {
-  padding: 0.4rem 0.9rem;
-  font-size: 0.65rem;
+  padding: 0.38rem 0.85rem;
+  font-size: 0.6rem;
 }
 
 /* ── Wallet status box ── */
 .wallet-status-box {
-  padding: 0.75rem 1rem;
-  background: var(--linen);
-  border: 1px solid var(--ash);
+  padding: 0.85rem 1rem;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--vault-border);
+  border-left: 2px solid var(--gold-line);
 }
 
 .wallet-status-box .label {
   font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.18em;
+  font-size: 0.55rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--warm-grey);
+  color: var(--text-muted);
   display: block;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.35rem;
 }
 
 .wallet-addr {
   font-family: var(--mono);
-  font-size: 0.72rem;
-  color: var(--charcoal);
+  font-size: 0.68rem;
+  color: var(--text-secondary);
   word-break: break-all;
   font-weight: 500;
 }
@@ -400,45 +571,52 @@ body {
 .deposit-group {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.4rem;
 }
 
 .deposit-group label {
   font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--warm-grey);
+  color: var(--text-muted);
 }
 
 .deposit-group input,
 #deposit-amount {
-  background: var(--parchment);
-  border: 1px solid var(--ash);
-  border-bottom: 2px solid var(--ash);
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 1.1rem;
-  font-weight: 500;
-  padding: 0.55rem 0.8rem;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid var(--vault-border);
+  border-bottom: 2px solid var(--vault-border);
+  color: var(--text-primary);
+  font-family: var(--display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 0.6rem 0.85rem;
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.18s, box-shadow 0.18s;
   width: 100%;
   appearance: textfield;
   -moz-appearance: textfield;
 }
+
 #deposit-amount::-webkit-outer-spin-button,
 #deposit-amount::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+#deposit-amount::placeholder { color: var(--text-muted); }
+
 #deposit-amount:focus {
-  border-color: var(--crimson);
-  border-bottom-color: var(--crimson);
+  border-color: var(--copper-line);
+  border-bottom-color: var(--copper);
+  box-shadow: 0 0 0 1px rgba(184,115,51,0.15), inset 0 0 12px rgba(0,0,0,0.2);
 }
 
+/* ── Utility ── */
 .text-muted {
   font-family: var(--mono);
-  font-size: 0.72rem;
-  color: var(--warm-grey);
+  font-size: 0.68rem;
+  color: var(--text-muted);
   font-style: italic;
+  line-height: 1.6;
 }
 
 /* ── Trophies ── */
@@ -449,108 +627,215 @@ body {
 }
 
 .trophies-header strong {
-  font-family: var(--serif);
-  font-size: 0.85rem;
-  letter-spacing: 0.12em;
+  font-family: var(--display);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--charcoal);
+  color: var(--text-secondary);
 }
 
 .trophies-container {
   min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .empty-state {
   font-family: var(--mono);
-  font-size: 0.72rem;
-  color: var(--warm-grey);
+  font-size: 0.68rem;
+  color: var(--text-muted);
   text-align: center;
   padding: 2rem;
   font-style: italic;
+  border: 1px dashed var(--vault-border);
 }
 
 /* ── Trophy card (JS-generated) ── */
 .trophy-card {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.85rem;
   align-items: flex-start;
-  padding: 0.75rem;
-  border: 1px solid var(--ash);
-  background: var(--parchment);
-  margin-bottom: 1px;
-  transition: background 0.12s;
+  padding: 0.85rem 1rem;
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(0,0,0,0.15));
+  border: 1px solid var(--vault-border);
+  border-left: 3px solid var(--gold-line);
+  transition: background 0.15s, border-left-color 0.15s;
+  position: relative;
 }
-.trophy-card:hover { background: var(--linen); }
 
-/* ── Admin panel ── */
+.trophy-card:hover {
+  background: linear-gradient(135deg, rgba(212,160,23,0.04), rgba(0,0,0,0.12));
+  border-left-color: var(--gold);
+}
+
+/* Gold enamel trophy icon effect */
+.trophy-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px rgba(212,160,23,0.5));
+  flex-shrink: 0;
+}
+
+.trophy-details {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.trophy-details strong {
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 0.2rem;
+  font-weight: 500;
+}
+
+/* ── Admin panel — CLASSIFIED document aesthetic ── */
 #admin-panel {
-  background: var(--ink);
-  color: var(--parchment);
+  background: var(--vault);
+  color: var(--text-primary);
   max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
-  border-top: 3px solid var(--gold-light);
+  position: relative;
+  /* Hazard stripe border effect using gradient */
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Amber hazard border */
+#admin-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(212,160,23,0.5) 0px,
+    rgba(212,160,23,0.5) 4px,
+    transparent 4px,
+    transparent 16px
+  ) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Top solid gold stripe */
+#admin-panel::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
 #admin-panel h3 {
-  font-family: var(--serif);
-  font-size: 1rem;
-  letter-spacing: 0.2em;
+  font-family: var(--display);
+  font-size: 0.9rem;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--gold-light);
-  margin-bottom: 0.5rem;
+  color: var(--gold);
+  margin-bottom: 0.6rem;
+  position: relative;
+}
+
+/* "CLASSIFIED" label effect */
+#admin-panel h3::before {
+  content: '⬛ ADMIN CONTROL ⬛';
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.4em;
+  color: var(--gold-line);
+  margin-bottom: 0.3rem;
+  font-weight: 400;
 }
 
 .admin-desc {
   font-family: var(--mono);
-  font-size: 0.72rem;
-  line-height: 1.7;
-  color: var(--warm-grey);
+  font-size: 0.68rem;
+  line-height: 1.75;
+  color: var(--text-muted);
   margin-bottom: 1.25rem;
+  border-left: 2px solid var(--vault-border);
+  padding-left: 0.75rem;
 }
 
 .admin-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
 }
 
 .admin-field {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.35rem;
 }
 
 .admin-field label {
   font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.12em;
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--warm-grey);
+  color: var(--text-muted);
 }
 
 .admin-field input {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: var(--parchment);
+  background: rgba(212,160,23,0.04);
+  border: 1px solid rgba(212,160,23,0.2);
+  border-bottom: 2px solid rgba(212,160,23,0.15);
+  color: var(--gold-bright);
   font-family: var(--mono);
   font-size: 0.85rem;
   padding: 0.5rem 0.75rem;
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.18s, box-shadow 0.18s;
 }
 
 .admin-field input:focus {
-  border-color: var(--gold-light);
+  border-color: var(--gold-line);
+  border-bottom-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(212,160,23,0.1);
 }
 
 .admin-field input::placeholder {
-  color: rgba(255,255,255,0.2);
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 /* ── Animations ── */
+
+/* Vault glow — dramatic gold breathing with scale */
+@keyframes vault-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px rgba(212,160,23,0.3)) drop-shadow(0 0 6px rgba(212,160,23,0.2));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 60px rgba(212,160,23,0.8)) drop-shadow(0 0 120px rgba(212,160,23,0.3)) drop-shadow(0 0 8px rgba(248,224,100,0.5));
+    transform: scale(1.015);
+  }
+}
+
+/* Legacy alias — keep prize-breathe working if referenced elsewhere */
 @keyframes prize-breathe {
-  0%, 100% { opacity: 0.95; }
-  50% { opacity: 1; }
+  0%, 100% {
+    filter: drop-shadow(0 0 20px rgba(212,160,23,0.3));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 60px rgba(212,160,23,0.8)) drop-shadow(0 0 120px rgba(212,160,23,0.3));
+    transform: scale(1.015);
+  }
+}
+
+/* Subtle pulse for status badges */
+@keyframes badge-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
