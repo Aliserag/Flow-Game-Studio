@@ -9,6 +9,18 @@
 - **Rendering**: Godot 4.6 default renderer (Vulkan/GLES3 compatibility mode for HTML5)
 - **Physics**: Jolt Physics (Godot 4.6 default) — only for UI collision; no physics gameplay
 
+## Input & Platform
+
+<!-- Written by /setup-engine. Read by /ux-design, /ux-review, /test-setup, /team-ui, and /dev-story -->
+<!-- to scope interaction specs, test helpers, and implementation to the correct input methods. -->
+
+- **Target Platforms**: Web (HTML5 primary), Desktop (dev/testing)
+- **Input Methods**: Keyboard/Mouse (desktop), Touch (mobile browser)
+- **Primary Input**: Keyboard/Mouse
+- **Gamepad Support**: None (browser-first game)
+- **Touch Support**: Partial (UI-only, no gameplay touch controls yet)
+- **Platform Notes**: HTML5 export via Godot; FCL JS SDK requires web context
+
 ## Naming Conventions (GDScript)
 
 - **Classes**: PascalCase — `ChipEconomy`, `FlowBridge`, `RunState`
@@ -79,6 +91,32 @@ All autoloads registered in Project Settings. Load order matters:
 
 ## Architecture Decisions Log
 
+<!-- Quick reference linking to full ADRs in docs/architecture/ -->
 - [ADR-001] Signal-based state management via RunState singleton — `docs/architecture/ADR-001-run-state-signals.md`
 - [ADR-002] Additive item multiplier stacking — `docs/architecture/ADR-002-item-stacking.md`
 - [ADR-003] FlowBridge as exclusive blockchain gateway — `docs/architecture/ADR-003-flow-bridge-gateway.md`
+
+## Engine Specialists
+
+<!-- Written by /setup-engine when engine is configured. -->
+<!-- Read by /code-review, /architecture-decision, /architecture-review, and team skills -->
+<!-- to know which specialist to spawn for engine-specific validation. -->
+
+- **Primary**: godot-specialist
+- **Language/Code Specialist**: godot-gdscript-specialist
+- **Shader Specialist**: godot-shader-specialist
+- **UI Specialist**: unity-ui-specialist (adapt for Godot UI Toolkit)
+- **Additional Specialists**: godot-gdextension-specialist (C++ only)
+- **Routing Notes**: All GDScript → godot-gdscript-specialist; all .tscn/.tres → godot-specialist
+
+### File Extension Routing
+
+<!-- Skills use this table to select the right specialist per file type. -->
+
+| File Extension / Type | Specialist to Spawn |
+|-----------------------|---------------------|
+| `.gd` (GDScript) | godot-gdscript-specialist |
+| `.gdshader` / `.gdshaderinc` | godot-shader-specialist |
+| `.tscn` / `.tres` | godot-specialist |
+| `.cpp` / `.h` (GDExtension) | godot-gdextension-specialist |
+| General architecture review | godot-specialist |
