@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Flow Mobile Starter",
+    "slug": "flow-mobile-starter",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "flowmobilestarter",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.yourcompany.flowmobilestarter"
+    },
+    "android": {
+      "package": "com.yourcompany.flowmobilestarter",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": { "newArchEnabled": true },
+          "ios":     { "newArchEnabled": true }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "YOUR_EAS_PROJECT_ID"
+      }
+    }
+  }
+}
