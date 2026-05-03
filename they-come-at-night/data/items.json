@@ -1,0 +1,176 @@
+{
+  "knife": {
+    "name": "Kitchen Knife",
+    "category": "weapon",
+    "rarity": "common",
+    "attack": 2,
+    "weight": 1,
+    "description": "Better than nothing. Barely."
+  },
+  "bat": {
+    "name": "Baseball Bat",
+    "category": "weapon",
+    "rarity": "common",
+    "attack": 3,
+    "weight": 2,
+    "description": "America's pastime. Now with extra splatter."
+  },
+  "machete": {
+    "name": "Machete",
+    "category": "weapon",
+    "rarity": "uncommon",
+    "attack": 5,
+    "weight": 2,
+    "description": "Heavy. Quiet. Effective."
+  },
+  "pistol": {
+    "name": "Pistol",
+    "category": "weapon",
+    "rarity": "uncommon",
+    "attack": 6,
+    "noise": 4,
+    "ammo": "9mm",
+    "weight": 2,
+    "description": "Loud. Brings friends."
+  },
+  "shotgun": {
+    "name": "Shotgun",
+    "category": "weapon",
+    "rarity": "rare",
+    "attack": 9,
+    "noise": 6,
+    "ammo": "shells",
+    "weight": 4,
+    "description": "Crowd control. Ammo's the question."
+  },
+  "rifle": {
+    "name": "Hunting Rifle",
+    "category": "weapon",
+    "rarity": "rare",
+    "attack": 8,
+    "noise": 5,
+    "ammo": "rifle",
+    "weight": 4,
+    "description": "Reach out and touch someone."
+  },
+  "vest": {
+    "name": "Tactical Vest",
+    "category": "armor",
+    "rarity": "uncommon",
+    "defense": 3,
+    "weight": 3,
+    "description": "Stops a bite. Maybe."
+  },
+  "leather_jacket": {
+    "name": "Leather Jacket",
+    "category": "armor",
+    "rarity": "common",
+    "defense": 1,
+    "weight": 2,
+    "description": "Looks cool. Doesn't help much."
+  },
+  "helmet": {
+    "name": "Construction Helmet",
+    "category": "armor",
+    "rarity": "common",
+    "defense": 2,
+    "weight": 1,
+    "description": "Protects what's left of your brain."
+  },
+  "bandage": {
+    "name": "Bandage",
+    "category": "consumable",
+    "rarity": "common",
+    "heal": 3,
+    "weight": 0,
+    "description": "Wrap it tight."
+  },
+  "medkit": {
+    "name": "Medkit",
+    "category": "consumable",
+    "rarity": "uncommon",
+    "heal": 8,
+    "weight": 1,
+    "description": "Real medicine. Don't waste it."
+  },
+  "antibiotics": {
+    "name": "Antibiotics",
+    "category": "consumable",
+    "rarity": "rare",
+    "cure_infection": true,
+    "weight": 0,
+    "description": "Slows the turn. Doesn't stop it."
+  },
+  "canned_food": {
+    "name": "Canned Food",
+    "category": "food",
+    "rarity": "common",
+    "nutrition": 2,
+    "weight": 1,
+    "description": "Beans. Always beans."
+  },
+  "mre": {
+    "name": "MRE",
+    "category": "food",
+    "rarity": "uncommon",
+    "nutrition": 4,
+    "weight": 1,
+    "description": "Meal Ready to Eat. Ready, not good."
+  },
+  "water_bottle": {
+    "name": "Water Bottle",
+    "category": "food",
+    "rarity": "common",
+    "nutrition": 1,
+    "weight": 1,
+    "description": "Filtered. You hope."
+  },
+  "ammo_9mm": {
+    "name": "9mm Ammo",
+    "category": "ammo",
+    "rarity": "common",
+    "stack": 12,
+    "weight": 0,
+    "description": "Pistol rounds."
+  },
+  "ammo_shells": {
+    "name": "Shotgun Shells",
+    "category": "ammo",
+    "rarity": "uncommon",
+    "stack": 6,
+    "weight": 0,
+    "description": "Buckshot."
+  },
+  "ammo_rifle": {
+    "name": "Rifle Rounds",
+    "category": "ammo",
+    "rarity": "uncommon",
+    "stack": 8,
+    "weight": 0,
+    "description": "High caliber."
+  },
+  "scrap": {
+    "name": "Scrap",
+    "category": "material",
+    "rarity": "common",
+    "stack": 99,
+    "weight": 0,
+    "description": "Metal, wire, broken bits. Builds things."
+  },
+  "wood": {
+    "name": "Wood Plank",
+    "category": "material",
+    "rarity": "common",
+    "stack": 99,
+    "weight": 0,
+    "description": "Boards from broken houses."
+  },
+  "fuel": {
+    "name": "Fuel Can",
+    "category": "material",
+    "rarity": "uncommon",
+    "stack": 5,
+    "weight": 2,
+    "description": "Burns. Explodes. Both useful."
+  }
+}

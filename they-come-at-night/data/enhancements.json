@@ -1,0 +1,90 @@
+{
+  "barricade": {
+    "name": "Barricade",
+    "tier": 1,
+    "cost": {"wood": 4, "scrap": 2},
+    "build_days": 1,
+    "defense_bonus": 2,
+    "description": "Boards on the windows, junk in the doorways."
+  },
+  "watchtower": {
+    "name": "Watchtower",
+    "tier": 1,
+    "cost": {"wood": 6, "scrap": 4},
+    "build_days": 2,
+    "vision_bonus": 2,
+    "warning_bonus": 1,
+    "description": "Spot trouble two days out instead of one."
+  },
+  "garden": {
+    "name": "Garden Plot",
+    "tier": 1,
+    "cost": {"wood": 3, "scrap": 1},
+    "build_days": 2,
+    "food_per_day": 1,
+    "description": "Tomatoes, onions, hope."
+  },
+  "fortified_walls": {
+    "name": "Fortified Walls",
+    "tier": 2,
+    "cost": {"wood": 8, "scrap": 10},
+    "build_days": 3,
+    "defense_bonus": 5,
+    "requires": ["barricade"],
+    "description": "Real walls. Took the doors off three houses."
+  },
+  "infirmary": {
+    "name": "Infirmary",
+    "tier": 2,
+    "cost": {"scrap": 6, "wood": 4},
+    "build_days": 2,
+    "heal_per_day": 1,
+    "description": "Beds, boiled water, what's left of the medkits."
+  },
+  "armory": {
+    "name": "Armory",
+    "tier": 2,
+    "cost": {"scrap": 8, "wood": 2},
+    "build_days": 2,
+    "attack_bonus": 2,
+    "description": "Organized weapons. People know where the ammo is."
+  },
+  "trap_field": {
+    "name": "Trap Field",
+    "tier": 2,
+    "cost": {"scrap": 10, "wood": 4},
+    "build_days": 3,
+    "defense_bonus": 3,
+    "siege_damage_bonus": 5,
+    "description": "Spikes, snares, fall pits. They walk in. They don't walk out."
+  },
+  "generator": {
+    "name": "Generator",
+    "tier": 3,
+    "cost": {"scrap": 15, "fuel": 3},
+    "build_days": 3,
+    "morale_bonus": 2,
+    "requires": ["fortified_walls"],
+    "description": "Lights. A radio. The first time someone laughs in a month."
+  },
+  "radio_tower": {
+    "name": "Radio Tower",
+    "tier": 3,
+    "cost": {"scrap": 20, "wood": 8},
+    "build_days": 4,
+    "warning_bonus": 3,
+    "recruit_bonus": true,
+    "requires": ["watchtower"],
+    "description": "Hear them coming. Maybe call for help. Maybe be heard."
+  },
+  "bunker": {
+    "name": "Bunker",
+    "tier": 3,
+    "cost": {"scrap": 25, "wood": 15, "fuel": 5},
+    "build_days": 5,
+    "defense_bonus": 10,
+    "siege_survival": true,
+    "requires": ["fortified_walls"],
+    "description": "Reinforced concrete and steel. The megahorde might not be the end."
+  }
+}

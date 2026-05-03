@@ -1,0 +1,291 @@
+[gd_scene load_steps=6 format=3 uid="uid://b1gameview00000"]
+
+[ext_resource type="Script" path="res://scripts/ui/game_view.gd" id="1_gv"]
+[ext_resource type="Script" path="res://scripts/ui/grid_renderer.gd" id="2_gr"]
+[ext_resource type="Script" path="res://scripts/ui/event_modal.gd" id="3_em"]
+[ext_resource type="Script" path="res://scripts/ui/build_panel.gd" id="4_bp"]
+[ext_resource type="Script" path="res://scripts/ui/assign_panel.gd" id="5_ap"]
+
+[node name="GameView" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_gv")
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.06, 0.05, 0.05, 1)
+
+[node name="Layout" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 4
+
+[node name="GridArea" type="VBoxContainer" parent="Layout"]
+custom_minimum_size = Vector2(620, 0)
+size_flags_horizontal = 3
+
+[node name="GridHeader" type="Label" parent="Layout/GridArea"]
+text = "  THE TOWN — click tiles to inspect, choose 'Move' then click adjacent tile"
+theme_override_colors/font_color = Color(0.7, 0.65, 0.5, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="Layout/GridArea"]
+size_flags_vertical = 3
+horizontal_scroll_mode = 2
+vertical_scroll_mode = 2
+
+[node name="GridRenderer" type="Control" parent="Layout/GridArea/Scroll"]
+custom_minimum_size = Vector2(700, 700)
+script = ExtResource("2_gr")
+
+[node name="Bottom" type="VBoxContainer" parent="Layout/GridArea"]
+custom_minimum_size = Vector2(0, 220)
+
+[node name="ActionsLabel" type="Label" parent="Layout/GridArea/Bottom"]
+text = "Actions:"
+theme_override_colors/font_color = Color(0.85, 0.65, 0.4, 1)
+
+[node name="Actions" type="HFlowContainer" parent="Layout/GridArea/Bottom"]
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 4
+
+[node name="LogLabel" type="Label" parent="Layout/GridArea/Bottom"]
+text = "Log:"
+theme_override_colors/font_color = Color(0.85, 0.65, 0.4, 1)
+
+[node name="LogScroll" type="ScrollContainer" parent="Layout/GridArea/Bottom"]
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 120)
+
+[node name="LogText" type="RichTextLabel" parent="Layout/GridArea/Bottom/LogScroll"]
+custom_minimum_size = Vector2(580, 0)
+bbcode_enabled = true
+scroll_following = true
+fit_content = true
+
+[node name="Right" type="VBoxContainer" parent="Layout"]
+custom_minimum_size = Vector2(310, 0)
+theme_override_constants/separation = 6
+
+[node name="HUD" type="PanelContainer" parent="Layout/Right"]
+
+[node name="HUDText" type="RichTextLabel" parent="Layout/Right/HUD"]
+custom_minimum_size = Vector2(0, 130)
+bbcode_enabled = true
+fit_content = true
+
+[node name="Party" type="PanelContainer" parent="Layout/Right"]
+
+[node name="PartyText" type="RichTextLabel" parent="Layout/Right/Party"]
+custom_minimum_size = Vector2(0, 160)
+bbcode_enabled = true
+fit_content = true
+
+[node name="TileInfo" type="PanelContainer" parent="Layout/Right"]
+
+[node name="TileInfoText" type="RichTextLabel" parent="Layout/Right/TileInfo"]
+custom_minimum_size = Vector2(0, 130)
+bbcode_enabled = true
+fit_content = true
+
+[node name="Inventory" type="PanelContainer" parent="Layout/Right"]
+size_flags_vertical = 3
+
+[node name="InventoryText" type="RichTextLabel" parent="Layout/Right/Inventory"]
+custom_minimum_size = Vector2(0, 200)
+bbcode_enabled = true
+fit_content = true
+
+[node name="EventModal" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+visible = false
+script = ExtResource("3_em")
+
+[node name="Backdrop" type="ColorRect" parent="EventModal"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.7)
+
+[node name="Panel" type="PanelContainer" parent="EventModal"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -260.0
+offset_right = 320.0
+offset_bottom = 260.0
+
+[node name="Margin" type="MarginContainer" parent="EventModal/Panel"]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="V" type="VBoxContainer" parent="EventModal/Panel/Margin"]
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="EventModal/Panel/Margin/V"]
+text = "Event"
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.85, 0.65, 0.4, 1)
+
+[node name="Body" type="RichTextLabel" parent="EventModal/Panel/Margin/V"]
+custom_minimum_size = Vector2(0, 130)
+bbcode_enabled = true
+fit_content = true
+
+[node name="Options" type="VBoxContainer" parent="EventModal/Panel/Margin/V"]
+
+[node name="Outcome" type="Label" parent="EventModal/Panel/Margin/V"]
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.7, 0.85, 0.7, 1)
+
+[node name="ContinueBtn" type="Button" parent="EventModal/Panel/Margin/V"]
+text = "Continue"
+
+[node name="BuildPanel" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+visible = false
+script = ExtResource("4_bp")
+
+[node name="Backdrop" type="ColorRect" parent="BuildPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.6)
+
+[node name="Panel" type="PanelContainer" parent="BuildPanel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -340.0
+offset_top = -240.0
+offset_right = 340.0
+offset_bottom = 240.0
+
+[node name="Margin" type="MarginContainer" parent="BuildPanel/Panel"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="V" type="VBoxContainer" parent="BuildPanel/Panel/Margin"]
+
+[node name="Title" type="Label" parent="BuildPanel/Panel/Margin/V"]
+text = "Build at your base"
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.85, 0.65, 0.4, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="BuildPanel/Panel/Margin/V"]
+custom_minimum_size = Vector2(640, 380)
+
+[node name="List" type="VBoxContainer" parent="BuildPanel/Panel/Margin/V/Scroll"]
+custom_minimum_size = Vector2(620, 0)
+theme_override_constants/separation = 6
+
+[node name="CloseBtn" type="Button" parent="BuildPanel/Panel/Margin/V"]
+text = "Close"
+
+[node name="AssignPanel" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+visible = false
+script = ExtResource("5_ap")
+
+[node name="Backdrop" type="ColorRect" parent="AssignPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.6)
+
+[node name="Panel" type="PanelContainer" parent="AssignPanel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -380.0
+offset_top = -240.0
+offset_right = 380.0
+offset_bottom = 240.0
+
+[node name="Margin" type="MarginContainer" parent="AssignPanel/Panel"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="V" type="VBoxContainer" parent="AssignPanel/Panel/Margin"]
+
+[node name="Title" type="Label" parent="AssignPanel/Panel/Margin/V"]
+text = "Inventory & Assignments — click a survivor, then Assign/Use items"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.85, 0.65, 0.4, 1)
+
+[node name="Body" type="HBoxContainer" parent="AssignPanel/Panel/Margin/V"]
+custom_minimum_size = Vector2(720, 380)
+
+[node name="PartyCol" type="VBoxContainer" parent="AssignPanel/Panel/Margin/V/Body"]
+custom_minimum_size = Vector2(360, 0)
+
+[node name="PartyHeader" type="Label" parent="AssignPanel/Panel/Margin/V/Body/PartyCol"]
+text = "Party"
+theme_override_colors/font_color = Color(0.85, 0.65, 0.4, 1)
+
+[node name="PartyScroll" type="ScrollContainer" parent="AssignPanel/Panel/Margin/V/Body/PartyCol"]
+custom_minimum_size = Vector2(0, 360)
+
+[node name="PartyList" type="VBoxContainer" parent="AssignPanel/Panel/Margin/V/Body/PartyCol/PartyScroll"]
+custom_minimum_size = Vector2(340, 0)
+theme_override_constants/separation = 4
+
+[node name="StashCol" type="VBoxContainer" parent="AssignPanel/Panel/Margin/V/Body"]
+custom_minimum_size = Vector2(360, 0)
+
+[node name="StashHeader" type="Label" parent="AssignPanel/Panel/Margin/V/Body/StashCol"]
+text = "Stash"
+theme_override_colors/font_color = Color(0.85, 0.65, 0.4, 1)
+
+[node name="StashScroll" type="ScrollContainer" parent="AssignPanel/Panel/Margin/V/Body/StashCol"]
+custom_minimum_size = Vector2(0, 360)
+
+[node name="StashList" type="VBoxContainer" parent="AssignPanel/Panel/Margin/V/Body/StashCol/StashScroll"]
+custom_minimum_size = Vector2(340, 0)
+theme_override_constants/separation = 4
+
+[node name="CloseBtn" type="Button" parent="AssignPanel/Panel/Margin/V"]
+text = "Close"
+
+[node name="GameOver" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+visible = false
+
+[node name="Backdrop" type="ColorRect" parent="GameOver"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.85)
+
+[node name="Panel" type="PanelContainer" parent="GameOver"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -180.0
+offset_right = 260.0
+offset_bottom = 180.0
+
+[node name="V" type="VBoxContainer" parent="GameOver/Panel"]
+theme_override_constants/separation = 16
+
+[node name="Message" type="Label" parent="GameOver/Panel/V"]
+text = "GAME OVER"
+horizontal_alignment = 1
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.9, 0.4, 0.4, 1)
+
+[node name="MenuBtn" type="Button" parent="GameOver/Panel/V"]
+text = "Return to Menu"

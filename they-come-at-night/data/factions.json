@@ -1,0 +1,95 @@
+{
+  "lone_wolf": {
+    "name": "Lone Wolf",
+    "alignment": "neutral",
+    "weight": 25,
+    "join_chance": 0.7,
+    "betrayal_chance": 0.05,
+    "description": "Just trying to survive. No agenda.",
+    "intro_lines": [
+      "Hey... you got food? I haven't eaten in days.",
+      "Don't shoot. I'm clean. No bites.",
+      "I lost my group last week. Mind if I tag along?",
+      "I can pull my weight. I swear."
+    ]
+  },
+  "militia": {
+    "name": "Free Militia",
+    "alignment": "lawful",
+    "weight": 12,
+    "join_chance": 0.5,
+    "betrayal_chance": 0.02,
+    "description": "Citizen-soldiers. Disciplined, suspicious of outsiders.",
+    "intro_lines": [
+      "Identify yourself. Slowly.",
+      "We're rebuilding. Order matters now more than ever.",
+      "You armed? Show me."
+    ]
+  },
+  "raiders": {
+    "name": "Raiders",
+    "alignment": "hostile",
+    "weight": 10,
+    "join_chance": 0.2,
+    "betrayal_chance": 0.6,
+    "description": "Take what they want. Smile while doing it.",
+    "intro_lines": [
+      "Friendly! Just friendly. Got anything to spare?",
+      "Nice setup you got. Real nice.",
+      "Look, I know we got off on the wrong foot..."
+    ]
+  },
+  "cannibals": {
+    "name": "The Long Pig Society",
+    "alignment": "hostile",
+    "weight": 5,
+    "join_chance": 0.4,
+    "betrayal_chance": 0.85,
+    "description": "Civilized. Articulate. Hungry.",
+    "intro_lines": [
+      "Oh thank god, another person! It's been so long.",
+      "I have a camp nearby. Plenty of food. You should come.",
+      "We're not animals. We have rules. We have... recipes.",
+      "You look thin. Let us feed you."
+    ]
+  },
+  "cultists": {
+    "name": "Children of the Risen",
+    "alignment": "hostile",
+    "weight": 6,
+    "join_chance": 0.3,
+    "betrayal_chance": 0.5,
+    "description": "Worship the dead. Believe the bite is a sacrament.",
+    "intro_lines": [
+      "The Risen will inherit. Will you?",
+      "Have you been Chosen yet, friend?",
+      "I've seen the truth. The dead are awake; the living merely sleep."
+    ]
+  },
+  "doctors": {
+    "name": "Mercy Corps Remnants",
+    "alignment": "lawful",
+    "weight": 4,
+    "join_chance": 0.8,
+    "betrayal_chance": 0.0,
+    "description": "Medical staff still trying. Saints, mostly.",
+    "intro_lines": [
+      "Are you injured? I have supplies.",
+      "I was a nurse. Before. I still am, I think.",
+      "Please — I just want to help people."
+    ]
+  },
+  "scavengers": {
+    "name": "Scavenger Crew",
+    "alignment": "neutral",
+    "weight": 15,
+    "join_chance": 0.6,
+    "betrayal_chance": 0.15,
+    "description": "Trade-focused. Practical to a fault.",
+    "intro_lines": [
+      "What you got? I'll trade.",
+      "Heard there's a Costco two days east. Untouched. Maybe.",
+      "Numbers help. Want to split a haul?"
+    ]
+  }
+}
