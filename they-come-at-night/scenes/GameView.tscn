@@ -1,10 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://b1gameview00000"]
+[gd_scene load_steps=8 format=3 uid="uid://b1gameview00000"]
 
 [ext_resource type="Script" path="res://scripts/ui/game_view.gd" id="1_gv"]
 [ext_resource type="Script" path="res://scripts/ui/grid_renderer.gd" id="2_gr"]
 [ext_resource type="Script" path="res://scripts/ui/event_modal.gd" id="3_em"]
 [ext_resource type="Script" path="res://scripts/ui/build_panel.gd" id="4_bp"]
 [ext_resource type="Script" path="res://scripts/ui/assign_panel.gd" id="5_ap"]
+[ext_resource type="Script" path="res://scripts/ui/knowledge_panel.gd" id="6_kp"]
+[ext_resource type="Script" path="res://scripts/ui/trade_panel.gd" id="7_tp"]
 
 [node name="GameView" type="Control"]
 anchor_right = 1.0
@@ -255,6 +257,119 @@ custom_minimum_size = Vector2(340, 0)
 theme_override_constants/separation = 4
 
 [node name="CloseBtn" type="Button" parent="AssignPanel/Panel/Margin/V"]
+text = "Close"
+
+[node name="TradePanel" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+visible = false
+script = ExtResource("7_tp")
+
+[node name="Backdrop" type="ColorRect" parent="TradePanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.6)
+
+[node name="Panel" type="PanelContainer" parent="TradePanel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -380.0
+offset_top = -260.0
+offset_right = 380.0
+offset_bottom = 260.0
+
+[node name="Margin" type="MarginContainer" parent="TradePanel/Panel"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="V" type="VBoxContainer" parent="TradePanel/Panel/Margin"]
+
+[node name="Title" type="Label" parent="TradePanel/Panel/Margin/V"]
+text = "Trading"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.85, 0.65, 0.4, 1)
+
+[node name="Body" type="HBoxContainer" parent="TradePanel/Panel/Margin/V"]
+custom_minimum_size = Vector2(720, 380)
+
+[node name="NpcCol" type="VBoxContainer" parent="TradePanel/Panel/Margin/V/Body"]
+custom_minimum_size = Vector2(360, 0)
+
+[node name="NpcHdr" type="Label" parent="TradePanel/Panel/Margin/V/Body/NpcCol"]
+text = "Their stock"
+theme_override_colors/font_color = Color(0.85, 0.65, 0.4, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="TradePanel/Panel/Margin/V/Body/NpcCol"]
+custom_minimum_size = Vector2(0, 360)
+
+[node name="List" type="VBoxContainer" parent="TradePanel/Panel/Margin/V/Body/NpcCol/Scroll"]
+custom_minimum_size = Vector2(340, 0)
+
+[node name="YourCol" type="VBoxContainer" parent="TradePanel/Panel/Margin/V/Body"]
+custom_minimum_size = Vector2(360, 0)
+
+[node name="YourHdr" type="Label" parent="TradePanel/Panel/Margin/V/Body/YourCol"]
+text = "Your inventory"
+theme_override_colors/font_color = Color(0.85, 0.65, 0.4, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="TradePanel/Panel/Margin/V/Body/YourCol"]
+custom_minimum_size = Vector2(0, 360)
+
+[node name="List" type="VBoxContainer" parent="TradePanel/Panel/Margin/V/Body/YourCol/Scroll"]
+custom_minimum_size = Vector2(340, 0)
+
+[node name="Status" type="Label" parent="TradePanel/Panel/Margin/V"]
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+
+[node name="CloseBtn" type="Button" parent="TradePanel/Panel/Margin/V"]
+text = "Close"
+
+[node name="KnowledgePanel" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+visible = false
+script = ExtResource("6_kp")
+
+[node name="Backdrop" type="ColorRect" parent="KnowledgePanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.6)
+
+[node name="Panel" type="PanelContainer" parent="KnowledgePanel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -220.0
+offset_right = 300.0
+offset_bottom = 220.0
+
+[node name="Margin" type="MarginContainer" parent="KnowledgePanel/Panel"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="V" type="VBoxContainer" parent="KnowledgePanel/Panel/Margin"]
+
+[node name="Title" type="Label" parent="KnowledgePanel/Panel/Margin/V"]
+text = "Knowledge"
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.85, 0.65, 0.4, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="KnowledgePanel/Panel/Margin/V"]
+custom_minimum_size = Vector2(560, 340)
+
+[node name="List" type="VBoxContainer" parent="KnowledgePanel/Panel/Margin/V/Scroll"]
+custom_minimum_size = Vector2(540, 0)
+theme_override_constants/separation = 6
+
+[node name="CloseBtn" type="Button" parent="KnowledgePanel/Panel/Margin/V"]
 text = "Close"
 
 [node name="GameOver" type="Control" parent="."]

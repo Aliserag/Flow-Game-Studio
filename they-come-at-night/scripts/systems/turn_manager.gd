@@ -34,6 +34,13 @@ static func end_turn(grid: Grid) -> void:
 	SwarmSystem.on_day_advanced(GameState.day, grid)
 	# 8. Check infections — turn into zombie if untreated for too long.
 	_tick_infections(grid)
+	# 8b. Nightly betrayal roll for high-betrayal-chance recruits.
+	BetrayalSystem.nightly_check(grid)
+	# 8c. Decay temporary defense buff.
+	if GameState._defense_temp_turns > 0:
+		GameState._defense_temp_turns -= 1
+		if GameState._defense_temp_turns <= 0:
+			GameState._defense_temp_bonus = 0
 	# 9. Roll for an event.
 	var ev: Dictionary = EventSystem.roll_for_event(grid)
 	# 10. Recompute visibility & emit signals.
@@ -68,16 +75,21 @@ static func _daily_upkeep() -> void:
 static func _tick_infections(grid: Grid) -> void:
 	var to_kill: Array = []
 	for s in GameState.party:
-		if s.has_method("get") and s.infected:
-			# If antibiotics on hand, auto-cure for the lead; flagged but not consumed for others.
-			if RNG.chance(0.25):
-				to_kill.append(s)
+		if s.infected and RNG.chance(0.25):
+			# Untreated infection turns into a zombie roll; antibiotics use is manual.
+			to_kill.append(s)
 	for victim in to_kill:
 		EventBus.log_danger("%s turns in the night." % victim.display_name)
+		var was_lead: bool = victim.is_lead
 		GameState.party.erase(victim)
 		GameState.assignments.erase(victim.id)
 		if grid != null:
 			grid.remove_entity(victim)
+		if was_lead and not GameState.party.is_empty():
+			var new_lead = GameState.party[0]
+			new_lead.is_lead = true
+			new_lead.faction_revealed = true
+			EventBus.log_warn("%s steps up as lead." % new_lead.display_name)
 		EventBus.emit_signal("party_changed")
 		# Spawn a single zombie at their location.
 		var z: ZombieUnit = ZombieUnit.make("single")

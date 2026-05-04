@@ -1,0 +1,24 @@
+# Godot editor generated cache. Do not commit.
+.godot/
+.import/
+
+# Exported builds
+/build/
+/exports/
+*.exe
+*.dmg
+*.x86_64
+*.app/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor swap files
+*.swp
+*.swo
+*~
+
+# Test coverage / artifacts
+/coverage/
+/test-results/

@@ -40,9 +40,5 @@ static func spawn_random() -> Npc:
 	return n
 
 func choose_move(grid: Grid) -> Vector2i:
-	# NPCs wander somewhat purposefully — most drift toward the player.
-	var nearest = grid.nearest_entity(pos, func(e): return e.is_player_party())
-	if nearest != null and grid.chebyshev(pos, nearest.pos) <= 6 and RNG.chance(0.4):
-		return grid.step_toward(pos, nearest.pos)
-	var dirs := [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.ZERO, Vector2i.ZERO]
-	return pos + RNG.pick(dirs)
+	# Faction-aware movement strategy lives in NpcBehavior.
+	return NpcBehavior.step(self, grid)

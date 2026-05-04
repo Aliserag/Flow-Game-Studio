@@ -136,8 +136,32 @@ static func _apply_effects(eff: Dictionary, grid: Grid) -> void:
 					var newest = GameState.party.back()
 					if newest.has_method("set"):
 						newest.faction_revealed = true
-			"defense_temp", "preparation_bonus", "tension":
-				pass # tracked but not yet wired into combat math
+			"defense_temp":
+				# {"defense_temp": 3} or {"defense_temp": [magnitude, turns]}
+				var mag: int = 0
+				var turns: int = 3
+				if val is Array and val.size() == 2:
+					mag = int(val[0])
+					turns = int(val[1])
+				else:
+					mag = int(val)
+				GameState._defense_temp_bonus = max(GameState._defense_temp_bonus, mag)
+				GameState._defense_temp_turns = max(GameState._defense_temp_turns, turns)
+			"preparation_bonus":
+				# One-shot defense buff against the next swarm/megahorde combat.
+				GameState._preparation_bonus_pending = max(GameState._preparation_bonus_pending, int(val))
+			"tension":
+				BetrayalSystem.add_tension(int(val))
+			"reveal_npc_faction":
+				ParleySystem.reveal_npc(int(val))
+			"reveal_recruit_faction":
+				if bool(val) and not GameState.party.is_empty():
+					var newest = GameState.party.back()
+					newest.faction_revealed = true
+			"consume_npc":
+				ParleySystem.consume_npc(int(val))
+			"open_trade_with_npc":
+				EventBus.emit_signal("open_trade_request", int(val))
 
 static func _recruit_random() -> void:
 	var s: Survivor = Survivor.make_random_recruit()
@@ -220,7 +244,10 @@ static func _trigger_siege(unit_id: String, grid: Grid) -> void:
 	EventBus.log_danger("Siege! %d zombies dropped, %d casualties." % [result.damage_to_zombie, result.casualties])
 
 static func _lose_supplies(fraction: float) -> void:
-	for item_id in GameState.inventory.keys():
-		var have: int = int(GameState.inventory[item_id])
+	# Iterate a snapshot of keys; remove_from_inventory mutates the dict.
+	for item_id in GameState.inventory.keys().duplicate():
+		var have: int = int(GameState.inventory.get(item_id, 0))
+		if have <= 0:
+			continue
 		var lose: int = int(ceil(have * fraction))
-		GameState.remove_from_inventory(item_id, lose)
+		GameState.remove_from_inventory(String(item_id), lose)

@@ -6,6 +6,7 @@ var factions: Dictionary = {}
 var zombie_units: Dictionary = {}
 var enhancements: Dictionary = {}
 var events: Dictionary = {}
+var knowledge: Dictionary = {}
 
 func _ready() -> void:
 	terrain = _load_json("res://data/terrain.json")
@@ -14,9 +15,10 @@ func _ready() -> void:
 	zombie_units = _load_json("res://data/zombie_units.json")
 	enhancements = _load_json("res://data/enhancements.json")
 	events = _load_json("res://data/events.json")
-	print("[DataLoader] terrain=%d items=%d factions=%d zombies=%d enhancements=%d events=%d" % [
+	knowledge = _load_json("res://data/knowledge.json")
+	print("[DataLoader] terrain=%d items=%d factions=%d zombies=%d enhancements=%d events=%d knowledge=%d" % [
 		terrain.size(), items.size(), factions.size(), zombie_units.size(),
-		enhancements.size(), events.size()
+		enhancements.size(), events.size(), knowledge.size()
 	])
 
 func _load_json(path: String) -> Dictionary:

@@ -299,5 +299,57 @@
         {"weight": 100, "text": "Practical. You collect rainwater in cans.", "effects": {"items": {"water_bottle": 3}}}
       ]}
     ]
+  },
+  "fortify_drill": {
+    "title": "Drills",
+    "weight": 6,
+    "min_day": 5,
+    "tags": ["settlement"],
+    "conditions": {"has_base": true, "min_party": 2},
+    "description": "You spend the day running drills. Everyone moves through the routines twice. The walls don't get any sturdier — but everyone's ready to use them.",
+    "options": [
+      {"text": "Run the drills", "outcomes": [
+        {"weight": 100, "text": "Everyone is sharper. For a few days.", "effects": {"defense_temp": [3, 4]}}
+      ]},
+      {"text": "Skip them", "outcomes": [
+        {"weight": 100, "text": "There's always tomorrow.", "effects": {"morale": -1}}
+      ]}
+    ]
+  },
+  "scout_returns": {
+    "title": "The Scout Returns",
+    "weight": 5,
+    "min_day": 12,
+    "tags": ["warning"],
+    "conditions": {"has_base": true},
+    "description": "Your scout comes back at dawn, hands shaking. 'I saw it. Coming this way. We've got time — but only if we use it.'",
+    "options": [
+      {"text": "Reinforce — the boards, the doors, everything", "cost": {"wood": 3, "scrap": 2}, "outcomes": [
+        {"weight": 100, "text": "By dusk you've doubled the defenses against whatever comes next.", "effects": {"preparation_bonus": 6}}
+      ]},
+      {"text": "Trust the existing walls", "outcomes": [
+        {"weight": 100, "text": "It'll have to be enough.", "effects": {}}
+      ]}
+    ]
+  },
+  "argument_at_dinner": {
+    "title": "Argument at Dinner",
+    "weight": 8,
+    "min_day": 4,
+    "tags": ["social"],
+    "conditions": {"min_party": 2},
+    "description": "Voices rise at dinner. Someone accuses someone else of stealing — quietly. The room goes still.",
+    "options": [
+      {"text": "Investigate calmly", "outcomes": [
+        {"weight": 60, "text": "You sort it out. A misunderstanding. Mostly.", "effects": {"morale": 1}},
+        {"weight": 40, "text": "There's no proof. The accusation lingers.", "effects": {"tension": 3}}
+      ]},
+      {"text": "Demand the accuser apologize", "outcomes": [
+        {"weight": 100, "text": "Everyone resents you a little. The room is colder for days.", "effects": {"tension": 5, "morale": -1}}
+      ]},
+      {"text": "Ignore it", "outcomes": [
+        {"weight": 100, "text": "The whisper grows.", "effects": {"tension": 4}}
+      ]}
+    ]
   }
 }

@@ -13,6 +13,8 @@ extends Control
 @onready var event_modal: Control = $EventModal
 @onready var build_panel: Control = $BuildPanel
 @onready var assign_panel: Control = $AssignPanel
+@onready var knowledge_panel: Control = $KnowledgePanel
+@onready var trade_panel: Control = $TradePanel
 @onready var game_over: Control = $GameOver
 @onready var game_over_label: Label = $GameOver/Panel/V/Message
 @onready var game_over_btn: Button = $GameOver/Panel/V/MenuBtn
@@ -21,7 +23,15 @@ var _selected_tile: Vector2i = Vector2i(-1, -1)
 var _move_mode: bool = false
 
 func _ready() -> void:
-	_init_world()
+	if GameState.has_meta("_resuming_save"):
+		GameState.remove_meta("_resuming_save")
+		if SaveSystem.load_run():
+			EventBus.log_good("Save loaded.")
+		else:
+			EventBus.log_warn("Save failed to load — starting fresh.")
+			_init_world()
+	else:
+		_init_world()
 	_wire_signals()
 	_rebuild_actions()
 	_refresh_all()
@@ -64,6 +74,14 @@ func _init_world() -> void:
 	GameState.grid.add_entity(npc)
 	EventBus.log_info("Day 1. You are %s. Survive." % lead.display_name)
 
+func _find_nearby_npc(lead) -> Npc:
+	if GameState.grid == null:
+		return null
+	for e in GameState.grid.entities:
+		if e is Npc and GameState.grid.chebyshev(e.pos, lead.pos) <= 1:
+			return e
+	return null
+
 func _find_spawn(g: Grid) -> Vector2i:
 	# Try centre, then ripple outward.
 	var c := g.size / 2
@@ -94,6 +112,7 @@ func _wire_signals() -> void:
 	EventBus.entity_removed.connect(func(_e): grid_renderer.refresh())
 	EventBus.entity_moved.connect(func(_e, _a, _b): grid_renderer.refresh())
 	EventBus.request_event_modal.connect(_on_event_modal_request)
+	EventBus.open_trade_request.connect(_on_open_trade_request)
 	EventBus.game_over.connect(_on_game_over)
 	game_over_btn.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/MainMenu.tscn"))
 
@@ -107,6 +126,13 @@ func _on_event_modal_request(payload: Dictionary) -> void:
 func _on_event_resolved(_idx: int) -> void:
 	GameState.phase = GameState.Phase.PLAYING
 	_refresh_all()
+
+func _on_open_trade_request(npc_id: int) -> void:
+	if GameState.grid == null: return
+	for e in GameState.grid.entities:
+		if e is Npc and e.id == npc_id:
+			trade_panel.open_trade(e)
+			return
 
 func _on_tile_clicked(c: Vector2i) -> void:
 	_selected_tile = c
@@ -261,8 +287,23 @@ func _rebuild_actions() -> void:
 				BaseSystem.abandon()
 				_refresh_all()
 			)
+	# Parley with any NPC on lead's tile or adjacent.
+	var nearby_npc: Npc = _find_nearby_npc(lead)
+	if nearby_npc != null:
+		var npc_ref := nearby_npc
+		var npc_label: String = "Talk to %s" % nearby_npc.display_name
+		if nearby_npc.faction_id == "cannibals" and GameState.knowledge.has("cannibal_warning"):
+			npc_label += "  ⚠ LONG PIG"
+		_add_action(npc_label, func():
+			var payload: Dictionary = ParleySystem.build_parley(npc_ref)
+			EventBus.emit_signal("request_event_modal", payload)
+		)
+
 	_add_action("Open Inventory / Assign", func():
 		assign_panel.show_panel()
+	)
+	_add_action("Knowledge (%d)" % GameState.knowledge.size(), func():
+		knowledge_panel.show_panel()
 	)
 	_add_action("Rest (end day)", func():
 		# Resting tries to heal the lead 1 HP.
@@ -271,6 +312,12 @@ func _rebuild_actions() -> void:
 	)
 	_add_action("End Day (no action)", func():
 		TurnManager.end_turn(GameState.grid)
+	)
+	_add_action("Save", func():
+		if SaveSystem.save():
+			EventBus.log_good("Saved.")
+		else:
+			EventBus.log_warn("Save failed.")
 	)
 
 func _add_action(label: String, cb: Callable) -> void:

@@ -1,0 +1,49 @@
+name: They Come At Night — Tests
+
+on:
+  push:
+    branches: [main, "claude/they-come-at-night*"]
+    paths:
+      - "they-come-at-night/**"
+      - ".github/workflows/they-come-at-night-tests.yml"
+  pull_request:
+    paths:
+      - "they-come-at-night/**"
+      - ".github/workflows/they-come-at-night-tests.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Godot
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/godot-bin
+          key: godot-4.6-stable-linux
+
+      - name: Install Godot 4.6
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot-bin
+          cd ~/godot-bin
+          # Adjust URL when 4.6 stable lands; this is the canonical pattern.
+          curl -L -o godot.zip https://github.com/godotengine/godot-builds/releases/download/4.6-stable/Godot_v4.6-stable_linux.x86_64.zip
+          unzip godot.zip
+          mv Godot_v4.6-stable_linux.x86_64 godot
+          chmod +x godot
+
+      - name: Run test suite
+        working-directory: they-come-at-night
+        run: |
+          ~/godot-bin/godot --headless --script res://tests/run_tests.gd
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-output
+          path: they-come-at-night/tests/
+          retention-days: 7

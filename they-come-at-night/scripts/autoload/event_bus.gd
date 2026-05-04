@@ -27,6 +27,7 @@ signal game_over(victory: bool, summary: String)
 signal hud_refresh_requested()
 signal action_requested(action_id: String, payload: Dictionary)
 signal request_event_modal(payload: Dictionary)
+signal open_trade_request(npc_id: int)
 signal modal_closed()
 
 func log_info(msg: String) -> void:

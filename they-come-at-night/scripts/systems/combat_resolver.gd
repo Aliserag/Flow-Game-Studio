@@ -31,11 +31,22 @@ static func party_defense() -> int:
 		d += GameState.base_defense_bonus
 		for enh in GameState.base_enhancements:
 			d += int(DataLoader.enhancements.get(enh, {}).get("defense_bonus", 0))
+	# Temporary defense buffs from events (defense_temp).
+	if GameState._defense_temp_turns > 0:
+		d += GameState._defense_temp_bonus
 	return d
+
+static func _consume_preparation_bonus_for(zombie: ZombieUnit) -> int:
+	# One-shot bonus consumed only on swarm/megahorde combat.
+	if zombie.unit_id != "swarm" and zombie.unit_id != "megahorde":
+		return 0
+	var bonus: int = GameState._preparation_bonus_pending
+	GameState._preparation_bonus_pending = 0
+	return bonus
 
 static func resolve_attack(zombie: ZombieUnit, grid: Grid) -> Dictionary:
 	var attack := party_attack_power()
-	var defense := party_defense()
+	var defense := party_defense() + _consume_preparation_bonus_for(zombie)
 	var z_attack: int = zombie.attack + int(zombie.size * 0.5)
 	var damage_to_zombie: int = max(1, attack + RNG.randi_range_inclusive(0, 4))
 	var damage_to_party: int = max(0, z_attack - defense + RNG.randi_range_inclusive(-2, 3))
@@ -50,7 +61,7 @@ static func resolve_attack(zombie: ZombieUnit, grid: Grid) -> Dictionary:
 		for survivor in GameState.party.duplicate():
 			if remaining <= 0:
 				break
-			var hit: int = min(remaining, max(1, randi() % 3 + 1))
+			var hit: int = min(remaining, RNG.randi_range_inclusive(1, 3))
 			survivor.hp -= hit
 			remaining -= hit
 			# Bite chance — only if a survivor took damage.
@@ -91,7 +102,7 @@ static func resolve_flee(zombie: ZombieUnit, grid: Grid, current_tile: Tile) -> 
 		var remaining := damage
 		for survivor in GameState.party.duplicate():
 			if remaining <= 0: break
-			var hit: int = min(remaining, randi() % 3 + 1)
+			var hit: int = min(remaining, RNG.randi_range_inclusive(1, 3))
 			survivor.hp -= hit
 			remaining -= hit
 			if survivor.hp <= 0:
@@ -111,11 +122,18 @@ static func resolve_flee(zombie: ZombieUnit, grid: Grid, current_tile: Tile) -> 
 	return {"success": success, "damage": damage, "casualties": casualties.size()}
 
 static func _remove_party_member(s, grid: Grid) -> void:
+	var was_lead: bool = s.is_lead
 	GameState.party.erase(s)
 	if grid != null:
 		grid.remove_entity(s)
 	# Remove their assignments.
 	GameState.assignments.erase(s.id)
+	# Promote the next-in-line if the lead fell so HUD/AI agree on who the lead is.
+	if was_lead and not GameState.party.is_empty():
+		var new_lead = GameState.party[0]
+		new_lead.is_lead = true
+		new_lead.faction_revealed = true
+		EventBus.log_warn("%s steps up as lead." % new_lead.display_name)
 	EventBus.emit_signal("party_changed")
 	EventBus.log_danger("%s is dead." % s.display_name)
 	if GameState.party.is_empty():

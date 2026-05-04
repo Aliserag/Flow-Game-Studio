@@ -48,6 +48,7 @@ static func _step_npc(n: Npc, grid: Grid) -> void:
 		grid.remove_entity(n)
 		return
 	grid.move_entity(n, target)
+	NpcBehavior.post_step_action(n, grid)
 
 static func _maybe_spawn_zombie(grid: Grid) -> void:
 	var chance: float = BASE_SPAWN_CHANCE + 0.01 * GameState.day

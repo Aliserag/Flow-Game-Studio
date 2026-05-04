@@ -41,6 +41,14 @@ var _megahorde_unlock_day: int = 0  # rolled once per run
 var swarm_pending: Dictionary = {}  # {kind: String, eta_days: int} or empty
 var noise_level: int = 0  # transient: spikes after gunfire, decays
 
+# Tension / betrayal modifiers
+var _betrayal_tension_bonus_turns: int = 0
+# Temporary defense bonus (turns remaining + magnitude)
+var _defense_temp_bonus: int = 0
+var _defense_temp_turns: int = 0
+# One-shot preparation bonus consumed at next swarm/megahorde combat
+var _preparation_bonus_pending: int = 0
+
 # Run-meta
 var run_seed: int = 0
 var knowledge: Array = []  # learned facts (cannibal_warning, immunity_exists, etc.)
@@ -74,6 +82,10 @@ func reset_run(new_mode: int, seed_value: int = 0) -> void:
 	_megahorde_unlock_day = 0
 	swarm_pending.clear()
 	noise_level = 0
+	_betrayal_tension_bonus_turns = 0
+	_defense_temp_bonus = 0
+	_defense_temp_turns = 0
+	_preparation_bonus_pending = 0
 	knowledge.clear()
 	stats = {
 		"zombies_killed": 0,

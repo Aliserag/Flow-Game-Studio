@@ -50,6 +50,9 @@ offset_bottom = 160.0
 [node name="VBox" type="VBoxContainer" parent="Panel"]
 theme_override_constants/separation = 14
 
+[node name="ContinueButton" type="Button" parent="Panel/VBox"]
+text = "CONTINUE"
+
 [node name="SoloButton" type="Button" parent="Panel/VBox"]
 text = "SOLO SURVIVOR"
 
