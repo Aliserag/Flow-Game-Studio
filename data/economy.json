@@ -1,0 +1,23 @@
+{
+  "version": "0.1.0",
+  "starting_gold": 60,
+  "battle_stipend": 15,
+  "kill_bonus_per_tier": {
+    "1": 5,
+    "2": 10,
+    "3": 20
+  },
+  "hire_price_range_per_tier": {
+    "1": [25, 40],
+    "2": [50, 80],
+    "3": [100, 160]
+  },
+  "max_roster_size": 6,
+  "min_roster_size": 1,
+  "tavern_candidates_per_visit": 3,
+  "starting_roster_size": 2,
+  "xp_per_kill": 5,
+  "xp_per_battle_won": 10,
+  "stat_points_per_level": 2,
+  "xp_to_level": [0, 30, 70, 130, 220, 350, 530, 770, 1080, 1480]
+}

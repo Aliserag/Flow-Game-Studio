@@ -1,122 +1,98 @@
-# Technical Preferences
+# Technical Preferences — WARBAND
 
-<!-- Configured 2026-04-06 for Lucky Strike / Godot 4.6 / GDScript -->
+<!-- Realigned 2026-05-14 from prior Lucky Strike project to WARBAND -->
 
 ## Engine & Language
 
-- **Engine**: Godot 4.6
+- **Engine**: Godot 4.6 stable (official 89cea1439)
 - **Language**: GDScript (primary) — C++ via GDExtension only for verifiable performance bottlenecks
-- **Rendering**: Godot 4.6 default renderer (Vulkan/GLES3 compatibility mode for HTML5)
-- **Physics**: Jolt Physics (Godot 4.6 default) — only for UI collision; no physics gameplay
+- **Rendering**: GLES3 / Compatibility renderer (HTML5 compatible)
+- **Physics**: None for gameplay. Side-on 2D positions are kinematic. No physics simulation.
 
 ## Input & Platform
 
-<!-- Written by /setup-engine. Read by /ux-design, /ux-review, /test-setup, /team-ui, and /dev-story -->
-<!-- to scope interaction specs, test helpers, and implementation to the correct input methods. -->
-
 - **Target Platforms**: Web (HTML5 primary), Desktop (dev/testing)
 - **Input Methods**: Keyboard/Mouse (desktop), Touch (mobile browser)
-- **Primary Input**: Keyboard/Mouse
-- **Gamepad Support**: None (browser-first game)
-- **Touch Support**: Partial (UI-only, no gameplay touch controls yet)
-- **Platform Notes**: HTML5 export via Godot; FCL JS SDK requires web context
+- **Primary Input**: Mouse (point-and-click tavern, GO button on battle)
+- **Gamepad Support**: None for G0; consider at G2
+- **Touch Support**: Tap-equivalent of click for tavern card selection at G2
 
 ## Naming Conventions (GDScript)
 
-- **Classes**: PascalCase — `ChipEconomy`, `FlowBridge`, `RunState`
-- **Variables/Functions**: snake_case — `current_chips`, `apply_chip_delta()`
-- **Signals**: snake_case past-tense verb — `chips_changed`, `deal_locked`, `run_ended`
-- **Constants**: UPPER_SNAKE_CASE — `STARTING_CHIPS`, `WIN_THRESHOLD`, `MIN_BET`
-- **Enums**: PascalCase enum name, UPPER_SNAKE_CASE values — `enum RunPhase { BETTING_ROOM, DEAL_PENDING }`
-- **Files**: snake_case matching class — `flow_bridge.gd`, `run_state.gd`
-- **Scenes**: PascalCase matching root node — `BettingTable.tscn`, `HUD.tscn`
-- **Data files**: kebab-case — `chip-economy.json`, `bet-types.json`, `items.json`
+- **Classes**: PascalCase — `RunState`, `CombatResolver`, `Orc`, `TavernCard`
+- **Variables/Functions**: snake_case — `current_gold`, `apply_damage()`, `roll_candidates()`
+- **Signals**: snake_case past-tense verb — `orc_died`, `gold_changed`, `battle_ended`
+- **Constants**: UPPER_SNAKE_CASE — `STARTING_GOLD`, `MAX_ROSTER_SIZE`, `MIN_HIRE_PRICE`
+- **Enums**: PascalCase enum name, UPPER_SNAKE_CASE values — `enum BattlePhase { TAVERN, DEAL, BATTLE, RESOLUTION }`
+- **Files**: snake_case matching class — `run_state.gd`, `combat_resolver.gd`
+- **Scenes**: PascalCase matching root node — `TavernScreen.tscn`, `BattleScreen.tscn`
+- **Data files**: kebab-case — `orc-archetypes.json`, `enemy-types.json`, `gear-pieces.json`
 - **Private members**: `_prefix` for methods/vars not intended for external use
 
 ## File Organization
 
-- `src/core/` — Autoload singletons (RunState, FlowBridge, ItemInventory, ItemEffectEngine)
-- `src/gameplay/` — VRF Tx Manager, Bet Resolution, Room Generator
-- `src/ui/` — BettingTable, HUD, RunEndScreen, ItemStack
-- `src/data/` — Data loading helpers (reads from `data/*.json`)
-- `data/` — All JSON config files (chip_economy.json, bet_types.json, items.json, etc.)
+- `src/core/` — Autoload singletons (RunState, Rng, ItemRegistry, SaveSystem, Logger)
+- `src/gameplay/` — Combat Resolver, Gold Economy, Trait Engine, Loot
+- `src/ui/` — Tavern, Battle Display, Resolution, Memorial screens
+- `src/data/` — Data loaders (reads from `data/*.json`)
+- `src/ai/` — Combat target selection logic
+- `data/` — All JSON config (orc-archetypes, enemy-types, gear-pieces, traits, etc.)
 - `assets/` — Art, audio, fonts (no logic)
+- `tests/unit/` — GUT unit test scripts
+- `tests/integration/` — Headless multi-system tests
 - `prototypes/` — Throwaway spike code (not imported into `src/`)
 
 ## Performance Budgets
 
 - **Target Framerate**: 60fps (browser target)
 - **Frame Budget**: 16.6ms total; gameplay logic < 1ms per frame
-- **Single deal resolution**: < 1ms (Bet Resolution + Item Effect Engine combined)
+- **Combat tick resolution**: < 1ms per tick
 - **RunState signal processing**: < 0.1ms per call
-- **Draw Calls**: < 50 per frame (2D game; budget is generous)
+- **Draw Calls**: < 100 per frame (10-20 sprites + UI)
 - **Memory Ceiling**: < 128MB (browser tab constraint)
 - **Startup time**: < 3 seconds to main menu (HTML5 export)
+- **Particle cap**: 24 simultaneous (per art bible §9)
 
 ## Testing
 
 - **Framework**: GUT (Godot Unit Testing) — `addons/gut/`
-- **Minimum Coverage**: All formulas in Chip Economy, Bet Resolution, Item Effect Engine
-- **Required Tests**:
-  - Chip Economy: net_delta formula, chip phase thresholds, win/bust conditions
-  - Bet Type Configuration: all 4 win conditions, boundary values (e.g., VRF=50 for Low/High)
-  - Item Effect Engine: payout_mult accumulation, chip_save cap, stacking
-  - VRF integer derivation: same bytes always produce same integers
-  - RunState: apply_chip_delta clamping, phase transitions, signal emission
-- **Test location**: `tests/unit/` for formula tests; `tests/integration/` for multi-system flows
+- **Minimum Coverage**: All formulas in Combat Resolver, Gold Economy, Stat Allocation, Trait Engine
+- **Test location**: `tests/unit/[system-slug]/` per system; `tests/integration/` for cross-system flows
+- **Headless runner**: `~/.local/bin/godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -ginclude_subdirs -gexit`
 
 ## Autoloads (Singletons)
 
-All autoloads registered in Project Settings. Load order matters:
+All autoloads registered in `project.godot`. Load order matters:
 
-1. `FlowBridge` (src/core/flow_bridge.gd) — must initialize before any blockchain calls
-2. `RunState` (src/core/run_state.gd) — must initialize before any gameplay systems
-3. `ItemEffectEngine` (src/core/item_effect_engine.gd) — stateless; order not critical
+1. `Logger` (src/core/logger.gd) — must be first; everything logs through it
+2. `Rng` (src/core/rng.gd) — must initialize before any random call
+3. `ItemRegistry` (src/core/item_registry.gd) — data loader; depends on data files
+4. `RunState` (src/core/run_state.gd) — must initialize before any gameplay system
+5. `SaveSystem` (src/core/save_system.gd) — in-memory for G0; localStorage at G1
+6. `CombatResolver` is a *node*, not autoload — instantiated per battle
 
 ## Forbidden Patterns
 
-- **No hardcoded gameplay values** — all constants in `data/*.json`, never in GDScript
-- **No direct JavaScript interop outside FlowBridge** — all JS calls route through FlowBridge
-- **No polling for state changes** — use signals; no `while` loops waiting on RunState fields
+- **No hardcoded gameplay values** — all constants in `data/*.json` (exception: max collection caps)
+- **No direct random calls** — always go through `Rng.roll()` to keep determinism
+- **No polling for state changes** — use signals
 - **No cross-system state writes** — only the owning system writes its state
-  (e.g., only Bet Resolution calls RunState.apply_chip_delta; no other system does)
-- **No float chip storage** — chips are always integers; floor() before storing
-- **No synchronous blockchain calls** — all FlowBridge operations are async/signal-based
+- **No float gold storage** — gold is always integer; floor() before storing
+- **No `process()` for game logic** — use signals or explicit tick functions
+- **No raw `print()`** — use `Logger` always
 
-## Allowed Libraries / Addons
+## Tooling
 
-- **GUT** (Godot Unit Testing) — testing framework
-- **FCL JS SDK** — bundled in HTML5 export template (not a GDScript dependency)
-- No other third-party addons approved yet — add via `/architecture-decision` when needed
-
-## Architecture Decisions Log
-
-<!-- Quick reference linking to full ADRs in docs/architecture/ -->
-- [ADR-001] Signal-based state management via RunState singleton — `docs/architecture/ADR-001-run-state-signals.md`
-- [ADR-002] Additive item multiplier stacking — `docs/architecture/ADR-002-item-stacking.md`
-- [ADR-003] FlowBridge as exclusive blockchain gateway — `docs/architecture/ADR-003-flow-bridge-gateway.md`
+- **Godot binary**: `~/.local/bin/godot` (linked to `~/godot-install/Godot_v4.6-stable_linux.x86_64`)
+- **Headless invocation**: `~/.local/bin/godot --headless --path .`
+- **Test runner**: `~/.local/bin/godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -ginclude_subdirs -gexit`
 
 ## Engine Specialists
 
-<!-- Written by /setup-engine when engine is configured. -->
-<!-- Read by /code-review, /architecture-decision, /architecture-review, and team skills -->
-<!-- to know which specialist to spawn for engine-specific validation. -->
-
-- **Primary**: godot-specialist
-- **Language/Code Specialist**: godot-gdscript-specialist
-- **Shader Specialist**: godot-shader-specialist
-- **UI Specialist**: unity-ui-specialist (adapt for Godot UI Toolkit)
-- **Additional Specialists**: godot-gdextension-specialist (C++ only)
-- **Routing Notes**: All GDScript → godot-gdscript-specialist; all .tscn/.tres → godot-specialist
-
-### File Extension Routing
-
-<!-- Skills use this table to select the right specialist per file type. -->
-
 | File Extension / Type | Specialist to Spawn |
-|-----------------------|---------------------|
-| `.gd` (GDScript) | godot-gdscript-specialist |
-| `.gdshader` / `.gdshaderinc` | godot-shader-specialist |
-| `.tscn` / `.tres` | godot-specialist |
-| `.cpp` / `.h` (GDExtension) | godot-gdextension-specialist |
-| General architecture review | godot-specialist |
+|---|---|
+| `.gd` (GDScript) | `godot-gdscript-specialist` |
+| `.gdshader` / `.gdshaderinc` | `godot-shader-specialist` |
+| `.tscn` / `.tres` | `godot-specialist` |
+| `.cpp` / `.h` (GDExtension) | `godot-gdextension-specialist` |
+| General architecture review | `godot-specialist` |

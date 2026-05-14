@@ -1,0 +1,94 @@
+[gd_scene load_steps=2 format=3 uid="uid://battle_screen"]
+
+[ext_resource type="Script" path="res://src/ui/battle_screen.gd" id="1_battlescr"]
+
+[node name="BattleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_battlescr")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.102, 0.102, 0.122, 1.0)
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HeaderBar" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0.0, 18.0)
+
+[node name="CompLabel" type="Label" parent="VBox/HeaderBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "BATTLE"
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.788, 0.659, 0.298, 1.0)
+horizontal_alignment = 1
+
+[node name="BattleArea" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EnemyPanel" type="PanelContainer" parent="VBox/BattleArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EnemyInner" type="VBoxContainer" parent="VBox/BattleArea/EnemyPanel"]
+layout_mode = 2
+
+[node name="EnemyTitle" type="Label" parent="VBox/BattleArea/EnemyPanel/EnemyInner"]
+layout_mode = 2
+text = "ENEMIES"
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1.0)
+horizontal_alignment = 1
+
+[node name="EnemyList" type="VBoxContainer" parent="VBox/BattleArea/EnemyPanel/EnemyInner"]
+layout_mode = 2
+
+[node name="PlayerPanel" type="PanelContainer" parent="VBox/BattleArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PlayerInner" type="VBoxContainer" parent="VBox/BattleArea/PlayerPanel"]
+layout_mode = 2
+
+[node name="PlayerTitle" type="Label" parent="VBox/BattleArea/PlayerPanel/PlayerInner"]
+layout_mode = 2
+text = "YOUR WARBAND"
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.788, 0.659, 0.298, 1.0)
+horizontal_alignment = 1
+
+[node name="PlayerList" type="VBoxContainer" parent="VBox/BattleArea/PlayerPanel/PlayerInner"]
+layout_mode = 2
+
+[node name="EventLog" type="Label" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0.0, 20.0)
+text = ""
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(1.0, 1.0, 1.0, 1.0)
+horizontal_alignment = 1
+
+[node name="ActionButton" type="Button" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0.0, 22.0)
+text = "RESOLVE BATTLE"
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.102, 0.102, 0.122, 1.0)

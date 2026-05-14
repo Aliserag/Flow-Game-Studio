@@ -1,0 +1,87 @@
+{
+  "version": "0.1.0",
+  "enemies": [
+    {
+      "id": "bandit-thug",
+      "name": "Bandit Thug",
+      "tier": 1,
+      "stats": {
+        "max_hp": 25,
+        "attack": 5,
+        "defense": 2,
+        "speed": 4
+      },
+      "traits": [],
+      "drops": [
+        {"item_id": "rusty-knife-common", "weight": 5},
+        {"item_id": "GOLD:3-8", "weight": 10}
+      ],
+      "description": "A desperate human. Soft and slow."
+    },
+    {
+      "id": "bandit-archer",
+      "name": "Bandit Archer",
+      "tier": 1,
+      "stats": {
+        "max_hp": 20,
+        "attack": 6,
+        "defense": 1,
+        "speed": 5
+      },
+      "traits": ["sharp-eye"],
+      "drops": [
+        {"item_id": "short-bow-common", "weight": 4},
+        {"item_id": "GOLD:5-10", "weight": 10}
+      ],
+      "description": "A thin man with a bow. Strikes from the back."
+    },
+    {
+      "id": "bandit-captain",
+      "name": "Bandit Captain",
+      "tier": 2,
+      "stats": {
+        "max_hp": 40,
+        "attack": 8,
+        "defense": 4,
+        "speed": 4
+      },
+      "traits": ["natural-leader"],
+      "drops": [
+        {"item_id": "iron-sword-common", "weight": 3},
+        {"item_id": "leather-tunic-common", "weight": 3},
+        {"item_id": "GOLD:15-25", "weight": 10}
+      ],
+      "description": "A wiry man with a sword and bad teeth."
+    }
+  ],
+  "compositions": [
+    {
+      "id": "farm-raid-easy",
+      "name": "Farm Raid (Easy)",
+      "tier": 1,
+      "members": [
+        {"enemy_id": "bandit-thug", "count": 2},
+        {"enemy_id": "bandit-archer", "count": 1}
+      ]
+    },
+    {
+      "id": "farm-raid-medium",
+      "name": "Farm Raid (Medium)",
+      "tier": 1,
+      "members": [
+        {"enemy_id": "bandit-thug", "count": 3},
+        {"enemy_id": "bandit-archer", "count": 1}
+      ]
+    },
+    {
+      "id": "farm-raid-hard",
+      "name": "Farm Raid (Hard)",
+      "tier": 2,
+      "members": [
+        {"enemy_id": "bandit-thug", "count": 2},
+        {"enemy_id": "bandit-archer", "count": 2},
+        {"enemy_id": "bandit-captain", "count": 1}
+      ]
+    }
+  ]
+}

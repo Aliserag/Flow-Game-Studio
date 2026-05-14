@@ -1,0 +1,97 @@
+{
+  "version": "0.1.0",
+  "gear": [
+    {
+      "id": "iron-sword-common",
+      "name": "Iron Sword",
+      "slot": "weapon",
+      "tier": "common",
+      "price": 20,
+      "modifiers": {
+        "attack": 2
+      },
+      "description": "Standard issue."
+    },
+    {
+      "id": "twohanded-axe-common",
+      "name": "Two-Handed Axe",
+      "slot": "weapon",
+      "tier": "common",
+      "price": 25,
+      "modifiers": {
+        "attack": 4,
+        "defense": -1
+      },
+      "description": "Hits like a wagon, swings slow."
+    },
+    {
+      "id": "short-bow-common",
+      "name": "Short Bow",
+      "slot": "weapon",
+      "tier": "common",
+      "price": 18,
+      "modifiers": {
+        "attack": 2,
+        "speed": 1
+      },
+      "is_ranged": true,
+      "description": "Strings get wet, then it's a stick."
+    },
+    {
+      "id": "club-common",
+      "name": "Spiked Club",
+      "slot": "weapon",
+      "tier": "common",
+      "price": 12,
+      "modifiers": {
+        "attack": 2
+      },
+      "description": "A stick with bits in it."
+    },
+    {
+      "id": "rusty-knife-common",
+      "name": "Rusty Knife",
+      "slot": "weapon",
+      "tier": "common",
+      "price": 5,
+      "modifiers": {
+        "attack": 1
+      },
+      "description": "Better than nothing. Barely."
+    },
+    {
+      "id": "leather-tunic-common",
+      "name": "Leather Tunic",
+      "slot": "chest",
+      "tier": "common",
+      "price": 15,
+      "modifiers": {
+        "defense": 2,
+        "max_hp": 5
+      },
+      "description": "Soaks one good cut. Maybe two."
+    },
+    {
+      "id": "wooden-shield-common",
+      "name": "Wooden Shield",
+      "slot": "offhand",
+      "tier": "common",
+      "price": 18,
+      "modifiers": {
+        "defense": 3
+      },
+      "description": "A round bit of plank."
+    },
+    {
+      "id": "lucky-charm-common",
+      "name": "Lucky Charm",
+      "slot": "accessory",
+      "tier": "common",
+      "price": 30,
+      "modifiers": {
+        "speed": 2
+      },
+      "description": "Doesn't work. People wear it anyway."
+    }
+  ]
+}

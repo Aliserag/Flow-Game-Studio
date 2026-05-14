@@ -1,0 +1,120 @@
+[gd_scene load_steps=2 format=3 uid="uid://tavern_screen"]
+
+[ext_resource type="Script" path="res://src/ui/tavern_screen.gd" id="1_tavernscr"]
+
+[node name="TavernScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_tavernscr")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.831, 0.722, 0.588, 1.0)
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HUDBar" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0.0, 18.0)
+
+[node name="HeroLabel" type="Label" parent="VBox/HUDBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Hero: —"
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.102, 0.102, 0.122, 1.0)
+
+[node name="BattlesLabel" type="Label" parent="VBox/HUDBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Battles: 0"
+theme_override_font_sizes/font_size = 8
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.102, 0.102, 0.122, 1.0)
+
+[node name="GoldLabel" type="Label" parent="VBox/HUDBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Gold: 0"
+theme_override_font_sizes/font_size = 8
+horizontal_alignment = 2
+theme_override_colors/font_color = Color(0.788, 0.659, 0.298, 1.0)
+
+[node name="MainArea" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RosterPanel" type="PanelContainer" parent="VBox/MainArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(140.0, 0.0)
+
+[node name="RosterInner" type="VBoxContainer" parent="VBox/MainArea/RosterPanel"]
+layout_mode = 2
+
+[node name="RosterTitle" type="Label" parent="VBox/MainArea/RosterPanel/RosterInner"]
+layout_mode = 2
+text = "WARBAND"
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.102, 0.102, 0.122, 1.0)
+horizontal_alignment = 1
+
+[node name="RosterList" type="VBoxContainer" parent="VBox/MainArea/RosterPanel/RosterInner"]
+layout_mode = 2
+
+[node name="CandidatesPanel" type="PanelContainer" parent="VBox/MainArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CandidatesInner" type="VBoxContainer" parent="VBox/MainArea/CandidatesPanel"]
+layout_mode = 2
+
+[node name="CandidatesTitle" type="Label" parent="VBox/MainArea/CandidatesPanel/CandidatesInner"]
+layout_mode = 2
+text = "RECRUITS"
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.102, 0.102, 0.122, 1.0)
+horizontal_alignment = 1
+
+[node name="CandidatesList" type="HBoxContainer" parent="VBox/MainArea/CandidatesPanel/CandidatesInner"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ButtonBar" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0.0, 22.0)
+alignment = 1
+
+[node name="BattleButton" type="Button" parent="VBox/ButtonBar"]
+layout_mode = 2
+text = "Enter Battle"
+theme_override_colors/font_color = Color(0.102, 0.102, 0.122, 1.0)
+
+[node name="MemorialButton" type="Button" parent="VBox/ButtonBar"]
+layout_mode = 2
+text = "Memorial"
+theme_override_colors/font_color = Color(0.102, 0.102, 0.122, 1.0)
+
+[node name="QuitRunButton" type="Button" parent="VBox/ButtonBar"]
+layout_mode = 2
+text = "Quit Run"
+theme_override_colors/font_color = Color(0.102, 0.102, 0.122, 1.0)
+
+[connection signal="pressed" from="VBox/ButtonBar/BattleButton" to="." method="_on_battle_pressed"]
+[connection signal="pressed" from="VBox/ButtonBar/MemorialButton" to="." method="_on_memorial_pressed"]
+[connection signal="pressed" from="VBox/ButtonBar/QuitRunButton" to="." method="_on_quit_run_pressed"]
