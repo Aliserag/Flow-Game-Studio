@@ -50,14 +50,14 @@ func add_entity(e) -> void:
 	var t := get_tile(e.pos)
 	if t != null:
 		t.add_entity(e)
-	EventBus.emit_signal("entity_added", e)
+	EventBus.entity_added.emit(e)
 
 func remove_entity(e) -> void:
 	entities.erase(e)
 	var t := get_tile(e.pos)
 	if t != null:
 		t.remove_entity(e)
-	EventBus.emit_signal("entity_removed", e)
+	EventBus.entity_removed.emit(e)
 
 func move_entity(e, new_pos: Vector2i) -> void:
 	if not in_bounds(new_pos):
@@ -70,7 +70,7 @@ func move_entity(e, new_pos: Vector2i) -> void:
 	e.pos = new_pos
 	if new_tile != null:
 		new_tile.add_entity(e)
-	EventBus.emit_signal("entity_moved", e, old, new_pos)
+	EventBus.entity_moved.emit(e, old, new_pos)
 
 func chebyshev(a: Vector2i, b: Vector2i) -> int:
 	return max(abs(a.x - b.x), abs(a.y - b.y))

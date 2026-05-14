@@ -23,6 +23,9 @@ func _ready() -> void:
 		if arg == "--gameview-boot":
 			_boot_gameview()
 			return
+		if arg == "--e2e":
+			_run_e2e()
+			return
 	# Default: keep the MainMenu child visible (already instanced in scene).
 
 func _run_tests() -> void:
@@ -97,6 +100,14 @@ func _boot_gameview() -> void:
 		str(GameState.grid.size if GameState.grid else "nil")
 	])
 	get_tree().quit(0)
+
+func _run_e2e() -> void:
+	for c in get_children():
+		c.visible = false
+	var ok: bool = E2EHarness.run(self)
+	# Give a frame so any queued frees complete before quit.
+	await get_tree().process_frame
+	get_tree().quit(0 if ok else 1)
 
 func _run_smoke_long() -> void:
 	for c in get_children():

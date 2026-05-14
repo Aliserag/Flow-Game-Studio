@@ -16,8 +16,11 @@ static func has_save() -> bool:
 	return FileAccess.file_exists(SAVE_PATH)
 
 static func delete_save() -> void:
+	# DirAccess understands `user://` directly; passing the engine-relative path
+	# is portable to HTML5 / mobile exports where globalize_path returns
+	# something the OS layer can't reach.
 	if has_save():
-		DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH))
+		DirAccess.remove_absolute(SAVE_PATH)
 
 static func save() -> bool:
 	if GameState.grid == null:
@@ -37,8 +40,15 @@ static func save() -> bool:
 	if f == null:
 		push_error("SaveSystem: failed to open %s for write" % SAVE_PATH)
 		return false
-	f.store_string(JSON.stringify(blob, "  "))
+	# Godot 4.4+ — store_string returns bool. A false return means the write
+	# silently failed (disk full, permission denied, etc.) and we MUST surface it.
+	var wrote_ok: bool = f.store_string(JSON.stringify(blob, "  "))
 	f.close()
+	if not wrote_ok:
+		push_error("SaveSystem: store_string failed for %s" % SAVE_PATH)
+		# Best-effort cleanup so a corrupt half-save doesn't poison Continue.
+		delete_save()
+		return false
 	return true
 
 static func load_run() -> bool:
@@ -59,9 +69,11 @@ static func load_run() -> bool:
 			[int(blob.get("version", 0)), SAVE_VERSION])
 		return false
 
-	# Wipe live state so we start clean.
-	GameState.reset_run(GameState.Mode.SOLO)
-	# Apply state scalars.
+	# Wipe live state so we start clean. Pass the saved mode so reset doesn't
+	# mis-flag listeners that branch on GameState.mode during deserialize.
+	var saved_mode: int = int((blob.get("state", {}) as Dictionary).get("mode", GameState.Mode.SOLO))
+	GameState.reset_run(saved_mode)
+	# Apply state scalars (mode included, redundantly, for safety).
 	_deserialize_state(blob.get("state", {}))
 	# Inventory & knowledge.
 	GameState.inventory = (blob.get("inventory", {}) as Dictionary).duplicate(true)
@@ -85,9 +97,9 @@ static func load_run() -> bool:
 	if not GameState.party.is_empty():
 		TurnManager.recompute_vision(GameState.grid)
 	GameState.phase = GameState.Phase.PLAYING
-	EventBus.emit_signal("party_changed")
-	EventBus.emit_signal("supplies_changed")
-	EventBus.emit_signal("hud_refresh_requested")
+	EventBus.party_changed.emit()
+	EventBus.supplies_changed.emit()
+	EventBus.hud_refresh_requested.emit()
 	return true
 
 # ---------- serializers ----------

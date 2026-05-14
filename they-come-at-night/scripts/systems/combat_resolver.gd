@@ -81,7 +81,7 @@ static func resolve_attack(zombie: ZombieUnit, grid: Grid) -> Dictionary:
 			GameState.end_run(true, "You broke the megahorde. The dead return to the dirt.")
 
 	GameState.noise_level = max(GameState.noise_level, 2)
-	EventBus.emit_signal("hud_refresh_requested")
+	EventBus.hud_refresh_requested.emit()
 
 	return {
 		"zombie_killed": killed,
@@ -134,7 +134,7 @@ static func _remove_party_member(s, grid: Grid) -> void:
 		new_lead.is_lead = true
 		new_lead.faction_revealed = true
 		EventBus.log_warn("%s steps up as lead." % new_lead.display_name)
-	EventBus.emit_signal("party_changed")
+	EventBus.party_changed.emit()
 	EventBus.log_danger("%s is dead." % s.display_name)
 	if GameState.party.is_empty():
 		GameState.end_run(false, "Your party was wiped out.")

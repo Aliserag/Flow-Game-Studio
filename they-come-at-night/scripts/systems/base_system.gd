@@ -15,7 +15,7 @@ static func establish(pos: Vector2i, grid: Grid) -> bool:
 	GameState.base_terrain_id = t.terrain_id
 	GameState.base_defense_bonus = t.defense_bonus()
 	t.has_base = true
-	EventBus.emit_signal("base_established", pos)
+	EventBus.base_established.emit(pos)
 	if t.is_building():
 		EventBus.log_good("Base established in %s. Defense +%d. Escape harder if besieged." % [t.display_name(), t.defense_bonus()])
 	else:
@@ -27,7 +27,7 @@ static func abandon() -> void:
 	GameState.base_enhancements.clear()
 	GameState.building_enhancement_id = ""
 	GameState.building_days_left = 0
-	EventBus.emit_signal("base_lost")
+	EventBus.base_lost.emit()
 	EventBus.log_warn("You abandon the base.")
 
 static func can_build(id: String) -> Dictionary:
@@ -59,7 +59,7 @@ static func start_build(id: String) -> bool:
 		GameState.remove_from_inventory(String(item_id), int(enh["cost"][item_id]))
 	GameState.building_enhancement_id = id
 	GameState.building_days_left = int(enh.get("build_days", 1))
-	EventBus.emit_signal("enhancement_progress", id, GameState.building_days_left)
+	EventBus.enhancement_progress.emit(id, GameState.building_days_left)
 	EventBus.log_info("Construction begun: %s (%d days)" % [enh.get("name", id), GameState.building_days_left])
 	return true
 
@@ -70,10 +70,10 @@ static func tick_day() -> void:
 			var id := GameState.building_enhancement_id
 			GameState.base_enhancements.append(id)
 			GameState.building_enhancement_id = ""
-			EventBus.emit_signal("enhancement_built", id)
+			EventBus.enhancement_built.emit(id)
 			EventBus.log_good("Construction complete: %s" % DataLoader.enhancements.get(id, {}).get("name", id))
 		else:
-			EventBus.emit_signal("enhancement_progress", GameState.building_enhancement_id, GameState.building_days_left)
+			EventBus.enhancement_progress.emit(GameState.building_enhancement_id, GameState.building_days_left)
 
 	# Passive yields from completed enhancements.
 	for id in GameState.base_enhancements:
@@ -84,6 +84,6 @@ static func tick_day() -> void:
 			# Heal each surviving party member by N up to max.
 			for s in GameState.party:
 				s.hp = min(s.max_hp, s.hp + int(enh["heal_per_day"]))
-			EventBus.emit_signal("hud_refresh_requested")
+			EventBus.hud_refresh_requested.emit()
 		if enh.has("morale_bonus"):
 			GameState.adjust_morale(int(enh["morale_bonus"]))

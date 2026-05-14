@@ -31,13 +31,13 @@ signal open_trade_request(npc_id: int)
 signal modal_closed()
 
 func log_info(msg: String) -> void:
-	emit_signal("log_message", msg, "info")
+	log_message.emit(msg, "info")
 
 func log_warn(msg: String) -> void:
-	emit_signal("log_message", msg, "warn")
+	log_message.emit(msg, "warn")
 
 func log_danger(msg: String) -> void:
-	emit_signal("log_message", msg, "danger")
+	log_message.emit(msg, "danger")
 
 func log_good(msg: String) -> void:
-	emit_signal("log_message", msg, "good")
+	log_message.emit(msg, "good")

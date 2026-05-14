@@ -25,7 +25,7 @@ static func on_day_advanced(day: int, grid: Grid) -> void:
 			_trigger_swarm(grid, String(GameState.swarm_pending["kind"]))
 			GameState.swarm_pending.clear()
 		else:
-			EventBus.emit_signal("swarm_warning", eta, String(GameState.swarm_pending["kind"]))
+			EventBus.swarm_warning.emit(eta, String(GameState.swarm_pending["kind"]))
 
 	# Tick megahorde countdown.
 	if GameState.megahorde_unlocked:
@@ -33,7 +33,7 @@ static func on_day_advanced(day: int, grid: Grid) -> void:
 		if GameState.megahorde_eta <= 0:
 			_trigger_megahorde(grid)
 		else:
-			EventBus.emit_signal("megahorde_unlocked", GameState.megahorde_eta)
+			EventBus.megahorde_unlocked.emit(GameState.megahorde_eta)
 
 	# Try to schedule next swarm.
 	if day >= SWARM_UNLOCK_DAY and GameState.swarm_pending.is_empty() and not GameState.megahorde_unlocked:
@@ -49,7 +49,7 @@ static func on_day_advanced(day: int, grid: Grid) -> void:
 		if day >= unlock_day:
 			GameState.megahorde_unlocked = true
 			GameState.megahorde_eta = RNG.randi_range_inclusive(MEGAHORDE_GRACE_MIN, MEGAHORDE_GRACE_MAX)
-			EventBus.emit_signal("megahorde_unlocked", GameState.megahorde_eta)
+			EventBus.megahorde_unlocked.emit(GameState.megahorde_eta)
 			EventBus.log_danger("MEGAHORDE detected on the horizon. ETA %d days." % GameState.megahorde_eta)
 
 static func _schedule_swarm() -> void:
@@ -57,7 +57,7 @@ static func _schedule_swarm() -> void:
 	# Late swarms can be hordes upgraded to swarm-tier.
 	var kind: String = "swarm" if RNG.chance(0.4) else "horde"
 	GameState.swarm_pending = {"kind": kind, "eta_days": eta}
-	EventBus.emit_signal("swarm_warning", eta, kind)
+	EventBus.swarm_warning.emit(eta, kind)
 	EventBus.log_warn("Scouts report: a %s approaches. ETA %d days." % [kind.capitalize(), eta])
 
 static func _trigger_swarm(grid: Grid, kind: String) -> void:
@@ -66,7 +66,7 @@ static func _trigger_swarm(grid: Grid, kind: String) -> void:
 	var z: ZombieUnit = ZombieUnit.make(kind)
 	z.pos = edge
 	grid.add_entity(z)
-	EventBus.emit_signal("swarm_arrived", kind)
+	EventBus.swarm_arrived.emit(kind)
 	EventBus.log_danger("A %s has arrived." % z.display_name)
 
 static func _trigger_megahorde(grid: Grid) -> void:
@@ -74,7 +74,7 @@ static func _trigger_megahorde(grid: Grid) -> void:
 	var mh: ZombieUnit = ZombieUnit.make("megahorde")
 	mh.pos = edge
 	grid.add_entity(mh)
-	EventBus.emit_signal("megahorde_arrived")
+	EventBus.megahorde_arrived.emit()
 	EventBus.log_danger("THE MEGAHORDE HAS ARRIVED.")
 
 static func _edge_near_player(grid: Grid) -> Vector2i:

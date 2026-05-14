@@ -92,7 +92,7 @@ static func _steal_and_flee(member, grid: Grid) -> void:
 	GameState.assignments.erase(member.id)
 	if grid != null:
 		grid.remove_entity(member)
-	EventBus.emit_signal("party_changed")
+	EventBus.party_changed.emit()
 	var faction_name: String = String(DataLoader.factions.get(member.faction_id, {}).get("name", member.faction_id))
 	if taken.is_empty():
 		EventBus.log_danger("%s (%s) vanished in the night with what little you had." % [member.display_name, faction_name])
@@ -117,7 +117,7 @@ static func _open_the_gates(member, grid: Grid) -> void:
 		var z: ZombieUnit = ZombieUnit.make("group")
 		z.pos = spawn_pos
 		grid.add_entity(z)
-	EventBus.emit_signal("party_changed")
+	EventBus.party_changed.emit()
 	GameState.adjust_morale(-3)
 
 static func _knife_in_the_dark(member, grid: Grid) -> void:
@@ -156,5 +156,5 @@ static func _knife_in_the_dark(member, grid: Grid) -> void:
 		EventBus.log_danger("%s did not survive the wound." % victim.display_name)
 		if GameState.party.is_empty():
 			GameState.end_run(false, "Betrayal in the night ended your run.")
-	EventBus.emit_signal("party_changed")
+	EventBus.party_changed.emit()
 	GameState.adjust_morale(-2)

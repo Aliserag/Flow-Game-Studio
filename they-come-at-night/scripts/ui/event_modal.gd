@@ -59,5 +59,5 @@ func _on_choice(idx: int) -> void:
 
 func _on_continue() -> void:
 	visible = false
-	emit_signal("choice_selected", -1)
-	EventBus.emit_signal("modal_closed")
+	choice_selected.emit(-1)
+	EventBus.modal_closed.emit()

@@ -296,7 +296,7 @@ func _rebuild_actions() -> void:
 			npc_label += "  ⚠ LONG PIG"
 		_add_action(npc_label, func():
 			var payload: Dictionary = ParleySystem.build_parley(npc_ref)
-			EventBus.emit_signal("request_event_modal", payload)
+			EventBus.request_event_modal.emit(payload)
 		)
 
 	_add_action("Open Inventory / Assign", func():

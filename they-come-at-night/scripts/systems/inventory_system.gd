@@ -11,7 +11,7 @@ static func assign(survivor_id: int, item_id: String) -> bool:
 		GameState.assignments[survivor_id] = []
 	GameState.assignments[survivor_id].append(item_id)
 	GameState.remove_from_inventory(item_id, 1)
-	EventBus.emit_signal("party_changed")
+	EventBus.party_changed.emit()
 	return true
 
 static func unassign(survivor_id: int, item_id: String) -> bool:
@@ -22,7 +22,7 @@ static func unassign(survivor_id: int, item_id: String) -> bool:
 		return false
 	lst.erase(item_id)
 	GameState.add_to_inventory(item_id, 1)
-	EventBus.emit_signal("party_changed")
+	EventBus.party_changed.emit()
 	return true
 
 static func use_consumable(survivor_id: int, item_id: String) -> Dictionary:
@@ -51,7 +51,7 @@ static func use_consumable(survivor_id: int, item_id: String) -> Dictionary:
 	if item.has("nutrition"):
 		GameState.adjust_morale(1)
 		msg = "%s eats %s." % [target.display_name, item.get("name", item_id)]
-	EventBus.emit_signal("hud_refresh_requested")
+	EventBus.hud_refresh_requested.emit()
 	return {"ok": true, "msg": msg}
 
 static func scavenge_tile(grid: Grid) -> Dictionary:

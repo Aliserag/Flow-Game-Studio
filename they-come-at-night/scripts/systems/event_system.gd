@@ -82,7 +82,7 @@ static func resolve_choice(event: Dictionary, choice_index: int, grid: Grid) -> 
 		weights.append(int(o.get("weight", 1)))
 	var chosen: Dictionary = RNG.weighted_pick(outcomes, weights)
 	_apply_effects(chosen.get("effects", {}), grid)
-	EventBus.emit_signal("event_resolved", String(event.get("id", "")), choice_index)
+	EventBus.event_resolved.emit(String(event.get("id", "")), choice_index)
 	return chosen
 
 static func _apply_effects(eff: Dictionary, grid: Grid) -> void:
@@ -161,14 +161,14 @@ static func _apply_effects(eff: Dictionary, grid: Grid) -> void:
 			"consume_npc":
 				ParleySystem.consume_npc(int(val))
 			"open_trade_with_npc":
-				EventBus.emit_signal("open_trade_request", int(val))
+				EventBus.open_trade_request.emit(int(val))
 
 static func _recruit_random() -> void:
 	var s: Survivor = Survivor.make_random_recruit()
 	GameState.party.append(s)
 	GameState.assignments[s.id] = []
 	GameState.stats["npcs_recruited"] += 1
-	EventBus.emit_signal("party_changed")
+	EventBus.party_changed.emit()
 	EventBus.log_good("%s joins you." % s.display_name)
 	# Place them on the lead's tile.
 	if not GameState.party.is_empty() and GameState.grid != null:
@@ -182,7 +182,7 @@ static func _recruit_faction(faction_id: String) -> void:
 	GameState.party.append(s)
 	GameState.assignments[s.id] = []
 	GameState.stats["npcs_recruited"] += 1
-	EventBus.emit_signal("party_changed")
+	EventBus.party_changed.emit()
 	EventBus.log_good("%s joins you." % s.display_name)
 	if not GameState.party.is_empty() and GameState.grid != null:
 		s.pos = GameState.party[0].pos
@@ -193,7 +193,7 @@ static func _kill_member(s, grid: Grid) -> void:
 	GameState.assignments.erase(s.id)
 	if grid != null:
 		grid.remove_entity(s)
-	EventBus.emit_signal("party_changed")
+	EventBus.party_changed.emit()
 	EventBus.log_danger("%s is gone." % s.display_name)
 
 static func _force_move_lead(grid: Grid) -> void:
@@ -209,7 +209,7 @@ static func _force_move_lead(grid: Grid) -> void:
 				if member != lead:
 					grid.move_entity(member, np)
 			GameState.has_base = false
-			EventBus.emit_signal("base_lost")
+			EventBus.base_lost.emit()
 			return
 
 static func _spawn_near_player(unit_id: String, grid: Grid) -> void:

@@ -101,7 +101,7 @@ func add_to_inventory(item_id: String, count: int = 1) -> void:
 	if count <= 0:
 		return
 	inventory[item_id] = inventory.get(item_id, 0) + count
-	EventBus.emit_signal("supplies_changed")
+	EventBus.supplies_changed.emit()
 
 func remove_from_inventory(item_id: String, count: int = 1) -> bool:
 	var have: int = int(inventory.get(item_id, 0))
@@ -110,7 +110,7 @@ func remove_from_inventory(item_id: String, count: int = 1) -> bool:
 	inventory[item_id] = have - count
 	if inventory[item_id] <= 0:
 		inventory.erase(item_id)
-	EventBus.emit_signal("supplies_changed")
+	EventBus.supplies_changed.emit()
 	return true
 
 func has_item(item_id: String, count: int = 1) -> bool:
@@ -121,7 +121,7 @@ func adjust_morale(delta: int) -> void:
 	if morale <= 0:
 		EventBus.log_danger("Morale collapses. Your group falls apart.")
 		end_run(false, "Your survivors lost hope and scattered.")
-	EventBus.emit_signal("hud_refresh_requested")
+	EventBus.hud_refresh_requested.emit()
 
 func adjust_lead_hp(delta: int) -> void:
 	if party.is_empty():
@@ -131,9 +131,9 @@ func adjust_lead_hp(delta: int) -> void:
 	if lead.hp <= 0:
 		EventBus.log_danger("%s is dead." % lead.display_name)
 		end_run(false, "Your lead survivor died.")
-	EventBus.emit_signal("hud_refresh_requested")
+	EventBus.hud_refresh_requested.emit()
 
 func end_run(victory: bool, summary: String) -> void:
 	phase = Phase.GAME_OVER
 	stats["days_survived"] = day
-	EventBus.emit_signal("game_over", victory, summary)
+	EventBus.game_over.emit(victory, summary)

@@ -45,10 +45,10 @@ static func end_turn(grid: Grid) -> void:
 	var ev: Dictionary = EventSystem.roll_for_event(grid)
 	# 10. Recompute visibility & emit signals.
 	recompute_vision(grid)
-	EventBus.emit_signal("day_advanced", GameState.day)
-	EventBus.emit_signal("hud_refresh_requested")
+	EventBus.day_advanced.emit(GameState.day)
+	EventBus.hud_refresh_requested.emit()
 	if not ev.is_empty():
-		EventBus.emit_signal("request_event_modal", ev)
+		EventBus.request_event_modal.emit(ev)
 
 static func _resolve_collisions(grid: Grid) -> void:
 	if GameState.party.is_empty(): return
@@ -90,7 +90,7 @@ static func _tick_infections(grid: Grid) -> void:
 			new_lead.is_lead = true
 			new_lead.faction_revealed = true
 			EventBus.log_warn("%s steps up as lead." % new_lead.display_name)
-		EventBus.emit_signal("party_changed")
+		EventBus.party_changed.emit()
 		# Spawn a single zombie at their location.
 		var z: ZombieUnit = ZombieUnit.make("single")
 		z.pos = victim.pos
@@ -118,5 +118,5 @@ static func attempt_move(grid: Grid, target: Vector2i) -> bool:
 		# Remaining base tile keeps `has_base` flag; player isn't 'in' it anymore.
 		# Walking back will re-engage it via UI.
 		pass
-	EventBus.emit_signal("player_moved", from, target)
+	EventBus.player_moved.emit(from, target)
 	return true

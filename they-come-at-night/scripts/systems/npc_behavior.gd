@@ -26,16 +26,14 @@ static func post_step_action(npc: Npc, grid: Grid) -> void:
 			if lead.hp < lead.max_hp:
 				lead.hp += 1
 				EventBus.log_good("%s patches up %s." % [npc.display_name, lead.display_name])
-				EventBus.emit_signal("hud_refresh_requested")
+				EventBus.hud_refresh_requested.emit()
 		"raiders":
 			# Attempt to mug — small HP loss to lead, raider walks off.
 			if RNG.chance(0.35):
 				var dmg: int = RNG.randi_range_inclusive(1, 3)
-				lead.hp -= dmg
 				EventBus.log_danger("%s strikes %s for %d." % [npc.display_name, lead.display_name, dmg])
-				if lead.hp <= 0:
-					GameState.adjust_lead_hp(0)  # triggers death check
-				EventBus.emit_signal("hud_refresh_requested")
+				# Single canonical write — routes through death check + HUD refresh.
+				GameState.adjust_lead_hp(-dmg)
 
 static func step(npc: Npc, grid: Grid) -> Vector2i:
 	match npc.faction_id:

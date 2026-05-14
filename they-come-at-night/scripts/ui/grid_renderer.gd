@@ -78,12 +78,12 @@ func _gui_input(event: InputEvent) -> void:
 		var c := _coord_at(event.position)
 		if c != hover_cell:
 			hover_cell = c
-			emit_signal("tile_hovered", c)
+			tile_hovered.emit(c)
 			queue_redraw()
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var c := _coord_at(event.position)
 		if c.x >= 0:
-			emit_signal("tile_clicked", c)
+			tile_clicked.emit(c)
 
 func _coord_at(p: Vector2) -> Vector2i:
 	var c := Vector2i(int(p.x / CELL_SIZE), int(p.y / CELL_SIZE))
