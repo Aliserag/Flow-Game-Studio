@@ -7,10 +7,25 @@ test files (assertion API mirrors GUT's: `assert_eq`, `assert_true`, etc.).
 
 ```bash
 cd they-come-at-night
-godot --headless --script res://tests/run_tests.gd
+# First time only (populates class cache):
+godot --headless --editor --quit
+
+# Run tests:
+godot --headless res://scenes/Main.tscn -- --test
+
+# Optional: simulate a 50-turn solo run (for CI smoke):
+godot --headless res://scenes/Main.tscn -- --smoke
+
+# Optional: longer Settled-mode run with 5 survivors:
+godot --headless res://scenes/Main.tscn -- --smoke-long
 ```
 
 Exit code 0 on all-pass, 1 on any failure (CI-suitable).
+
+> **Why not `--script`?** Godot's `--script` mode runs a single GDScript file
+> without booting the project, which means autoload identifiers (`DataLoader`,
+> `GameState`, etc.) don't resolve at compile time. The Main-scene launcher
+> approach boots the project normally and routes via `OS.get_cmdline_user_args()`.
 
 ## Add a new test suite
 
@@ -27,7 +42,7 @@ Exit code 0 on all-pass, 1 on any failure (CI-suitable).
        TestFramework.assert_eq(2, 1 + 1, "math")
    ```
 
-2. Add the suite to `tests/run_tests.gd`:
+2. Add the suite call to `scripts/ui/main_launcher.gd::_run_tests()`:
    ```gdscript
    MyThingTest.run_all()
    ```

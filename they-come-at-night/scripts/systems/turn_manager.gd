@@ -106,7 +106,7 @@ static func attempt_move(grid: Grid, target: Vector2i) -> bool:
 		return false
 	if not grid.in_bounds(target):
 		return false
-	var from := lead.pos
+	var from: Vector2i = lead.pos
 	# If target tile has a hostile, that's combat (handled at end_turn collision).
 	grid.move_entity(lead, target)
 	# Drag party with lead.

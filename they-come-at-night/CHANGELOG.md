@@ -13,6 +13,39 @@ Version: SemVer-ish (0.X = pre-release; 1.0 = launch).
 - +30 events, +5 factions, +10 items
 - Audio, sprite art, settings menu
 
+## [0.2.1] — Verification pass
+
+### Added
+- `scripts/ui/main_launcher.gd` — top-level launcher routing on `--test`,
+  `--smoke`, `--smoke-long`, `--gameview-boot` CLI args
+- `--test` runs the full test suite (alternative to broken `--script` mode)
+- `--smoke` simulates a 50-turn solo run (CI smoke)
+- `--smoke-long` simulates a 100-turn Settled-mode run with mixed-faction party
+- CI workflow updated to use `Main.tscn -- --test` and adds smoke job
+
+### Fixed — bugs found by running Godot 4.4 locally
+- `grid.gd:65` and `turn_manager.gd:109` — `:=` inference failed on `e.pos` /
+  `lead.pos`; now explicit `: Vector2i`.
+- `map_generator.gd:57,61` — Variant inference warning treated as error;
+  added explicit types on `dist` and `pick`.
+- `betrayal_system.gd:65` — declared `var pick: int` but `RNG.weighted_pick`
+  returns String; type runtime-mismatch caused outcome dispatch to fail
+  silently (betrayal fired but no outcome ran). Fixed type to `String`.
+- `build_panel.gd:33,34,61` — Variant inference fixes (`built`/`building`/`build_id`).
+- `assign_panel.gd:42,54,55,83,91` — Variant inference fixes (`sid`/`iid`/`sid2`).
+- `trade_panel.gd:50,74` — Variant inference fixes (`iid`).
+- `game_view.gd:173,234,264` — Variant inference fixes (`base_t`/`t`).
+- `tests/run_tests.gd` — replaced with a deprecation stub; tests now run via
+  `Main.tscn -- --test` because `--script` mode doesn't resolve autoload names.
+
+### Verified
+- 261 tests pass (DataLoader 133, Grid 65, Tile 15, CombatResolver 9,
+  InventorySystem 12, SwarmSystem 6, BetrayalSystem 7, SaveLoad 14)
+- Solo smoke (50 turns) completes without engine errors
+- Settled smoke (100 turns, 5-person party) exercises betrayal, swarm
+  scheduling, combat, hunger upkeep — all clean
+- `GameView.tscn` boots and `_ready()` completes without errors
+
 ## [0.2.0] — M0 + M1
 
 ### Added — M0 Verification

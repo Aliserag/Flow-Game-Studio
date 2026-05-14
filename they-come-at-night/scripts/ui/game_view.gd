@@ -170,7 +170,7 @@ func _refresh_hud() -> void:
 	lines.append("[b]Day %d[/b]" % GameState.day)
 	lines.append("Morale: %d/10" % GameState.morale)
 	if GameState.has_base:
-		var base_t := GameState.grid.get_tile(GameState.base_pos)
+		var base_t: Tile = GameState.grid.get_tile(GameState.base_pos)
 		lines.append("Base: %s @ (%d,%d)" % [base_t.display_name() if base_t else "?", GameState.base_pos.x, GameState.base_pos.y])
 		lines.append("Defense: +%d" % (GameState.base_defense_bonus + _enh_defense()))
 		if GameState.building_enhancement_id != "":
@@ -231,7 +231,7 @@ func _refresh_tile_info() -> void:
 	if _selected_tile.x < 0 or GameState.grid == null:
 		tile_info_label.text = "[color=gray]Hover or click a tile[/color]"
 		return
-	var t := GameState.grid.get_tile(_selected_tile)
+	var t: Tile = GameState.grid.get_tile(_selected_tile)
 	if t == null:
 		tile_info_label.text = "[color=gray](off map)[/color]"
 		return
@@ -261,7 +261,7 @@ func _rebuild_actions() -> void:
 	if GameState.party.is_empty():
 		return
 	var lead = GameState.party[0]
-	var t := GameState.grid.get_tile(lead.pos)
+	var t: Tile = GameState.grid.get_tile(lead.pos)
 
 	_add_action("Move (click adjacent tile)", func():
 		_move_mode = true

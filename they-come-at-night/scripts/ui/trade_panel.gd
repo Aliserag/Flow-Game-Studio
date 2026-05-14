@@ -47,7 +47,7 @@ func _populate() -> void:
 			btn.text = "BUY"
 			if not TradeSystem.can_buy(item_id, _npc):
 				btn.disabled = true
-			var iid := item_id
+			var iid: String = String(item_id)
 			btn.pressed.connect(func() -> void:
 				if TradeSystem.execute_buy(iid, _npc, _stock):
 					_refresh_status()
@@ -71,7 +71,7 @@ func _populate() -> void:
 		row.add_child(l)
 		var btn := Button.new()
 		btn.text = "SELL"
-		var iid := item_id
+		var iid: String = String(item_id)
 		btn.pressed.connect(func() -> void:
 			if TradeSystem.execute_sell(iid, _npc, _stock):
 				_refresh_status()

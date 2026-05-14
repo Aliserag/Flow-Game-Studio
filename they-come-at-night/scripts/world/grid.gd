@@ -62,7 +62,7 @@ func remove_entity(e) -> void:
 func move_entity(e, new_pos: Vector2i) -> void:
 	if not in_bounds(new_pos):
 		return
-	var old := e.pos
+	var old: Vector2i = e.pos
 	var old_tile := get_tile(old)
 	var new_tile := get_tile(new_pos)
 	if old_tile != null:

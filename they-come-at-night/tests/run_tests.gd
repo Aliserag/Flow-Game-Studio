@@ -1,25 +1,18 @@
-extends SceneTree
+extends Node
 
-# Headless test runner. Invoke from project root with:
-#   godot --headless --script res://tests/run_tests.gd
+# DEPRECATED — Godot's --script mode does NOT resolve autoload identifiers
+# (DataLoader, GameState, etc.) at compile time, which makes this script
+# fail to load any test suite that references autoloads.
 #
-# Returns exit code 0 on all-pass, 1 on any failure (suitable for CI).
+# Run tests via the Main scene launcher instead:
+#
+#   godot --headless res://scenes/Main.tscn -- --test
+#
+# That path boots the project normally (autoloads register, class cache loads)
+# and the `--test` user-arg routes to MainLauncher._run_tests().
+#
+# This file is kept for documentation only.
 
-func _initialize() -> void:
-	print("=== They Come At Night — Test Suite ===")
-	TestFramework.reset()
-
-	# Order matters only insofar as suites print sequentially.
-	# Unit suites first.
-	DataLoaderTest.run_all()
-	GridTest.run_all()
-	TileTest.run_all()
-	CombatResolverTest.run_all()
-	InventorySystemTest.run_all()
-	SwarmSystemTest.run_all()
-	BetrayalSystemTest.run_all()
-	# Integration suites.
-	SaveLoadTest.run_all()
-
-	print(TestFramework.summary())
-	quit(0 if TestFramework.ok() else 1)
+func _ready() -> void:
+	push_error("Do not invoke run_tests.gd directly. Use: godot --headless res://scenes/Main.tscn -- --test")
+	get_tree().quit(1)

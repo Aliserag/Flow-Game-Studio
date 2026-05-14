@@ -30,8 +30,8 @@ func _populate() -> void:
 		var v := VBoxContainer.new()
 		row.add_child(v)
 		var title := Label.new()
-		var built := GameState.base_enhancements.has(id)
-		var building := GameState.building_enhancement_id == id
+		var built: bool = GameState.base_enhancements.has(id)
+		var building: bool = GameState.building_enhancement_id == id
 		var prefix := ""
 		if built: prefix = "[BUILT] "
 		elif building: prefix = "[BUILDING %d days] " % GameState.building_days_left
@@ -58,7 +58,7 @@ func _populate() -> void:
 			if not check.ok:
 				btn.disabled = true
 				btn.text += "  (%s)" % check.reason
-			var build_id := id
+			var build_id: String = String(id)
 			btn.pressed.connect(func() -> void:
 				if BaseSystem.start_build(build_id):
 					_populate()

@@ -62,8 +62,10 @@ static func _current_tension_modifier() -> float:
 
 static func _fire_betrayal(member, grid: Grid) -> void:
 	GameState.stats["npcs_betrayed"] = int(GameState.stats.get("npcs_betrayed", 0)) + 1
-	var pick: int = RNG.weighted_pick(["steal", "gates", "knife"],
-		[STEAL_OUTCOME_WEIGHT, GATES_OUTCOME_WEIGHT, KNIFE_OUTCOME_WEIGHT])
+	var pick: String = String(RNG.weighted_pick(
+		["steal", "gates", "knife"],
+		[STEAL_OUTCOME_WEIGHT, GATES_OUTCOME_WEIGHT, KNIFE_OUTCOME_WEIGHT]
+	))
 	match pick:
 		"steal":
 			_steal_and_flee(member, grid)

@@ -35,10 +35,25 @@ jobs:
           mv Godot_v4.6-stable_linux.x86_64 godot
           chmod +x godot
 
+      - name: Trigger editor scan (populate class cache)
+        working-directory: they-come-at-night
+        run: |
+          # Godot needs to scan the project once so class_name globals resolve
+          # when the test runner loads downstream scripts.
+          ~/godot-bin/godot --headless --editor --quit || true
+
       - name: Run test suite
         working-directory: they-come-at-night
         run: |
-          ~/godot-bin/godot --headless --script res://tests/run_tests.gd
+          # Tests run via the Main.tscn launcher with the --test user arg.
+          # --script mode cannot resolve autoload identifiers at compile time,
+          # so we boot the project normally and route via cmdline_user_args.
+          ~/godot-bin/godot --headless res://scenes/Main.tscn -- --test
+
+      - name: Run smoke (50-turn solo)
+        working-directory: they-come-at-night
+        run: |
+          ~/godot-bin/godot --headless res://scenes/Main.tscn -- --smoke
 
       - name: Upload test artifacts
         if: always()

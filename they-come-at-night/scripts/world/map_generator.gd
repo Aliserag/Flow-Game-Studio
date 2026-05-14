@@ -54,11 +54,11 @@ static func _seed_town(g: Grid, centre: Vector2i) -> void:
 			var p := Vector2i(centre.x + dx, centre.y + dy)
 			if not g.in_bounds(p):
 				continue
-			var dist := max(abs(dx), abs(dy))
+			var dist: int = max(abs(dx), abs(dy))
 			# Closer = more likely building.
 			var p_building: float = 0.85 - 0.25 * dist
 			if RNG.chance(p_building):
-				var pick = RNG.pick(building_pool)
+				var pick: String = String(RNG.pick(building_pool))
 				g.set_tile(p, Tile.new(p, pick))
 
 static func _carve_road(g: Grid, a: Vector2i, b: Vector2i) -> void:

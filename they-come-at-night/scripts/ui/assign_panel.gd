@@ -39,7 +39,7 @@ func _populate() -> void:
 		var marker := ""
 		if s.id == _selected_survivor_id: marker = "> "
 		btn.text = "%s%s%s   HP %d/%d  ATK %d" % [marker, s.display_name, faction, s.hp, s.max_hp, s.attack]
-		var sid := s.id
+		var sid: int = int(s.id)
 		btn.pressed.connect(func() -> void:
 			_selected_survivor_id = sid
 			_populate()
@@ -51,8 +51,8 @@ func _populate() -> void:
 			for it in assigned:
 				var item_btn := Button.new()
 				item_btn.text = "x %s" % DataLoader.items.get(it, {}).get("name", it)
-				var iid := it
-				var sid2 := s.id
+				var iid: String = String(it)
+				var sid2: int = int(s.id)
 				item_btn.pressed.connect(func(): InventorySystem.unassign(sid2, iid))
 				inner.add_child(item_btn)
 			v.add_child(inner)
@@ -80,7 +80,7 @@ func _populate() -> void:
 				assign_btn.text = "Assign"
 				if _selected_survivor_id < 0:
 					assign_btn.disabled = true
-				var iid := item_id
+				var iid: String = String(item_id)
 				assign_btn.pressed.connect(func(): InventorySystem.assign(_selected_survivor_id, iid))
 				row.add_child(assign_btn)
 			elif category in ["consumable", "food"]:
@@ -88,7 +88,7 @@ func _populate() -> void:
 				use_btn.text = "Use"
 				if _selected_survivor_id < 0:
 					use_btn.disabled = true
-				var iid := item_id
+				var iid: String = String(item_id)
 				use_btn.pressed.connect(func():
 					var r: Dictionary = InventorySystem.use_consumable(_selected_survivor_id, iid)
 					EventBus.log_info(r.msg)
