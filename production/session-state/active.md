@@ -1,118 +1,117 @@
 # Active Session State
 
-**Last updated:** 2026-05-14
+**Last updated:** 2026-05-21
 **Branch:** `claude/orc-arena`
-**Stage:** **G0 Playable Prototype — COMPLETE**
+**Stage:** **G1 Vertical Slice — COMPLETE**
 
 ## Current Status
 
-WARBAND G0 Playable Prototype is **DONE**. 44/44 tests pass. HTML5 export
-builds. Aggregate score: 82.1/100.
+WARBAND G1 Vertical Slice is **DONE**. 62/62 tests pass 3x consecutively.
+HTML5 export builds. Aggregate score: 84.0/100.
 
-See `production/orchestration/final-report-G0.md` for full report.
+See `production/orchestration/final-report-G1.md` for full report.
 
-## Files Written / Modified This Session
+## G1 Deliverables
 
-### Design (locked)
-- `design/concept/warband-game-concept.md` — concept doc
-- `design/gdd/systems-index.md` — 24-system index
-- `design/art-bible/warband-art-bible.md` — art bible v1.0
+- **New systems**: CampaignMap, ScoutReport, Market, BossPhases (extended CombatResolver),
+  BiomeSystem, SpriteComposer, persistent SaveSystem
+- **New UI**: CampaignMapScreen, ScoutScreen, MarketScreen, VictoryScreen
+- **Updated UI**: Tavern (→ map), Resolution (→ map/victory/game-over), Memorial (→ map), Battle (sprites)
+- **Content**: 6 archetypes, 10 enemies + 1 boss, 8 compositions, 20 gear, 12 traits, 1 biome
+- **Art pipeline**: procedural sprite generator (29 sprites), modular composite system
+- **ADRs**: 4 authored (signal-state, deterministic RNG, pure-function combat, modular sprites)
+- **Tests**: 62 (was 44 in G0)
 
-### Source code (foundation)
-- `project.godot`
-- `icon.svg`
-- `src/core/logger.gd` (Console autoload)
-- `src/core/rng.gd`
-- `src/core/item_registry.gd`
-- `src/core/run_state.gd`
-- `src/core/save_system.gd`
-- `src/core/campaign_holder.gd`
-- `src/core/orc.gd` (class)
+## Files Modified or Created This G1 Session
 
-### Source code (gameplay)
-- `src/gameplay/combat_resolver.gd`
-- `src/gameplay/tavern_recruit.gd`
-- `src/gameplay/battle_setup.gd`
-- `src/gameplay/campaign_controller.gd`
-
-### Source code (UI)
-- 6 .tscn scenes + 6 .gd scripts (MainMenu, Tavern, Battle, Resolution, Memorial, GameOver)
+### Source
+- `src/gameplay/campaign_map.gd` (new)
+- `src/gameplay/scout_report.gd` (new)
+- `src/gameplay/market.gd` (new)
+- `src/gameplay/sprite_composer.gd` (new)
+- `src/gameplay/combat_resolver.gd` (rewritten — boss phases, biome mods, traits)
+- `src/gameplay/campaign_controller.gd` (rewritten — full G1 flow)
+- `src/core/run_state.gd` (+phases, +map/market state, +signals)
+- `src/core/save_system.gd` (rewritten — persistent via user://)
+- `src/core/item_registry.gd` (+biomes loader, +gear_ids)
+- `src/ui/CampaignMapScreen.tscn` + `campaign_map_screen.gd` (new)
+- `src/ui/ScoutScreen.tscn` + `scout_screen.gd` (new)
+- `src/ui/MarketScreen.tscn` + `market_screen.gd` (new)
+- `src/ui/VictoryScreen.tscn` + `victory_screen.gd` (new)
+- `src/ui/tavern_screen.gd`, `resolution_screen.gd`, `memorial_screen.gd`, `battle_screen.gd` (updated)
 
 ### Data
-- `data/orc-archetypes.json` — 4 archetypes
-- `data/enemy-types.json` — 3 enemies + 3 compositions
-- `data/gear-pieces.json` — 8 gear pieces
-- `data/traits.json` — 6 traits
-- `data/economy.json` — tuning knobs
+- `data/orc-archetypes.json` (+2 archetypes: cleaver, shaman)
+- `data/enemy-types.json` (+7 enemies, +1 boss, +5 compositions)
+- `data/gear-pieces.json` (+12 pieces, uncommon/unique tiers)
+- `data/traits.json` (+6 traits)
+- `data/biomes.json` (new — farm-village biome)
 
 ### Tests
-- `tests/unit/test_rng.gd` — 6 tests
-- `tests/unit/test_orc.gd` — 9 tests
-- `tests/unit/test_run_state.gd` — 10 tests
-- `tests/unit/test_save_system.gd` — 4 tests
-- `tests/unit/test_combat_resolver.gd` — 5 tests
-- `tests/unit/test_tavern_recruit.gd` — 4 tests
-- `tests/unit/test_battle_setup.gd` — 3 tests
-- `tests/integration/test_g0_end_to_end.gd` — 3 tests
+- `tests/unit/test_campaign_map.gd` (new, 9 tests)
+- `tests/unit/test_scout_report.gd` (new, 3 tests)
+- `tests/unit/test_market.gd` (new, 5 tests)
+- `tests/integration/test_g0_end_to_end.gd` (rewritten for G1 flow + boss phase test)
 
-### Orchestration
-- `production/orchestration/orchestration-plan.md`
-- `production/orchestration/completion-criteria.md`
-- `production/orchestration/score-rubric.md`
-- `production/orchestration/agent-roster.md`
-- `production/orchestration/feedback-loop.md`
-- `production/orchestration/scoreboard.md`
-- `production/orchestration/final-report-G0.md`
-- `.claude/skills/score-feature.md`
+### Assets
+- `assets/chars/char_<archetype>_base_idle.png` × 6
+- `assets/enemies/enemy_<id>.png` × 10
+- `assets/chars/gear/char_gear_<slot>_<id>.png` × 10
+- `assets/chars/scars/char_scar_<N>.png` × 3
 
-### Configuration
-- `.claude/docs/technical-preferences.md` (realigned WARBAND from prior project)
-- `addons/gut/` (GUT 9.6.0 testing framework installed)
-- `export_presets.cfg` (HTML5 Web preset)
+### Tools
+- `tools/sprite-gen/generate_sprites.py` (new — 600 lines, procedural sprite generator)
 
-### Tooling Installed
-- Godot 4.6 stable at `~/.local/bin/godot`
-- Godot 4.6 export templates at `~/.local/share/godot/export_templates/4.6.stable/`
-
-## Build Artifact
-
-`build/index.html` — HTML5 build (38 MB). Verified to build cleanly. Serve over HTTP to play in browser.
+### Docs
+- `docs/architecture/ADR-001-signal-driven-state.md` (new)
+- `docs/architecture/ADR-002-deterministic-rng.md` (new)
+- `docs/architecture/ADR-003-pure-function-combat.md` (new)
+- `docs/architecture/ADR-004-modular-sprite-atlas.md` (new)
+- `production/orchestration/completion-criteria-g1.md` (new)
+- `production/orchestration/final-report-G1.md` (new)
+- `production/orchestration/scoreboard.md` (updated)
 
 ## Test Results (Final)
 
 ```
-Scripts: 8
-Tests:   44
-Pass:    44
+Scripts: 11
+Tests:   62
+Pass:    62
 Fail:     0
-Asserts: 451
-Time:    0.44s
+Asserts: 341
+Time:    0.46s
 ```
 
 3 consecutive runs identical. No flakiness.
 
+## Build Artifact
+
+`build/index.html` — HTML5 build (38 MB). Within 50 MB G1 threshold. Verified builds cleanly.
+
 ## Score Summary
 
-| Category | Score |
-|---|---|
-| Aggregate | **82.1 / 100** (GOOD) |
-| Lowest individual | 72 (battle-display) |
-| EXCELLENT count | 2 (Rng, RunState) |
-| GOOD count | 7 |
-| ADEQUATE count | 5 |
-| FAIL count | 0 |
+| Category | G0 | G1 |
+|---|---:|---:|
+| Aggregate | 82.1 | **84.0** |
+| EXCELLENT | 2 | **5** |
+| GOOD | 7 | **11** |
+| ADEQUATE | 5 | 4 |
+| FAIL | 0 | 0 |
 
 ## Next Required Action
 
-Direct the orchestrator to begin **G1 — Vertical Slice** scope if desired.
-G1 plan should target:
-- 1 biome, 5 archetypes, 10 enemies, 1 boss
-- Full campaign map (branching node graph)
-- Real pixel-art assets per modular atlas spec
-- localStorage save persistence
+Two options:
+
+1. **G2 scope**: 3 more biomes, 4 more bosses, full 60-trait library, Sagas/Legends
+   meta-progression UI, audio implementation, real artist content, localization,
+   telemetry. Concept doc calls this 3-6 months of work.
+
+2. **Polish G1 for a public alpha demo**: replace placeholder sprites with hand-drawn
+   art (requires an artist), polish UI typography (Cinzel + Courier Prime per art bible),
+   add the missing per-system GDDs, audio implementation.
 
 <!-- STATUS -->
-Epic: G0 Prototype
+Epic: G1 Vertical Slice
 Feature: Complete
-Task: G0 verified — ready for user review or G1 kickoff
+Task: G1 verified — ready for user review or G2 kickoff
 <!-- /STATUS -->

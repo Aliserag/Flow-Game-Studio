@@ -46,21 +46,15 @@ func _build_player_side() -> void:
 func _make_orc_row(orc: Orc, is_enemy: bool) -> HBoxContainer:
 	var row: HBoxContainer = HBoxContainer.new()
 	row.name = "row_" + orc.id
-
-	var arch_id: String = orc.archetype_id.to_lower() if not is_enemy else "enemy"
-	var swatch: ColorRect = ColorRect.new()
-	swatch.custom_minimum_size = Vector2(10.0, 10.0)
-	if is_enemy:
-		swatch.color = Color(0.4, 0.4, 0.4, 1.0)
-	else:
-		var cols: Dictionary = {
-			"berserker": Color(0.545, 0.102, 0.102, 1.0),
-			"brute":     Color(0.396, 0.267, 0.153, 1.0),
-			"archer":    Color(0.153, 0.396, 0.153, 1.0),
-			"chieftain": Color(0.788, 0.659, 0.298, 1.0),
-			"shaman":    Color(0.4,   0.1,   0.6,   1.0),
-		}
-		swatch.color = cols.get(arch_id, Color(0.4, 0.4, 0.4, 1.0))
+	# Sprite (composited from base body + scars + gear overlays)
+	var sprite: TextureRect = TextureRect.new()
+	sprite.texture = SpriteComposer.get_orc_sprite(orc)
+	sprite.expand_mode = TextureRect.EXPAND_KEEP_SIZE
+	sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	# Scale up 2x for visibility
+	sprite.custom_minimum_size = Vector2(48, 64) if orc.is_hero else Vector2(36, 48)
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	row.add_child(sprite)
 
 	var lbl: Label = Label.new()
 	lbl.name = "NameHp"
@@ -70,8 +64,6 @@ func _make_orc_row(orc: Orc, is_enemy: bool) -> HBoxContainer:
 		lbl.text = "%s  %d/%d" % [orc.name, orc.current_hp, orc.max_hp]
 	lbl.theme_override_font_sizes["font_size"] = 8
 	lbl.theme_override_colors["font_color"] = Color(0.9, 0.9, 0.9, 1.0)
-
-	row.add_child(swatch)
 	row.add_child(lbl)
 	return row
 
@@ -98,14 +90,26 @@ func _build_enemy_side() -> void:
 		return
 
 	for m in members:
+		if not m is Dictionary:
+			continue
+		var row: HBoxContainer = HBoxContainer.new()
+		var enemy_id: String = String(m.get("enemy_id", ""))
+		var sprite: TextureRect = TextureRect.new()
+		sprite.texture = SpriteComposer.get_enemy_sprite(enemy_id)
+		sprite.expand_mode = TextureRect.EXPAND_KEEP_SIZE
+		sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		var enemy: Dictionary = ItemRegistry.get_enemy(enemy_id)
+		var is_boss: bool = bool(enemy.get("is_boss", false))
+		sprite.custom_minimum_size = Vector2(48, 64) if is_boss else Vector2(36, 48)
+		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		row.add_child(sprite)
 		var lbl: Label = Label.new()
-		if m is Dictionary:
-			lbl.text = "%s" % str(m.get("name", "Enemy"))
-		else:
-			lbl.text = str(m)
+		lbl.text = "%d × %s" % [int(m.get("count", 1)), str(m.get("name", enemy_id))]
 		lbl.theme_override_font_sizes["font_size"] = 8
-		lbl.theme_override_colors["font_color"] = Color(0.8, 0.8, 0.8, 1.0)
-		_enemy_list.add_child(lbl)
+		var label_color := Color(0.788, 0.659, 0.298, 1.0) if is_boss else Color(0.8, 0.8, 0.8, 1.0)
+		lbl.theme_override_colors["font_color"] = label_color
+		row.add_child(lbl)
+		_enemy_list.add_child(row)
 
 
 func _on_resolve_pressed() -> void:

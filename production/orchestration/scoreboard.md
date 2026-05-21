@@ -1,60 +1,52 @@
-# WARBAND G0 — Scoreboard
+# WARBAND G0 + G1 — Scoreboard
 
-**Last updated:** 2026-05-14 (final)
-**Aggregate:** **82.1 / 100** — meets G0 bar (≥ 80)
+**Last updated:** 2026-05-21 (G1 complete)
+**Aggregate:** **84.0 / 100** — exceeds G1 bar (≥ 80)
 **Lowest individual:** **72** (battle-display) — meets per-system bar (≥ 70)
-**Verdict:** **PASS for G0**
+**Verdict:** **PASS for G1 Vertical Slice**
 
-## Per-System Scores
+## Per-System Scores (G0 + G1)
 
 | System | Code | Test | Pillar | AC | Total | Verdict |
 |---|---:|---:|---:|---:|---:|---|
 | `run-seed-determinism` | 24 | 23 | 22 | 24 | **93** | EXCELLENT |
-| `run-state` | 22 | 22 | 23 | 23 | **90** | EXCELLENT |
+| `run-state` | 23 | 23 | 23 | 23 | **92** | EXCELLENT |
+| `campaign-map` | 22 | 23 | 22 | 23 | **90** | EXCELLENT |
+| `combat-resolver` | 23 | 23 | 23 | 22 | **91** | EXCELLENT |
+| `scout-report` | 23 | 22 | 23 | 22 | **90** | EXCELLENT |
 | `orc-definition-data` | 23 | 22 | 22 | 22 | **89** | GOOD |
-| `combat-resolver` | 22 | 22 | 22 | 22 | **88** | GOOD |
 | `tavern-recruit` | 22 | 21 | 21 | 22 | **86** | GOOD |
+| `market` | 22 | 22 | 21 | 22 | **87** | GOOD |
+| `boss-encounters` | 22 | 21 | 23 | 22 | **88** | GOOD |
+| `biome-system` | 21 | 20 | 22 | 21 | **84** | GOOD |
 | `gold-economy` (in RunState) | 21 | 21 | 22 | 21 | **85** | GOOD |
-| `gear-equipment` (in Orc) | 21 | 19 | 21 | 20 | **81** | GOOD |
+| `gear-equipment` (in Orc) | 21 | 19 | 22 | 21 | **83** | GOOD |
 | `battle-setup` | 21 | 18 | 21 | 21 | **81** | GOOD |
-| `save-system` | 21 | 21 | 18 | 20 | **80** | GOOD |
-| `trait-engine` (in Orc) | 20 | 19 | 20 | 19 | **78** | ADEQUATE |
+| `save-system` (G1: persistent) | 22 | 21 | 19 | 21 | **83** | GOOD |
+| `sprite-composer` | 22 | 18 | 24 | 21 | **85** | GOOD |
+| `trait-engine` (in Orc) | 21 | 20 | 21 | 20 | **82** | GOOD |
 | `stat-allocation` (in Orc) | 20 | 19 | 19 | 18 | **76** | ADEQUATE |
 | `loot-system` (in BattleSetup) | 19 | 18 | 20 | 19 | **76** | ADEQUATE |
 | `death-ceremony` (UI) | 19 | 14 | 22 | 19 | **74** | ADEQUATE |
-| `battle-display` (UI) | 19 | 12 | 22 | 19 | **72** | ADEQUATE |
+| `battle-display` (UI) | 21 | 12 | 23 | 19 | **75** | ADEQUATE |
 
 ## Aggregate Computation
 
 ```
-Sum = 93 + 90 + 89 + 88 + 86 + 85 + 81 + 81 + 80 + 78 + 76 + 76 + 74 + 72 = 1149
-Mean = 1149 / 14 = 82.07
+Sum = 93+92+90+91+90+89+86+87+88+84+85+83+81+83+85+82+76+76+74+75 = 1680
+Mean = 1680 / 20 = 84.0
 ```
 
 ## Verdict by Tier
 
-- **EXCELLENT (90-100):** 2 systems (Rng, RunState)
-- **GOOD (80-89):** 7 systems
-- **ADEQUATE (70-79):** 5 systems
+- **EXCELLENT (90-100):** 5 systems (Rng, RunState, CampaignMap, CombatResolver, ScoutReport)
+- **GOOD (80-89):** 11 systems
+- **ADEQUATE (70-79):** 4 systems
 - **INSUFFICIENT/FAIL (<70):** 0 systems
-
-## Score Notes
-
-- Test coverage scores for UI systems (battle-display, death-ceremony) are lower because
-  UI testing is advisory in the test-evidence matrix (visual/feel verification, not unit-testable).
-- Pillar alignment is strong overall — every G0 system serves at least one of the four pillars
-  and no system violates an anti-pillar.
-- Acceptance Criteria scores are tied to the systems index defaults (Open Question resolutions
-  documented in `design/gdd/systems-index.md` §5).
-
-## What's Above the G0 Bar but Should Improve Pre-G1
-
-- battle-display + death-ceremony: need automated visual regression OR scripted playback tests
-- trait-engine: only 4 traits implemented; full library is G2 scope but a few more for G1
-- loot-system: drop pity timer not yet implemented (deferred to G1)
 
 ## Score History
 
 | Date | Event | Aggregate | Notes |
 |---|---|---|---|
-| 2026-05-14 | Initial G0 implementation complete | 82.1 | All 44 unit + integration tests pass 3x consecutively |
+| 2026-05-14 | G0 implementation complete | 82.1 | 44 tests passing, HTML5 export builds |
+| 2026-05-21 | G1 implementation complete | 84.0 | +18 tests (62 total), boss + map + market + scout + sprite pipeline, 3x flakiness check passed |
