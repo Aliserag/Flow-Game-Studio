@@ -15,6 +15,7 @@ extends Control
 @onready var assign_panel: Control = $AssignPanel
 @onready var knowledge_panel: Control = $KnowledgePanel
 @onready var trade_panel: Control = $TradePanel
+@onready var settlement_view: Control = $SettlementView
 @onready var game_over: Control = $GameOver
 @onready var game_over_label: Label = $GameOver/Panel/V/Message
 @onready var game_over_btn: Button = $GameOver/Panel/V/MenuBtn
@@ -282,6 +283,9 @@ func _rebuild_actions() -> void:
 		elif lead.pos == GameState.base_pos:
 			_add_action("Open Build menu", func():
 				build_panel.show_panel()
+			)
+			_add_action("Settlement", func():
+				settlement_view.show_panel()
 			)
 			_add_action("Abandon base", func():
 				BaseSystem.abandon()

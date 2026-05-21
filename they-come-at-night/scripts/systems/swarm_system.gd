@@ -44,7 +44,7 @@ static func on_day_advanced(day: int, grid: Grid) -> void:
 	if not GameState.megahorde_unlocked:
 		var unlock_day: int = GameState._megahorde_unlock_day
 		if unlock_day == 0:
-			unlock_day = RNG.randi_range_inclusive(MEGAHORDE_UNLOCK_DAY_MIN, MEGAHORDE_UNLOCK_DAY_MAX)
+			unlock_day = DifficultyConfig.megahorde_unlock_day_for_map_size(GameState.map_size)
 			GameState._megahorde_unlock_day = unlock_day
 		if day >= unlock_day:
 			GameState.megahorde_unlocked = true

@@ -1,0 +1,71 @@
+[gd_scene load_steps=2 format=3 uid="uid://b1settle00000000"]
+
+[ext_resource type="Script" path="res://scripts/ui/settlement_view.gd" id="1_sv"]
+
+[node name="SettlementView" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+visible = false
+script = ExtResource("1_sv")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.7)
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -460.0
+offset_top = -260.0
+offset_right = 460.0
+offset_bottom = 260.0
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="V" type="VBoxContainer" parent="Panel/Margin"]
+
+[node name="Title" type="Label" parent="Panel/Margin/V"]
+text = "Settlement"
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.85, 0.65, 0.4, 1)
+
+[node name="Body" type="HBoxContainer" parent="Panel/Margin/V"]
+custom_minimum_size = Vector2(880, 420)
+
+[node name="PartyCol" type="VBoxContainer" parent="Panel/Margin/V/Body"]
+custom_minimum_size = Vector2(560, 0)
+
+[node name="Hdr" type="Label" parent="Panel/Margin/V/Body/PartyCol"]
+text = "Party — click a task to assign for the next day"
+theme_override_colors/font_color = Color(0.85, 0.65, 0.4, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="Panel/Margin/V/Body/PartyCol"]
+custom_minimum_size = Vector2(0, 400)
+
+[node name="List" type="VBoxContainer" parent="Panel/Margin/V/Body/PartyCol/Scroll"]
+custom_minimum_size = Vector2(540, 0)
+theme_override_constants/separation = 8
+
+[node name="InfoCol" type="VBoxContainer" parent="Panel/Margin/V/Body"]
+custom_minimum_size = Vector2(300, 0)
+theme_override_constants/separation = 16
+
+[node name="ReservesLabel" type="RichTextLabel" parent="Panel/Margin/V/Body/InfoCol"]
+bbcode_enabled = true
+fit_content = true
+custom_minimum_size = Vector2(0, 140)
+
+[node name="EnhancementsLabel" type="RichTextLabel" parent="Panel/Margin/V/Body/InfoCol"]
+bbcode_enabled = true
+fit_content = true
+custom_minimum_size = Vector2(0, 220)
+
+[node name="CloseBtn" type="Button" parent="Panel/Margin/V"]
+text = "Close"

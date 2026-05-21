@@ -118,5 +118,41 @@
     "supply_max": 3,
     "spawn_weight": 2,
     "description": "Stone walls. People hid here. They're still here."
+  },
+  "junkyard": {
+    "name": "Junkyard",
+    "glyph": "J",
+    "color": "#7a5a3a",
+    "is_building": false,
+    "defense_bonus": 1,
+    "escape_bonus": 1,
+    "supply_min": 2,
+    "supply_max": 5,
+    "spawn_weight": 5,
+    "description": "Towers of rusted metal. Scrap heaven, structural disaster."
+  },
+  "police_station": {
+    "name": "Police Station",
+    "glyph": "P",
+    "color": "#4a4a7a",
+    "is_building": true,
+    "defense_bonus": 3,
+    "escape_bonus": -2,
+    "supply_min": 3,
+    "supply_max": 6,
+    "spawn_weight": 2,
+    "description": "Cells. A locker room. The armory's been picked over, but not cleaned out."
+  },
+  "farm": {
+    "name": "Farm",
+    "glyph": "f",
+    "color": "#8aa05a",
+    "is_building": true,
+    "defense_bonus": 1,
+    "escape_bonus": 1,
+    "supply_min": 2,
+    "supply_max": 4,
+    "spawn_weight": 4,
+    "description": "Overgrown fields. Old tools. Some plants still know how to grow."
   }
 }

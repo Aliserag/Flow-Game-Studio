@@ -172,5 +172,95 @@
     "stack": 5,
     "weight": 2,
     "description": "Burns. Explodes. Both useful."
+  },
+  "suppressor": {
+    "name": "Suppressor",
+    "category": "weapon",
+    "rarity": "rare",
+    "attack": 0,
+    "noise": -2,
+    "weight": 1,
+    "description": "Threads onto a pistol. Quiet enough. Not silent."
+  },
+  "backpack": {
+    "name": "Backpack",
+    "category": "armor",
+    "rarity": "common",
+    "defense": 0,
+    "capacity_bonus": 5,
+    "weight": 1,
+    "description": "Carry more. Lose more if you drop it."
+  },
+  "compass": {
+    "name": "Compass",
+    "category": "consumable",
+    "rarity": "uncommon",
+    "vision_bonus": 1,
+    "weight": 0,
+    "description": "Brass. Mostly accurate. Better than nothing."
+  },
+  "crowbar": {
+    "name": "Crowbar",
+    "category": "weapon",
+    "rarity": "common",
+    "attack": 3,
+    "weight": 2,
+    "description": "Pries doors. Cracks skulls. The classic."
+  },
+  "molotov": {
+    "name": "Molotov Cocktail",
+    "category": "consumable",
+    "rarity": "uncommon",
+    "aoe_damage": 8,
+    "weight": 1,
+    "description": "One throw. Lots of fire. Hard to take back."
+  },
+  "walkie_talkie": {
+    "name": "Walkie-Talkie",
+    "category": "consumable",
+    "rarity": "uncommon",
+    "recruit_bonus": true,
+    "weight": 1,
+    "description": "Half a working pair. Reaches further than you'd think."
+  },
+  "lockpicks": {
+    "name": "Lockpicks",
+    "category": "consumable",
+    "rarity": "uncommon",
+    "loot_bonus": true,
+    "weight": 0,
+    "description": "Bent paperclips and patience. Opens most things."
+  },
+  "improvised_spear": {
+    "name": "Improvised Spear",
+    "category": "weapon",
+    "rarity": "common",
+    "attack": 4,
+    "weight": 2,
+    "description": "Pipe + kitchen knife + duct tape. Surprisingly effective."
+  },
+  "body_armor": {
+    "name": "Body Armor",
+    "category": "armor",
+    "rarity": "rare",
+    "defense": 5,
+    "weight": 5,
+    "description": "Heavy. Stops a bullet, maybe."
+  },
+  "first_aid_manual": {
+    "name": "First Aid Manual",
+    "category": "consumable",
+    "rarity": "uncommon",
+    "smarts_bonus": 1,
+    "weight": 0,
+    "description": "Field guide. Good for one careful read."
+  },
+  "binoculars": {
+    "name": "Binoculars",
+    "category": "consumable",
+    "rarity": "uncommon",
+    "vision_bonus": 2,
+    "weight": 1,
+    "description": "Spot trouble two tiles further. Don't fog them up."
   }
 }

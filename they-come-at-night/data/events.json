@@ -3,353 +3,3275 @@
     "title": "Crying in the Walls",
     "weight": 10,
     "min_day": 2,
-    "tags": ["building", "horror"],
-    "conditions": {"on_building": true},
+    "tags": [
+      "building",
+      "horror"
+    ],
+    "conditions": {
+      "on_building": true
+    },
     "description": "You hear a child crying inside the walls. Soft, then louder. You search every room — empty. The crying continues. It seems to follow you.",
     "options": [
-      {"text": "Investigate the basement", "outcomes": [
-        {"weight": 60, "text": "A radio, left on, looping a child's voice. You smash it.", "effects": {"items": {"scrap": 1}, "morale": -1}},
-        {"weight": 30, "text": "An actual child, feral but alive. She watches you for hours before speaking.", "effects": {"recruit_random_faction": true}},
-        {"weight": 10, "text": "Nothing. You search for hours. The crying never stops. You barely sleep.", "effects": {"morale": -3, "hp": -1}}
-      ]},
-      {"text": "Block your ears and sleep", "outcomes": [
-        {"weight": 100, "text": "You wake up exhausted, but alive. The crying has stopped.", "effects": {"morale": -1}}
-      ]},
-      {"text": "Leave immediately", "outcomes": [
-        {"weight": 100, "text": "You don't look back.", "effects": {"force_move": true, "morale": -1}}
-      ]}
+      {
+        "text": "Investigate the basement",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "A radio, left on, looping a child's voice. You smash it.",
+            "effects": {
+              "items": {
+                "scrap": 1
+              },
+              "morale": -1
+            }
+          },
+          {
+            "weight": 30,
+            "text": "An actual child, feral but alive. She watches you for hours before speaking.",
+            "effects": {
+              "recruit_random_faction": true
+            }
+          },
+          {
+            "weight": 10,
+            "text": "Nothing. You search for hours. The crying never stops. You barely sleep.",
+            "effects": {
+              "morale": -3,
+              "hp": -1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Block your ears and sleep",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You wake up exhausted, but alive. The crying has stopped.",
+            "effects": {
+              "morale": -1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Leave immediately",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You don't look back.",
+            "effects": {
+              "force_move": true,
+              "morale": -1
+            }
+          }
+        ]
+      }
     ]
   },
   "the_offer": {
     "title": "An Offer",
     "weight": 15,
     "min_day": 3,
-    "tags": ["social"],
+    "tags": [
+      "social"
+    ],
     "description": "A well-dressed man steps out from behind a car. Clean shave. Clean clothes. A clean smile. 'I represent a community,' he says. 'We have walls. We have food. We have rules. Come with me.'",
     "options": [
-      {"text": "Accept and follow him", "outcomes": [
-        {"weight": 30, "text": "He's telling the truth. You spend a week in safety, leave with supplies.", "effects": {"items": {"canned_food": 3, "bandage": 2, "medkit": 1}, "morale": 3}},
-        {"weight": 40, "text": "It's a cult. You escape after three days. You smell like incense for weeks.", "effects": {"morale": -2, "items": {"knife": 1}}},
-        {"weight": 30, "text": "Cannibals. You barely escape. You learned what the 'rules' were.", "effects": {"hp": -4, "morale": -4, "knowledge": "cannibal_warning"}}
-      ]},
-      {"text": "Politely decline", "outcomes": [
-        {"weight": 70, "text": "He shrugs and walks away. 'Suit yourself.'", "effects": {}},
-        {"weight": 30, "text": "His smile flickers. He doesn't shrug.", "effects": {"spawn_hostile_npc": "cannibals"}}
-      ]},
-      {"text": "Shoot him", "outcomes": [
-        {"weight": 100, "text": "He drops. You loot the body. A list of names. Your name isn't on it. Yet.", "effects": {"items": {"pistol": 1, "ammo_9mm": 1}, "morale": -2, "noise": 4}}
-      ]}
+      {
+        "text": "Accept and follow him",
+        "outcomes": [
+          {
+            "weight": 30,
+            "text": "He's telling the truth. You spend a week in safety, leave with supplies.",
+            "effects": {
+              "items": {
+                "canned_food": 3,
+                "bandage": 2,
+                "medkit": 1
+              },
+              "morale": 3
+            }
+          },
+          {
+            "weight": 40,
+            "text": "It's a cult. You escape after three days. You smell like incense for weeks.",
+            "effects": {
+              "morale": -2,
+              "items": {
+                "knife": 1
+              }
+            }
+          },
+          {
+            "weight": 30,
+            "text": "Cannibals. You barely escape. You learned what the 'rules' were.",
+            "effects": {
+              "hp": -4,
+              "morale": -4,
+              "knowledge": "cannibal_warning"
+            }
+          }
+        ]
+      },
+      {
+        "text": "Politely decline",
+        "outcomes": [
+          {
+            "weight": 70,
+            "text": "He shrugs and walks away. 'Suit yourself.'",
+            "effects": {}
+          },
+          {
+            "weight": 30,
+            "text": "His smile flickers. He doesn't shrug.",
+            "effects": {
+              "spawn_hostile_npc": "cannibals"
+            }
+          }
+        ]
+      },
+      {
+        "text": "Shoot him",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "He drops. You loot the body. A list of names. Your name isn't on it. Yet.",
+            "effects": {
+              "items": {
+                "pistol": 1,
+                "ammo_9mm": 1
+              },
+              "morale": -2,
+              "noise": 4
+            }
+          }
+        ]
+      }
     ]
   },
   "stranger_at_the_door": {
     "title": "Stranger at the Door",
     "weight": 20,
     "min_day": 1,
-    "tags": ["social", "recruit"],
-    "conditions": {"has_base": true},
+    "tags": [
+      "social",
+      "recruit"
+    ],
+    "conditions": {
+      "has_base": true
+    },
     "description": "Someone is knocking. Three times. Pause. Three times. They don't sound infected. They might be lying.",
     "options": [
-      {"text": "Open the door", "outcomes": [
-        {"weight": 100, "text": "You let them in.", "effects": {"recruit_random_faction": true}}
-      ]},
-      {"text": "Talk through the door", "outcomes": [
-        {"weight": 50, "text": "They're alone, scared, helpful. They wait until you're ready.", "effects": {"recruit_random_faction": true, "morale": 1}},
-        {"weight": 30, "text": "They lie. Badly. You hear others whispering behind them. They leave.", "effects": {"morale": -1}},
-        {"weight": 20, "text": "They scream and bang on the door for an hour. Then silence. In the morning, claw marks.", "effects": {"morale": -2, "defense_temp": -1}}
-      ]},
-      {"text": "Ignore it", "outcomes": [
-        {"weight": 70, "text": "They give up. You feel something — guilt? relief? You're not sure which.", "effects": {"morale": -1}},
-        {"weight": 30, "text": "They die outside. Their corpse attracts attention.", "effects": {"morale": -2, "spawn_zombies_nearby": "single"}}
-      ]}
+      {
+        "text": "Open the door",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You let them in.",
+            "effects": {
+              "recruit_random_faction": true
+            }
+          }
+        ]
+      },
+      {
+        "text": "Talk through the door",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "They're alone, scared, helpful. They wait until you're ready.",
+            "effects": {
+              "recruit_random_faction": true,
+              "morale": 1
+            }
+          },
+          {
+            "weight": 30,
+            "text": "They lie. Badly. You hear others whispering behind them. They leave.",
+            "effects": {
+              "morale": -1
+            }
+          },
+          {
+            "weight": 20,
+            "text": "They scream and bang on the door for an hour. Then silence. In the morning, claw marks.",
+            "effects": {
+              "morale": -2,
+              "defense_temp": -1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Ignore it",
+        "outcomes": [
+          {
+            "weight": 70,
+            "text": "They give up. You feel something — guilt? relief? You're not sure which.",
+            "effects": {
+              "morale": -1
+            }
+          },
+          {
+            "weight": 30,
+            "text": "They die outside. Their corpse attracts attention.",
+            "effects": {
+              "morale": -2,
+              "spawn_zombies_nearby": "single"
+            }
+          }
+        ]
+      }
     ]
   },
   "the_dog": {
     "title": "The Dog",
     "weight": 8,
     "min_day": 2,
-    "tags": ["humor", "wholesome"],
+    "tags": [
+      "humor",
+      "wholesome"
+    ],
     "description": "A golden retriever trots up to you, tail wagging. It's wearing a tactical vest. There is a note pinned to the vest: 'HIS NAME IS BISCUIT. HE IS A GOOD BOY. PLEASE TAKE CARE OF HIM. HE HAS SEEN THINGS.'",
     "options": [
-      {"text": "Adopt Biscuit", "outcomes": [
-        {"weight": 100, "text": "Biscuit licks your face. The world is briefly, briefly okay.", "effects": {"items": {"vest": 1}, "morale": 5, "companion": "biscuit"}}
-      ]},
-      {"text": "Take the vest, leave the dog", "outcomes": [
-        {"weight": 100, "text": "Biscuit watches you walk away. You will think about this for the rest of your life.", "effects": {"items": {"vest": 1}, "morale": -10}}
-      ]}
+      {
+        "text": "Adopt Biscuit",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Biscuit licks your face. The world is briefly, briefly okay.",
+            "effects": {
+              "items": {
+                "vest": 1
+              },
+              "morale": 5,
+              "companion": "biscuit"
+            }
+          }
+        ]
+      },
+      {
+        "text": "Take the vest, leave the dog",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Biscuit watches you walk away. You will think about this for the rest of your life.",
+            "effects": {
+              "items": {
+                "vest": 1
+              },
+              "morale": -10
+            }
+          }
+        ]
+      }
     ]
   },
   "wandering_trader": {
     "title": "Wandering Trader",
     "weight": 12,
     "min_day": 4,
-    "tags": ["trade"],
+    "tags": [
+      "trade"
+    ],
     "description": "An old man pulls a shopping cart full of junk. 'Trade?' he says. He shows you what he's got: bandages, ammo, a single mysterious can with no label.",
     "options": [
-      {"text": "Trade scrap for medical supplies (2 scrap)", "cost": {"scrap": 2}, "outcomes": [
-        {"weight": 100, "text": "Fair deal.", "effects": {"items": {"bandage": 2, "antibiotics": 1}}}
-      ]},
-      {"text": "Buy the mystery can (1 scrap)", "cost": {"scrap": 1}, "outcomes": [
-        {"weight": 50, "text": "Peaches. Real peaches.", "effects": {"items": {"canned_food": 1}, "morale": 3}},
-        {"weight": 30, "text": "Cat food. You eat it anyway.", "effects": {"items": {"canned_food": 1}, "morale": -1}},
-        {"weight": 20, "text": "Empty. You should have shaken it first.", "effects": {"morale": -2}}
-      ]},
-      {"text": "Rob him", "outcomes": [
-        {"weight": 60, "text": "He has nothing of value. You feel terrible.", "effects": {"morale": -5, "items": {"scrap": 1}}},
-        {"weight": 40, "text": "He pulls a pistol. You weren't expecting that.", "effects": {"hp": -4, "items": {"pistol": 1}, "morale": -3}}
-      ]},
-      {"text": "Decline politely", "outcomes": [
-        {"weight": 100, "text": "He nods and shuffles off into the dusk.", "effects": {}}
-      ]}
+      {
+        "text": "Trade scrap for medical supplies (2 scrap)",
+        "cost": {
+          "scrap": 2
+        },
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Fair deal.",
+            "effects": {
+              "items": {
+                "bandage": 2,
+                "antibiotics": 1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "text": "Buy the mystery can (1 scrap)",
+        "cost": {
+          "scrap": 1
+        },
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "Peaches. Real peaches.",
+            "effects": {
+              "items": {
+                "canned_food": 1
+              },
+              "morale": 3
+            }
+          },
+          {
+            "weight": 30,
+            "text": "Cat food. You eat it anyway.",
+            "effects": {
+              "items": {
+                "canned_food": 1
+              },
+              "morale": -1
+            }
+          },
+          {
+            "weight": 20,
+            "text": "Empty. You should have shaken it first.",
+            "effects": {
+              "morale": -2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Rob him",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "He has nothing of value. You feel terrible.",
+            "effects": {
+              "morale": -5,
+              "items": {
+                "scrap": 1
+              }
+            }
+          },
+          {
+            "weight": 40,
+            "text": "He pulls a pistol. You weren't expecting that.",
+            "effects": {
+              "hp": -4,
+              "items": {
+                "pistol": 1
+              },
+              "morale": -3
+            }
+          }
+        ]
+      },
+      {
+        "text": "Decline politely",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "He nods and shuffles off into the dusk.",
+            "effects": {}
+          }
+        ]
+      }
     ]
   },
   "the_radio": {
     "title": "A Voice on the Radio",
     "weight": 6,
     "min_day": 5,
-    "tags": ["mystery", "lore"],
+    "tags": [
+      "mystery",
+      "lore"
+    ],
     "description": "Static. Then a woman's voice: '...this is Site 3, broadcasting on all frequencies. The cure is real. We have it. We are at — ' Static. The location is gone.",
     "options": [
-      {"text": "Search for the broadcast source", "outcomes": [
-        {"weight": 30, "text": "You find Site 3. It's a strip mall. The woman is dead. She was alone for a long time.", "effects": {"items": {"medkit": 2, "antibiotics": 2}, "morale": -3}},
-        {"weight": 40, "text": "You can't pin it down. The trail goes cold.", "effects": {"morale": -1}},
-        {"weight": 30, "text": "You find a survivor camp. Real people. They've never heard of Site 3.", "effects": {"recruit_random_faction": true, "items": {"canned_food": 2}}}
-      ]},
-      {"text": "Ignore it", "outcomes": [
-        {"weight": 100, "text": "You wonder, sometimes, what was real.", "effects": {"morale": -1}}
-      ]}
+      {
+        "text": "Search for the broadcast source",
+        "outcomes": [
+          {
+            "weight": 30,
+            "text": "You find Site 3. It's a strip mall. The woman is dead. She was alone for a long time.",
+            "effects": {
+              "items": {
+                "medkit": 2,
+                "antibiotics": 2
+              },
+              "morale": -3
+            }
+          },
+          {
+            "weight": 40,
+            "text": "You can't pin it down. The trail goes cold.",
+            "effects": {
+              "morale": -1
+            }
+          },
+          {
+            "weight": 30,
+            "text": "You find a survivor camp. Real people. They've never heard of Site 3.",
+            "effects": {
+              "recruit_random_faction": true,
+              "items": {
+                "canned_food": 2
+              }
+            }
+          }
+        ]
+      },
+      {
+        "text": "Ignore it",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You wonder, sometimes, what was real.",
+            "effects": {
+              "morale": -1
+            }
+          }
+        ]
+      }
     ]
   },
   "the_horde_passes": {
     "title": "The Horde Passes",
     "weight": 5,
     "min_day": 10,
-    "tags": ["horror", "survival"],
-    "conditions": {"on_building": true},
+    "tags": [
+      "horror",
+      "survival"
+    ],
+    "conditions": {
+      "on_building": true
+    },
     "description": "You hear them first — like rain, then like thunder, then like the world ending. A horde is moving past your shelter. If you stay perfectly still, they might not notice.",
     "options": [
-      {"text": "Hold your breath. Stay silent.", "outcomes": [
-        {"weight": 70, "text": "Hours of held breath. They pass. You are alive.", "effects": {"morale": -2}},
-        {"weight": 30, "text": "Someone in your group sneezes. Or coughs. Or breathes too loud.", "effects": {"trigger_siege": "horde"}}
-      ]},
-      {"text": "Shoot through the window", "outcomes": [
-        {"weight": 100, "text": "You take down a few. The rest turn. All of them. Turn.", "effects": {"trigger_siege": "horde", "items": {"ammo_9mm": -2}}}
-      ]},
-      {"text": "Run out the back", "outcomes": [
-        {"weight": 60, "text": "You make it. Just barely. You leave most of your supplies.", "effects": {"force_move": true, "supply_loss": 0.3, "morale": -2}},
-        {"weight": 40, "text": "You don't make it.", "effects": {"hp": -8, "force_move": true}}
-      ]}
+      {
+        "text": "Hold your breath. Stay silent.",
+        "outcomes": [
+          {
+            "weight": 70,
+            "text": "Hours of held breath. They pass. You are alive.",
+            "effects": {
+              "morale": -2
+            }
+          },
+          {
+            "weight": 30,
+            "text": "Someone in your group sneezes. Or coughs. Or breathes too loud.",
+            "effects": {
+              "trigger_siege": "horde"
+            }
+          }
+        ]
+      },
+      {
+        "text": "Shoot through the window",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You take down a few. The rest turn. All of them. Turn.",
+            "effects": {
+              "trigger_siege": "horde",
+              "items": {
+                "ammo_9mm": -2
+              }
+            }
+          }
+        ]
+      },
+      {
+        "text": "Run out the back",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "You make it. Just barely. You leave most of your supplies.",
+            "effects": {
+              "force_move": true,
+              "supply_loss": 0.3,
+              "morale": -2
+            }
+          },
+          {
+            "weight": 40,
+            "text": "You don't make it.",
+            "effects": {
+              "hp": -8,
+              "force_move": true
+            }
+          }
+        ]
+      }
     ]
   },
   "found_a_kid": {
     "title": "A Kid Alone",
     "weight": 8,
     "min_day": 3,
-    "tags": ["social", "moral"],
+    "tags": [
+      "social",
+      "moral"
+    ],
     "description": "A child, maybe nine, sits in the doorway of a burnt-out house. She doesn't cry. She doesn't speak. She just looks at you.",
     "options": [
-      {"text": "Take her with you", "outcomes": [
-        {"weight": 80, "text": "She follows. She doesn't speak for weeks. Then one morning she asks if you have any books.", "effects": {"recruit_specific_faction": "lone_wolf", "morale": 3}},
-        {"weight": 20, "text": "She's not what you thought she was.", "effects": {"recruit_specific_faction": "cannibals", "morale": 2}}
-      ]},
-      {"text": "Give her supplies and leave", "outcomes": [
-        {"weight": 100, "text": "You leave a bandage and some food. You hate yourself. You keep walking.", "effects": {"items": {"bandage": -1, "canned_food": -1}, "morale": -4}}
-      ]},
-      {"text": "Walk past", "outcomes": [
-        {"weight": 100, "text": "You don't look at her. You will, every night, for a long time.", "effects": {"morale": -6}}
-      ]}
+      {
+        "text": "Take her with you",
+        "outcomes": [
+          {
+            "weight": 80,
+            "text": "She follows. She doesn't speak for weeks. Then one morning she asks if you have any books.",
+            "effects": {
+              "recruit_specific_faction": "lone_wolf",
+              "morale": 3
+            }
+          },
+          {
+            "weight": 20,
+            "text": "She's not what you thought she was.",
+            "effects": {
+              "recruit_specific_faction": "cannibals",
+              "morale": 2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Give her supplies and leave",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You leave a bandage and some food. You hate yourself. You keep walking.",
+            "effects": {
+              "items": {
+                "bandage": -1,
+                "canned_food": -1
+              },
+              "morale": -4
+            }
+          }
+        ]
+      },
+      {
+        "text": "Walk past",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You don't look at her. You will, every night, for a long time.",
+            "effects": {
+              "morale": -6
+            }
+          }
+        ]
+      }
     ]
   },
   "infected_member": {
     "title": "Infection",
     "weight": 10,
     "min_day": 6,
-    "tags": ["horror", "moral"],
-    "conditions": {"has_party": true},
+    "tags": [
+      "horror",
+      "moral"
+    ],
+    "conditions": {
+      "has_party": true
+    },
     "description": "{party_member} pulls down their sleeve. The bite is fresh. They look at you and don't say anything.",
     "options": [
-      {"text": "Use antibiotics if you have them", "cost": {"antibiotics": 1}, "outcomes": [
-        {"weight": 60, "text": "It works. The bite scars but doesn't turn. Lucky.", "effects": {"morale": 1}},
-        {"weight": 40, "text": "It doesn't work. They turn that night. You knew it might not work.", "effects": {"kill_random_party": true, "morale": -5}}
-      ]},
-      {"text": "Cut off the limb", "outcomes": [
-        {"weight": 50, "text": "It works. They survive without an arm. They never quite forgive you.", "effects": {"morale": -2, "party_member_injured": true}},
-        {"weight": 30, "text": "Too late. They turn. You shoot them.", "effects": {"kill_random_party": true, "morale": -6}},
-        {"weight": 20, "text": "They die from blood loss. You're a survivor, not a surgeon.", "effects": {"kill_random_party": true, "morale": -8}}
-      ]},
-      {"text": "End it now, mercifully", "outcomes": [
-        {"weight": 100, "text": "It's quick. They thank you, almost. The others watch.", "effects": {"kill_random_party": true, "morale": -4}}
-      ]},
-      {"text": "Hide the bite, hope for the best", "outcomes": [
-        {"weight": 90, "text": "They turn at night. They take someone with them.", "effects": {"kill_random_party": true, "kill_random_party": true, "morale": -8}},
-        {"weight": 10, "text": "Somehow — somehow — they don't turn. They are immune. You don't tell anyone what happened.", "effects": {"morale": 3, "knowledge": "immunity_exists"}}
-      ]}
+      {
+        "text": "Use antibiotics if you have them",
+        "cost": {
+          "antibiotics": 1
+        },
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "It works. The bite scars but doesn't turn. Lucky.",
+            "effects": {
+              "morale": 1
+            }
+          },
+          {
+            "weight": 40,
+            "text": "It doesn't work. They turn that night. You knew it might not work.",
+            "effects": {
+              "kill_random_party": true,
+              "morale": -5
+            }
+          }
+        ]
+      },
+      {
+        "text": "Cut off the limb",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "It works. They survive without an arm. They never quite forgive you.",
+            "effects": {
+              "morale": -2,
+              "party_member_injured": true
+            }
+          },
+          {
+            "weight": 30,
+            "text": "Too late. They turn. You shoot them.",
+            "effects": {
+              "kill_random_party": true,
+              "morale": -6
+            }
+          },
+          {
+            "weight": 20,
+            "text": "They die from blood loss. You're a survivor, not a surgeon.",
+            "effects": {
+              "kill_random_party": true,
+              "morale": -8
+            }
+          }
+        ]
+      },
+      {
+        "text": "End it now, mercifully",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "It's quick. They thank you, almost. The others watch.",
+            "effects": {
+              "kill_random_party": true,
+              "morale": -4
+            }
+          }
+        ]
+      },
+      {
+        "text": "Hide the bite, hope for the best",
+        "outcomes": [
+          {
+            "weight": 90,
+            "text": "They turn at night. They take someone with them.",
+            "effects": {
+              "kill_random_party": true,
+              "morale": -8
+            }
+          },
+          {
+            "weight": 10,
+            "text": "Somehow — somehow — they don't turn. They are immune. You don't tell anyone what happened.",
+            "effects": {
+              "morale": 3,
+              "knowledge": "immunity_exists"
+            }
+          }
+        ]
+      }
     ]
   },
   "hidden_stash": {
     "title": "Hidden Stash",
     "weight": 12,
     "min_day": 1,
-    "tags": ["loot"],
-    "conditions": {"on_building": true},
+    "tags": [
+      "loot"
+    ],
+    "conditions": {
+      "on_building": true
+    },
     "description": "Behind a false wall, taped under a desk, in the freezer — someone hid this for the apocalypse, and never came back for it.",
     "options": [
-      {"text": "Take everything", "outcomes": [
-        {"weight": 50, "text": "Cans, water, a few bandages. Enough for a few days.", "effects": {"items": {"canned_food": 3, "water_bottle": 2, "bandage": 1}}},
-        {"weight": 30, "text": "Weapons cache. Whoever lived here was paranoid. Justifiably.", "effects": {"items": {"pistol": 1, "ammo_9mm": 2, "knife": 1}}},
-        {"weight": 15, "text": "Pre-collapse cash and gold coins. Useless. You leave them.", "effects": {"morale": -1}},
-        {"weight": 5, "text": "A diary. The last entry is two years old. The cause was never the dead. It was always us. You read all of it.", "effects": {"morale": -3, "knowledge": "the_truth"}}
-      ]}
+      {
+        "text": "Take everything",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "Cans, water, a few bandages. Enough for a few days.",
+            "effects": {
+              "items": {
+                "canned_food": 3,
+                "water_bottle": 2,
+                "bandage": 1
+              }
+            }
+          },
+          {
+            "weight": 30,
+            "text": "Weapons cache. Whoever lived here was paranoid. Justifiably.",
+            "effects": {
+              "items": {
+                "pistol": 1,
+                "ammo_9mm": 2,
+                "knife": 1
+              }
+            }
+          },
+          {
+            "weight": 15,
+            "text": "Pre-collapse cash and gold coins. Useless. You leave them.",
+            "effects": {
+              "morale": -1
+            }
+          },
+          {
+            "weight": 5,
+            "text": "A diary. The last entry is two years old. The cause was never the dead. It was always us. You read all of it.",
+            "effects": {
+              "morale": -3,
+              "knowledge": "the_truth"
+            }
+          }
+        ]
+      }
     ]
   },
   "false_alarm": {
     "title": "False Alarm",
     "weight": 8,
     "min_day": 1,
-    "tags": ["humor"],
+    "tags": [
+      "humor"
+    ],
     "description": "Something moves in the bushes. You raise your weapon. Heart pounding. You wait.",
     "options": [
-      {"text": "Investigate carefully", "outcomes": [
-        {"weight": 60, "text": "A raccoon. A truly enormous raccoon. It hisses at you and waddles off.", "effects": {"morale": 1}},
-        {"weight": 25, "text": "It's a zombie. Just one. You handle it.", "effects": {"hp": -1, "morale": 1}},
-        {"weight": 15, "text": "It's a person. They were as scared as you. You both laugh, awkwardly. They walk on.", "effects": {"morale": 2}}
-      ]}
+      {
+        "text": "Investigate carefully",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "A raccoon. A truly enormous raccoon. It hisses at you and waddles off.",
+            "effects": {
+              "morale": 1
+            }
+          },
+          {
+            "weight": 25,
+            "text": "It's a zombie. Just one. You handle it.",
+            "effects": {
+              "hp": -1,
+              "morale": 1
+            }
+          },
+          {
+            "weight": 15,
+            "text": "It's a person. They were as scared as you. You both laugh, awkwardly. They walk on.",
+            "effects": {
+              "morale": 2
+            }
+          }
+        ]
+      }
     ]
   },
   "settlement_argument": {
     "title": "An Argument",
     "weight": 10,
     "min_day": 4,
-    "tags": ["social", "settlement"],
-    "conditions": {"has_base": true, "min_party": 2},
+    "tags": [
+      "social",
+      "settlement"
+    ],
+    "conditions": {
+      "has_base": true,
+      "min_party": 2
+    },
     "description": "Two of your people are screaming at each other in the courtyard. It's about food rations. It's not really about food rations.",
     "options": [
-      {"text": "Side with one of them", "outcomes": [
-        {"weight": 100, "text": "You pick. The other festers.", "effects": {"morale": -1, "tension": 1}}
-      ]},
-      {"text": "Mediate", "outcomes": [
-        {"weight": 60, "text": "You broker peace. They both respect you a little more.", "effects": {"morale": 2}},
-        {"weight": 40, "text": "Neither listens. Now they're both mad at you.", "effects": {"morale": -2}}
-      ]},
-      {"text": "Tell them to shut up", "outcomes": [
-        {"weight": 50, "text": "They shut up. Resentfully.", "effects": {"morale": -1, "tension": 1}},
-        {"weight": 50, "text": "They don't. One of them leaves in the night. With supplies.", "effects": {"kill_random_party": true, "items": {"canned_food": -3, "bandage": -2}}}
-      ]}
+      {
+        "text": "Side with one of them",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You pick. The other festers.",
+            "effects": {
+              "morale": -1,
+              "tension": 1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Mediate",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "You broker peace. They both respect you a little more.",
+            "effects": {
+              "morale": 2
+            }
+          },
+          {
+            "weight": 40,
+            "text": "Neither listens. Now they're both mad at you.",
+            "effects": {
+              "morale": -2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Tell them to shut up",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "They shut up. Resentfully.",
+            "effects": {
+              "morale": -1,
+              "tension": 1
+            }
+          },
+          {
+            "weight": 50,
+            "text": "They don't. One of them leaves in the night. With supplies.",
+            "effects": {
+              "kill_random_party": true,
+              "items": {
+                "canned_food": -3,
+                "bandage": -2
+              }
+            }
+          }
+        ]
+      }
     ]
   },
   "found_a_book": {
     "title": "A Book",
     "weight": 5,
     "min_day": 1,
-    "tags": ["wholesome"],
+    "tags": [
+      "wholesome"
+    ],
     "description": "A paperback in surprisingly good condition. The cover is gone. You read the first page.",
     "options": [
-      {"text": "Read it", "outcomes": [
-        {"weight": 25, "text": "A romance novel. You read it cover to cover by candlelight.", "effects": {"morale": 4}},
-        {"weight": 25, "text": "A survival manual. Genuinely useful.", "effects": {"morale": 1, "items": {"bandage": 1}}},
-        {"weight": 25, "text": "A children's book. You weep, quietly, and don't know why.", "effects": {"morale": 2}},
-        {"weight": 25, "text": "A book on the apocalypse. Written before. They got most of it wrong.", "effects": {"morale": 1}}
-      ]}
+      {
+        "text": "Read it",
+        "outcomes": [
+          {
+            "weight": 25,
+            "text": "A romance novel. You read it cover to cover by candlelight.",
+            "effects": {
+              "morale": 4
+            }
+          },
+          {
+            "weight": 25,
+            "text": "A survival manual. Genuinely useful.",
+            "effects": {
+              "morale": 1,
+              "items": {
+                "bandage": 1
+              }
+            }
+          },
+          {
+            "weight": 25,
+            "text": "A children's book. You weep, quietly, and don't know why.",
+            "effects": {
+              "morale": 2
+            }
+          },
+          {
+            "weight": 25,
+            "text": "A book on the apocalypse. Written before. They got most of it wrong.",
+            "effects": {
+              "morale": 1
+            }
+          }
+        ]
+      }
     ]
   },
   "the_offer_to_join": {
     "title": "Lost Soul",
     "weight": 18,
     "min_day": 2,
-    "tags": ["social", "recruit"],
+    "tags": [
+      "social",
+      "recruit"
+    ],
     "description": "Someone walks toward you with hands raised. They look exhausted. 'Please,' they say. 'I just want to not be alone.'",
     "options": [
-      {"text": "Welcome them in", "outcomes": [
-        {"weight": 100, "text": "They join you. You'll see who they are over time.", "effects": {"recruit_random_faction": true}}
-      ]},
-      {"text": "Question them first", "outcomes": [
-        {"weight": 100, "text": "Their answers feel honest. Probably.", "effects": {"recruit_random_faction": true, "vetting_bonus": true}}
-      ]},
-      {"text": "Send them away", "outcomes": [
-        {"weight": 80, "text": "They nod, defeated, and turn around.", "effects": {"morale": -1}},
-        {"weight": 20, "text": "They scream curses and storm off. You watch your back for days.", "effects": {"morale": -2}}
-      ]}
+      {
+        "text": "Welcome them in",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "They join you. You'll see who they are over time.",
+            "effects": {
+              "recruit_random_faction": true
+            }
+          }
+        ]
+      },
+      {
+        "text": "Question them first",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Their answers feel honest. Probably.",
+            "effects": {
+              "recruit_random_faction": true,
+              "vetting_bonus": true
+            }
+          }
+        ]
+      },
+      {
+        "text": "Send them away",
+        "outcomes": [
+          {
+            "weight": 80,
+            "text": "They nod, defeated, and turn around.",
+            "effects": {
+              "morale": -1
+            }
+          },
+          {
+            "weight": 20,
+            "text": "They scream curses and storm off. You watch your back for days.",
+            "effects": {
+              "morale": -2
+            }
+          }
+        ]
+      }
     ]
   },
   "swarm_warning": {
     "title": "The Wind Smells Wrong",
     "weight": 4,
     "min_day": 15,
-    "tags": ["horror", "warning"],
+    "tags": [
+      "horror",
+      "warning"
+    ],
     "description": "There is a smell on the wind. Sweet and rotten. Birds have stopped singing in the direction it comes from. Something is moving — something big — and it is moving toward you.",
     "options": [
-      {"text": "Prepare. Days of work.", "outcomes": [
-        {"weight": 100, "text": "You ready everything you can. The horizon stays empty. For now.", "effects": {"morale": -1, "preparation_bonus": 2}}
-      ]},
-      {"text": "Pretend you didn't notice", "outcomes": [
-        {"weight": 100, "text": "Some part of you knew, and chose not to.", "effects": {"morale": -2}}
-      ]}
+      {
+        "text": "Prepare. Days of work.",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You ready everything you can. The horizon stays empty. For now.",
+            "effects": {
+              "morale": -1,
+              "preparation_bonus": 2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Pretend you didn't notice",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Some part of you knew, and chose not to.",
+            "effects": {
+              "morale": -2
+            }
+          }
+        ]
+      }
     ]
   },
   "rain": {
     "title": "Rain",
     "weight": 10,
     "min_day": 1,
-    "tags": ["wholesome"],
+    "tags": [
+      "wholesome"
+    ],
     "description": "It rains for the first time in weeks. Real rain. You stand in it.",
     "options": [
-      {"text": "Stand in it", "outcomes": [
-        {"weight": 100, "text": "You stand in it.", "effects": {"morale": 3, "items": {"water_bottle": 2}}}
-      ]},
-      {"text": "Get inside", "outcomes": [
-        {"weight": 100, "text": "Practical. You collect rainwater in cans.", "effects": {"items": {"water_bottle": 3}}}
-      ]}
+      {
+        "text": "Stand in it",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You stand in it.",
+            "effects": {
+              "morale": 3,
+              "items": {
+                "water_bottle": 2
+              }
+            }
+          }
+        ]
+      },
+      {
+        "text": "Get inside",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Practical. You collect rainwater in cans.",
+            "effects": {
+              "items": {
+                "water_bottle": 3
+              }
+            }
+          }
+        ]
+      }
     ]
   },
   "fortify_drill": {
     "title": "Drills",
     "weight": 6,
     "min_day": 5,
-    "tags": ["settlement"],
-    "conditions": {"has_base": true, "min_party": 2},
+    "tags": [
+      "settlement"
+    ],
+    "conditions": {
+      "has_base": true,
+      "min_party": 2
+    },
     "description": "You spend the day running drills. Everyone moves through the routines twice. The walls don't get any sturdier — but everyone's ready to use them.",
     "options": [
-      {"text": "Run the drills", "outcomes": [
-        {"weight": 100, "text": "Everyone is sharper. For a few days.", "effects": {"defense_temp": [3, 4]}}
-      ]},
-      {"text": "Skip them", "outcomes": [
-        {"weight": 100, "text": "There's always tomorrow.", "effects": {"morale": -1}}
-      ]}
+      {
+        "text": "Run the drills",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Everyone is sharper. For a few days.",
+            "effects": {
+              "defense_temp": [
+                3,
+                4
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "text": "Skip them",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "There's always tomorrow.",
+            "effects": {
+              "morale": -1
+            }
+          }
+        ]
+      }
     ]
   },
   "scout_returns": {
     "title": "The Scout Returns",
     "weight": 5,
     "min_day": 12,
-    "tags": ["warning"],
-    "conditions": {"has_base": true},
+    "tags": [
+      "warning"
+    ],
+    "conditions": {
+      "has_base": true
+    },
     "description": "Your scout comes back at dawn, hands shaking. 'I saw it. Coming this way. We've got time — but only if we use it.'",
     "options": [
-      {"text": "Reinforce — the boards, the doors, everything", "cost": {"wood": 3, "scrap": 2}, "outcomes": [
-        {"weight": 100, "text": "By dusk you've doubled the defenses against whatever comes next.", "effects": {"preparation_bonus": 6}}
-      ]},
-      {"text": "Trust the existing walls", "outcomes": [
-        {"weight": 100, "text": "It'll have to be enough.", "effects": {}}
-      ]}
+      {
+        "text": "Reinforce — the boards, the doors, everything",
+        "cost": {
+          "wood": 3,
+          "scrap": 2
+        },
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "By dusk you've doubled the defenses against whatever comes next.",
+            "effects": {
+              "preparation_bonus": 6
+            }
+          }
+        ]
+      },
+      {
+        "text": "Trust the existing walls",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "It'll have to be enough.",
+            "effects": {}
+          }
+        ]
+      }
     ]
   },
   "argument_at_dinner": {
     "title": "Argument at Dinner",
     "weight": 8,
     "min_day": 4,
-    "tags": ["social"],
-    "conditions": {"min_party": 2},
+    "tags": [
+      "social"
+    ],
+    "conditions": {
+      "min_party": 2
+    },
     "description": "Voices rise at dinner. Someone accuses someone else of stealing — quietly. The room goes still.",
     "options": [
-      {"text": "Investigate calmly", "outcomes": [
-        {"weight": 60, "text": "You sort it out. A misunderstanding. Mostly.", "effects": {"morale": 1}},
-        {"weight": 40, "text": "There's no proof. The accusation lingers.", "effects": {"tension": 3}}
-      ]},
-      {"text": "Demand the accuser apologize", "outcomes": [
-        {"weight": 100, "text": "Everyone resents you a little. The room is colder for days.", "effects": {"tension": 5, "morale": -1}}
-      ]},
-      {"text": "Ignore it", "outcomes": [
-        {"weight": 100, "text": "The whisper grows.", "effects": {"tension": 4}}
-      ]}
+      {
+        "text": "Investigate calmly",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "You sort it out. A misunderstanding. Mostly.",
+            "effects": {
+              "morale": 1
+            }
+          },
+          {
+            "weight": 40,
+            "text": "There's no proof. The accusation lingers.",
+            "effects": {
+              "tension": 3
+            }
+          }
+        ]
+      },
+      {
+        "text": "Demand the accuser apologize",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Everyone resents you a little. The room is colder for days.",
+            "effects": {
+              "tension": 5,
+              "morale": -1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Ignore it",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "The whisper grows.",
+            "effects": {
+              "tension": 4
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "refugee_delegation": {
+    "title": "Refugees at the Gate",
+    "weight": 8,
+    "min_day": 6,
+    "tags": [
+      "settled_only",
+      "social"
+    ],
+    "conditions": {
+      "mode_required": "settled",
+      "has_base": true
+    },
+    "description": "A small group stands at your gate. Five of them. One's a child. They have nothing.",
+    "options": [
+      {
+        "text": "Let them in",
+        "outcomes": [
+          {
+            "weight": 70,
+            "text": "They join. Two pull their weight; one mostly cries; the child barely speaks.",
+            "effects": {
+              "recruit_random_faction": true,
+              "morale": -1
+            }
+          },
+          {
+            "weight": 30,
+            "text": "Within a week, food runs short. Tension builds.",
+            "effects": {
+              "recruit_random_faction": true,
+              "tension": 4,
+              "items": {
+                "canned_food": -3
+              }
+            }
+          }
+        ]
+      },
+      {
+        "text": "Give them food and send them on",
+        "cost": {
+          "canned_food": 2
+        },
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "They thank you and walk into the dusk. You never see them again.",
+            "effects": {
+              "morale": 1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Refuse, lock the door",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "They leave silently. You watch them from a window.",
+            "effects": {
+              "morale": -3
+            }
+          },
+          {
+            "weight": 40,
+            "text": "In the night, you hear weeping. By morning the child is at the gate, alone.",
+            "effects": {
+              "morale": -5
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tribute_demand": {
+    "title": "Tribute",
+    "weight": 6,
+    "min_day": 10,
+    "tags": [
+      "settled_only",
+      "faction"
+    ],
+    "conditions": {
+      "mode_required": "settled",
+      "has_base": true
+    },
+    "description": "Three armed men at your gate. 'The Federal Remnant claims this district. We're collecting a contribution. Food, ammo, or labor. Pick.'",
+    "options": [
+      {
+        "text": "Pay food",
+        "cost": {
+          "canned_food": 4
+        },
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "They count it twice and leave.",
+            "effects": {
+              "morale": -2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Pay ammo",
+        "cost": {
+          "ammo_9mm": 2
+        },
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "They nod, respectful.",
+            "effects": {
+              "morale": -1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Refuse",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "They leave, threatening. You don't see them for a week. Then you do.",
+            "effects": {
+              "tension": 5,
+              "spawn_hostile_npc": "federal_remnant"
+            }
+          },
+          {
+            "weight": 50,
+            "text": "They draw weapons. You barely survive the exchange.",
+            "effects": {
+              "hp": -3,
+              "items": {
+                "ammo_9mm": -2
+              },
+              "morale": -2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "internal_dispute_settled": {
+    "title": "A Vote",
+    "weight": 7,
+    "min_day": 8,
+    "tags": [
+      "settled_only",
+      "social"
+    ],
+    "conditions": {
+      "mode_required": "settled",
+      "has_base": true,
+      "min_party": 3
+    },
+    "description": "Half the settlement wants to ration food strictly. The other half says morale will collapse. They want you to decide.",
+    "options": [
+      {
+        "text": "Strict rationing",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Reserves last longer. Faces get thinner. Conversations get shorter.",
+            "effects": {
+              "items": {
+                "canned_food": 3
+              },
+              "morale": -2,
+              "tension": 2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Eat well while we can",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Two good meals. The dread lifts a little. So does the food supply.",
+            "effects": {
+              "morale": 3,
+              "items": {
+                "canned_food": -2
+              }
+            }
+          }
+        ]
+      },
+      {
+        "text": "Let them work it out themselves",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "They reach a compromise. You earn no points but lose none.",
+            "effects": {}
+          },
+          {
+            "weight": 40,
+            "text": "Argument turns ugly. Someone walks out.",
+            "effects": {
+              "kill_random_party": true,
+              "tension": 3
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "religious_convert": {
+    "title": "Conversion",
+    "weight": 5,
+    "min_day": 14,
+    "tags": [
+      "settled_only",
+      "social"
+    ],
+    "conditions": {
+      "mode_required": "settled",
+      "has_base": true,
+      "min_party": 2
+    },
+    "description": "{party_member} has been quiet for days. Tonight they tell you they've found faith — that the dead are sacred, and the Children of the Risen had it right. They're leaving in the morning.",
+    "options": [
+      {
+        "text": "Let them go peacefully",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "They embrace you at the gate. Then they walk into the dark.",
+            "effects": {
+              "kill_random_party": true,
+              "morale": -3
+            }
+          }
+        ]
+      },
+      {
+        "text": "Lock them in until it passes",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "After three days they come back to themselves. They never speak of it again.",
+            "effects": {
+              "tension": 3,
+              "morale": -1
+            }
+          },
+          {
+            "weight": 50,
+            "text": "They escape in the night. Two others go with them.",
+            "effects": {
+              "kill_random_party": true
+            }
+          }
+        ]
+      },
+      {
+        "text": "Argue with them all night",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "By dawn they're crying and they stay.",
+            "effects": {
+              "morale": 2
+            }
+          },
+          {
+            "weight": 40,
+            "text": "They go anyway, harder this time.",
+            "effects": {
+              "kill_random_party": true,
+              "morale": -2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "generator_breakdown": {
+    "title": "Lights Out",
+    "weight": 6,
+    "min_day": 12,
+    "tags": [
+      "settled_only",
+      "infrastructure"
+    ],
+    "conditions": {
+      "mode_required": "settled",
+      "has_base": true
+    },
+    "description": "The generator coughs and dies. The lights go out across the compound. Someone laughs nervously.",
+    "options": [
+      {
+        "text": "Spend the night fixing it",
+        "cost": {
+          "scrap": 3,
+          "fuel": 1
+        },
+        "outcomes": [
+          {
+            "weight": 80,
+            "text": "By dawn it hums again. You barely slept.",
+            "effects": {
+              "hp": -1
+            }
+          },
+          {
+            "weight": 20,
+            "text": "It won't restart. You'll need to find a real mechanic.",
+            "effects": {
+              "items": {
+                "scrap": -3,
+                "fuel": -1
+              },
+              "morale": -1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Sleep in the dark",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You all sleep light. Nothing comes for you. This time.",
+            "effects": {
+              "morale": -2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "wedding_at_the_end": {
+    "title": "A Wedding",
+    "weight": 4,
+    "min_day": 18,
+    "tags": [
+      "settled_only",
+      "wholesome"
+    ],
+    "conditions": {
+      "mode_required": "settled",
+      "min_party": 4
+    },
+    "description": "Two of your survivors want to marry. Tonight. The bigger one is crying. The smaller one is laughing. They want everyone there.",
+    "options": [
+      {
+        "text": "Officiate it",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "There are vows. There is bad wine. Everyone forgets, just for an hour.",
+            "effects": {
+              "morale": 6
+            }
+          }
+        ]
+      },
+      {
+        "text": "Refuse — it's frivolous",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "They marry anyway, quietly, while you sit in your room.",
+            "effects": {
+              "morale": -3,
+              "tension": 2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "broadcast_caller": {
+    "title": "Someone's Calling",
+    "weight": 4,
+    "min_day": 16,
+    "tags": [
+      "settled_only",
+      "lore"
+    ],
+    "conditions": {
+      "mode_required": "settled",
+      "has_base": true
+    },
+    "description": "Your scout reports a radio signal on a narrow band: '...if anyone hears this, we are at — coordinates following — we have a generator, food, walls, doctors. Please come.'",
+    "options": [
+      {
+        "text": "Send two survivors to investigate",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "They return with another faction's offer of alliance. Real one.",
+            "effects": {
+              "recruit_random_faction": true,
+              "items": {
+                "canned_food": 3,
+                "antibiotics": 1
+              },
+              "morale": 4
+            }
+          },
+          {
+            "weight": 30,
+            "text": "They don't return.",
+            "effects": {
+              "kill_random_party": true,
+              "morale": -5
+            }
+          },
+          {
+            "weight": 20,
+            "text": "They find an empty bunker and a still-running tape.",
+            "effects": {
+              "items": {
+                "scrap": 4,
+                "fuel": 1
+              },
+              "morale": -2,
+              "knowledge": "the_truth"
+            }
+          }
+        ]
+      },
+      {
+        "text": "Ignore it. The world is full of bait.",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "The signal stops three days later.",
+            "effects": {
+              "morale": -1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "patrol_report": {
+    "title": "Patrol Report",
+    "weight": 8,
+    "min_day": 7,
+    "tags": [
+      "settled_only",
+      "warning"
+    ],
+    "conditions": {
+      "mode_required": "settled",
+      "has_base": true,
+      "min_party": 2
+    },
+    "description": "Your patrol returns at dusk. 'Movement south of the river. Big. Slow. Days away — but coming.'",
+    "options": [
+      {
+        "text": "Reinforce the south wall",
+        "cost": {
+          "wood": 2,
+          "scrap": 1
+        },
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Done. If it comes, you'll have an answer.",
+            "effects": {
+              "defense_temp": [
+                3,
+                6
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "text": "Prepare to run",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Bags packed by the door. No one sleeps well.",
+            "effects": {
+              "morale": -2,
+              "preparation_bonus": 2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Send another patrol",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "Second patrol confirms. It's a horde. You have time.",
+            "effects": {
+              "preparation_bonus": 4
+            }
+          },
+          {
+            "weight": 40,
+            "text": "Second patrol doesn't return.",
+            "effects": {
+              "kill_random_party": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "quiet_day": {
+    "title": "A Quiet Day",
+    "weight": 3,
+    "min_day": 4,
+    "tags": [
+      "settlement",
+      "flavor"
+    ],
+    "conditions": {
+      "has_base": true
+    },
+    "description": "Nothing happens today. Someone hums. The wind moves something on the roof. You play cards.",
+    "options": [
+      {
+        "text": "Enjoy it",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You needed this.",
+            "effects": {
+              "morale": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "strange_noises": {
+    "title": "Strange Noises",
+    "weight": 3,
+    "min_day": 5,
+    "tags": [
+      "settlement",
+      "flavor"
+    ],
+    "conditions": {
+      "has_base": true
+    },
+    "description": "There's a scratching in the walls. Tap, tap, tap. Probably a rat. Probably.",
+    "options": [
+      {
+        "text": "Investigate carefully",
+        "outcomes": [
+          {
+            "weight": 80,
+            "text": "A rat. You name it Greg. Greg lives now.",
+            "effects": {
+              "morale": 1
+            }
+          },
+          {
+            "weight": 20,
+            "text": "A loose pipe. You tighten it.",
+            "effects": {}
+          }
+        ]
+      },
+      {
+        "text": "Block your ears",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You don't sleep great.",
+            "effects": {
+              "morale": -1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "ammo_audit": {
+    "title": "Ammo Audit",
+    "weight": 3,
+    "min_day": 6,
+    "tags": [
+      "settlement",
+      "flavor"
+    ],
+    "conditions": {
+      "has_base": true
+    },
+    "description": "Someone's been counting the rounds. Some are missing. Or they were never there. It's hard to remember.",
+    "options": [
+      {
+        "text": "Count again, more carefully",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "Inventory was right. You miscounted yesterday.",
+            "effects": {
+              "morale": -1
+            }
+          },
+          {
+            "weight": 50,
+            "text": "Found a clip behind a shelf. You feel better.",
+            "effects": {
+              "items": {
+                "ammo_9mm": 1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "text": "Ignore it",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Maybe later.",
+            "effects": {}
+          }
+        ]
+      }
+    ]
+  },
+  "letter_in_the_drawer": {
+    "title": "A Letter in the Drawer",
+    "weight": 2,
+    "min_day": 8,
+    "tags": [
+      "settlement",
+      "flavor"
+    ],
+    "conditions": {
+      "has_base": true,
+      "on_building": true
+    },
+    "description": "Cleaning out a desk drawer, you find a letter. Written, never sent. To a son. From a father who lived here before. It's a good letter.",
+    "options": [
+      {
+        "text": "Read all of it",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You don't know him. You'll think about him for weeks.",
+            "effects": {
+              "morale": 2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Burn it",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Someone deserved more than this. You're not sure who.",
+            "effects": {
+              "morale": -2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "the_smiling_face": {
+    "title": "The Smiling Face",
+    "weight": 4,
+    "min_day": 7,
+    "tags": [
+      "horror"
+    ],
+    "description": "There's a face painted on a wall along your path. White, with red lips, smiling too wide. Eyes scratched out. It wasn't there yesterday.",
+    "options": [
+      {
+        "text": "Take a different route",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You add three hours to the trip and don't regret it.",
+            "effects": {
+              "morale": -1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Paint over it",
+        "outcomes": [
+          {
+            "weight": 80,
+            "text": "The paint won't cover it.",
+            "effects": {
+              "morale": -2
+            }
+          },
+          {
+            "weight": 20,
+            "text": "It covers easily. You feel slightly better.",
+            "effects": {
+              "morale": 1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Photograph it",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "It comes out in the photo. Different angle. Same smile.",
+            "effects": {
+              "morale": -3,
+              "knowledge": "the_truth"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "the_photograph": {
+    "title": "A Photograph in a Wallet",
+    "weight": 4,
+    "min_day": 5,
+    "tags": [
+      "horror"
+    ],
+    "description": "A wallet on the road. Driver's license: Maria, 34. A photograph: Maria and a little boy at a beach. You're not on a beach. You're on a road.",
+    "options": [
+      {
+        "text": "Take the cash, leave the photo",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You take some cash. You leave the photo. You'll think about Maria.",
+            "effects": {
+              "items": {
+                "scrap": 1
+              },
+              "morale": -1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Bury the wallet",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "It feels right. It changes nothing.",
+            "effects": {
+              "morale": -2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "the_running_children": {
+    "title": "Children Running",
+    "weight": 3,
+    "min_day": 6,
+    "tags": [
+      "horror"
+    ],
+    "description": "You see them across a field. Three children, running silently. Not toward anything. Not from anything. Just running. They never get tired.",
+    "options": [
+      {
+        "text": "Watch until they're gone",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "They run until the sun sets. Then they're gone.",
+            "effects": {
+              "morale": -3
+            }
+          }
+        ]
+      },
+      {
+        "text": "Call out",
+        "outcomes": [
+          {
+            "weight": 70,
+            "text": "They stop running. They turn and look. You leave very quickly.",
+            "effects": {
+              "morale": -4,
+              "noise": 3
+            }
+          },
+          {
+            "weight": 30,
+            "text": "They don't hear. Or they don't acknowledge.",
+            "effects": {
+              "morale": -2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "the_locked_basement": {
+    "title": "The Basement Door",
+    "weight": 5,
+    "min_day": 4,
+    "tags": [
+      "horror"
+    ],
+    "conditions": {
+      "on_building": true
+    },
+    "description": "The door is chained from this side. Chained shut by someone in this room. Whatever's down there, they wanted it to stay.",
+    "options": [
+      {
+        "text": "Open it",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "It's empty. Long empty. A child's chair. A blanket. That's all.",
+            "effects": {
+              "morale": -2,
+              "items": {
+                "bandage": 1
+              }
+            }
+          },
+          {
+            "weight": 30,
+            "text": "Pre-collapse supply cache. Whoever lived here was prepared.",
+            "effects": {
+              "items": {
+                "canned_food": 3,
+                "antibiotics": 1,
+                "ammo_9mm": 1
+              }
+            }
+          },
+          {
+            "weight": 20,
+            "text": "Something is still down there. You close the door. You leave.",
+            "effects": {
+              "morale": -5,
+              "force_move": true
+            }
+          }
+        ]
+      },
+      {
+        "text": "Leave it sealed",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Whoever they trusted, you can trust.",
+            "effects": {}
+          }
+        ]
+      }
+    ]
+  },
+  "writing_on_the_wall": {
+    "title": "Writing on the Wall",
+    "weight": 4,
+    "min_day": 4,
+    "tags": [
+      "horror"
+    ],
+    "conditions": {
+      "on_building": true
+    },
+    "description": "Scrawled in something dark, across an entire wall: 'IT GETS IN THROUGH THE EYES.' Underneath, in smaller writing: 'don't look back. don't look back. don't look back.'",
+    "options": [
+      {
+        "text": "Search the building",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "Empty. Long empty. A pile of mirrors, all face-down.",
+            "effects": {
+              "morale": -3,
+              "items": {
+                "scrap": 1
+              }
+            }
+          },
+          {
+            "weight": 40,
+            "text": "You find a journal. The handwriting matches. You read the last page. You wish you hadn't.",
+            "effects": {
+              "morale": -4,
+              "knowledge": "the_truth"
+            }
+          }
+        ]
+      },
+      {
+        "text": "Leave immediately",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You don't look back.",
+            "effects": {
+              "force_move": true,
+              "morale": -2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "the_screaming_wind": {
+    "title": "Screaming Wind",
+    "weight": 3,
+    "min_day": 8,
+    "tags": [
+      "horror"
+    ],
+    "description": "The wind picks up at dusk. It sounds like screaming. Not metaphorically. Specifically like a man screaming.",
+    "options": [
+      {
+        "text": "Investigate",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "A loose pipe in an old factory. You secure it. The screaming stops.",
+            "effects": {
+              "morale": 1
+            }
+          },
+          {
+            "weight": 50,
+            "text": "You find nothing. The screaming continues for hours.",
+            "effects": {
+              "morale": -3
+            }
+          }
+        ]
+      },
+      {
+        "text": "Keep moving",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You walk faster.",
+            "effects": {
+              "morale": -1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "the_quiet_town": {
+    "title": "The Quiet Town",
+    "weight": 3,
+    "min_day": 10,
+    "tags": [
+      "horror"
+    ],
+    "description": "You enter a town. There are no zombies. There are no people. There are no birds. Doors hang open. Meals are on tables. Coffee still warm in some cups.",
+    "options": [
+      {
+        "text": "Loot quickly and leave",
+        "outcomes": [
+          {
+            "weight": 70,
+            "text": "You take what you can. Nothing follows you. You don't sleep well that night.",
+            "effects": {
+              "items": {
+                "canned_food": 4,
+                "bandage": 2,
+                "scrap": 2
+              },
+              "morale": -3
+            }
+          },
+          {
+            "weight": 30,
+            "text": "Something is wrong. You feel watched. You leave the loot.",
+            "effects": {
+              "morale": -5,
+              "knowledge": "the_truth"
+            }
+          }
+        ]
+      },
+      {
+        "text": "Skirt around",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "The wind doesn't move in there. You're glad you didn't go in.",
+            "effects": {
+              "morale": -2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "room_not_on_map": {
+    "title": "A Room That Wasn't On The Map",
+    "weight": 2,
+    "min_day": 12,
+    "tags": [
+      "horror",
+      "lore"
+    ],
+    "conditions": {
+      "on_building": true
+    },
+    "description": "You map this building yesterday. Today there's a door where there was wall. The door is open. There is a room.",
+    "options": [
+      {
+        "text": "Enter the room",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "Pre-collapse cache. Someone hid this very well.",
+            "effects": {
+              "items": {
+                "rifle": 1,
+                "ammo_rifle": 2,
+                "medkit": 2
+              }
+            }
+          },
+          {
+            "weight": 30,
+            "text": "The room is empty. When you turn to leave, the door is gone.",
+            "effects": {
+              "morale": -5,
+              "force_move": true
+            }
+          },
+          {
+            "weight": 20,
+            "text": "An old man sits in a chair. He looks at you. He says: 'You are early.'",
+            "effects": {
+              "morale": -8,
+              "knowledge": "the_truth"
+            }
+          }
+        ]
+      },
+      {
+        "text": "Block the doorway and leave",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You nail planks across it. You don't come back.",
+            "effects": {
+              "items": {
+                "wood": -2
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "karaoke_machine": {
+    "title": "Karaoke Machine",
+    "weight": 4,
+    "min_day": 3,
+    "tags": [
+      "humor",
+      "wholesome"
+    ],
+    "conditions": {
+      "on_building": true
+    },
+    "description": "In the back of a bar: a working karaoke machine. Battery half-full. The book is right there. The book has a duet section.",
+    "options": [
+      {
+        "text": "Sing terribly, with feeling",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You sing 'Total Eclipse of the Heart'. You feel briefly, gloriously alive.",
+            "effects": {
+              "morale": 4,
+              "noise": 2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Take the battery",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Practical. You feel less alive.",
+            "effects": {
+              "items": {
+                "scrap": 2
+              },
+              "morale": -1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "the_cat": {
+    "title": "The Cat",
+    "weight": 5,
+    "min_day": 2,
+    "tags": [
+      "humor",
+      "wholesome"
+    ],
+    "description": "A cat. A regular orange cat. It looks at you. It blinks slowly. It does not seem concerned about the apocalypse.",
+    "options": [
+      {
+        "text": "Try to befriend it",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "It tolerates your existence. You feel chosen.",
+            "effects": {
+              "morale": 3
+            }
+          },
+          {
+            "weight": 40,
+            "text": "It hisses and walks off, deeply offended.",
+            "effects": {
+              "morale": -1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Walk past respectfully",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "It watches you the whole time. You nod. It does not nod back.",
+            "effects": {
+              "morale": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "stuck_shopping_cart": {
+    "title": "The Stuck Shopping Cart",
+    "weight": 3,
+    "min_day": 1,
+    "tags": [
+      "humor"
+    ],
+    "description": "A shopping cart is wedged into a storm drain. There are still some cans in it. The cart is going nowhere.",
+    "options": [
+      {
+        "text": "Fight the cart for the cans",
+        "outcomes": [
+          {
+            "weight": 70,
+            "text": "After thirty minutes, you win. The cart breaks. The cans are yours.",
+            "effects": {
+              "items": {
+                "canned_food": 2
+              },
+              "morale": 1
+            }
+          },
+          {
+            "weight": 30,
+            "text": "The cart wins. You sit on the curb. You laugh about it later.",
+            "effects": {
+              "morale": 2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "polite_zombie": {
+    "title": "A Very Polite Zombie",
+    "weight": 2,
+    "min_day": 4,
+    "tags": [
+      "humor"
+    ],
+    "description": "A zombie is shambling toward you. It stops at a crosswalk. It waits. The light is broken. The light has been broken for years. The zombie waits.",
+    "options": [
+      {
+        "text": "Wait with it",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "After a few minutes, it shambles off in another direction. You salute. Nobody is who they were.",
+            "effects": {
+              "morale": 2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Put it down respectfully",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Quickly. Quietly. With apologies.",
+            "effects": {
+              "morale": -1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "time_capsule": {
+    "title": "Time Capsule",
+    "weight": 3,
+    "min_day": 6,
+    "tags": [
+      "humor"
+    ],
+    "conditions": {
+      "on_building": true
+    },
+    "description": "A school time capsule, buried in 2019. To be opened in 2069. You open it. There's a Polaroid, a CD, a child's letter to 'the future people.' The letter is hopeful in the worst possible way.",
+    "options": [
+      {
+        "text": "Read the letter aloud to anyone within earshot",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "There's laughing, and then there's crying.",
+            "effects": {
+              "morale": 3
+            }
+          }
+        ]
+      },
+      {
+        "text": "Bury it again",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Maybe a future will deserve it.",
+            "effects": {
+              "morale": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "argument_about_books": {
+    "title": "Argument About Books",
+    "weight": 3,
+    "min_day": 5,
+    "tags": [
+      "humor",
+      "social"
+    ],
+    "conditions": {
+      "min_party": 2
+    },
+    "description": "Two of your survivors are loudly arguing about whether 'The Great Gatsby' is overrated. Voices raised. Nick Carraway has been called a coward.",
+    "options": [
+      {
+        "text": "Side with the prosecution",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Justice is done. The defense sulks.",
+            "effects": {
+              "morale": 2,
+              "tension": 1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Side with the defense",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Justice is also done, differently.",
+            "effects": {
+              "morale": 2,
+              "tension": 1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Demand silence",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Everyone goes back to surviving. Worse for it.",
+            "effects": {
+              "morale": -1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "the_surrender": {
+    "title": "Surrender",
+    "weight": 3,
+    "min_day": 6,
+    "tags": [
+      "moral"
+    ],
+    "description": "A man on his knees, hands up. A raider. You saw him kill someone last week. He has a child with him.",
+    "options": [
+      {
+        "text": "Take him in. Watch him.",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "He becomes useful. Quiet. Useful.",
+            "effects": {
+              "recruit_specific_faction": "raiders"
+            }
+          },
+          {
+            "weight": 50,
+            "text": "Three nights later, he tries to leave with everything.",
+            "effects": {
+              "recruit_specific_faction": "raiders",
+              "tension": 5
+            }
+          }
+        ]
+      },
+      {
+        "text": "Take the child, leave him",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "The child doesn't cry. You will, later.",
+            "effects": {
+              "recruit_specific_faction": "lone_wolf",
+              "morale": -3
+            }
+          }
+        ]
+      },
+      {
+        "text": "End it cleanly",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "The child watches. You did what you thought was right. You think.",
+            "effects": {
+              "morale": -6,
+              "items": {
+                "ammo_9mm": -1
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "the_prisoner": {
+    "title": "The Prisoner",
+    "weight": 3,
+    "min_day": 7,
+    "tags": [
+      "moral"
+    ],
+    "description": "You find him tied up in a basement, badly beaten. He says cannibals had him. He says you have to let him go. He's also been bitten.",
+    "options": [
+      {
+        "text": "Untie him, give him a clean death",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "He thanks you, almost. He doesn't look at the gun.",
+            "effects": {
+              "morale": -4,
+              "items": {
+                "ammo_9mm": -1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "text": "Leave him where he is",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "He screams as you walk away. You walk faster.",
+            "effects": {
+              "morale": -6
+            }
+          }
+        ]
+      },
+      {
+        "text": "Free him, accept the risk",
+        "outcomes": [
+          {
+            "weight": 30,
+            "text": "He's strong. He survives the turn — somehow. Joins you.",
+            "effects": {
+              "recruit_random_faction": true,
+              "knowledge": "immunity_exists"
+            }
+          },
+          {
+            "weight": 70,
+            "text": "He turns within a day. You handle it.",
+            "effects": {
+              "morale": -4
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "the_hoarder": {
+    "title": "The Hoarder",
+    "weight": 3,
+    "min_day": 9,
+    "tags": [
+      "moral"
+    ],
+    "description": "An old man in a house, surrounded by years of canned food. He has more than he could eat in a decade. He is alone. He won't share. He has a shotgun.",
+    "options": [
+      {
+        "text": "Trade with him",
+        "cost": {
+          "scrap": 4
+        },
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "He gives you some cans. You feel like you got the worse end.",
+            "effects": {
+              "items": {
+                "canned_food": 5
+              }
+            }
+          }
+        ]
+      },
+      {
+        "text": "Take it by force",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "He drops his gun. You take what you need. You'll remember his face.",
+            "effects": {
+              "items": {
+                "canned_food": 20,
+                "shotgun": 1
+              },
+              "morale": -5
+            }
+          },
+          {
+            "weight": 50,
+            "text": "He shoots first. You barely survive.",
+            "effects": {
+              "hp": -5,
+              "items": {
+                "canned_food": 8,
+                "shotgun": 1
+              },
+              "morale": -4
+            }
+          }
+        ]
+      },
+      {
+        "text": "Leave him be",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "He nods. He locks the door. He won't last forever.",
+            "effects": {
+              "morale": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "the_deserter": {
+    "title": "The Deserter",
+    "weight": 4,
+    "min_day": 8,
+    "tags": [
+      "moral",
+      "social"
+    ],
+    "conditions": {
+      "min_party": 3
+    },
+    "description": "{party_member} packs their bag in the night and tries to leave. You catch them at the gate. They won't say where they're going. They're crying.",
+    "options": [
+      {
+        "text": "Let them go",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "They take some food and walk out. You hope they find something.",
+            "effects": {
+              "kill_random_party": true,
+              "items": {
+                "canned_food": -2
+              },
+              "morale": -2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Argue them into staying",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "They stay. Quieter than before.",
+            "effects": {
+              "morale": -1,
+              "tension": 3
+            }
+          },
+          {
+            "weight": 40,
+            "text": "They stay one night and slip out the next.",
+            "effects": {
+              "kill_random_party": true,
+              "morale": -3
+            }
+          }
+        ]
+      },
+      {
+        "text": "Lock them in",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "They scream until dawn. Everyone is awake.",
+            "effects": {
+              "morale": -4,
+              "tension": 5
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "wounded_enemy": {
+    "title": "A Wounded Enemy",
+    "weight": 3,
+    "min_day": 7,
+    "tags": [
+      "moral"
+    ],
+    "description": "A raider, shot, bleeding out behind a car. He sees you. He whispers: 'Please.' He has a med kit on his belt.",
+    "options": [
+      {
+        "text": "Take the kit",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You take it. You walk away. The whisper stops.",
+            "effects": {
+              "items": {
+                "medkit": 1
+              },
+              "morale": -3
+            }
+          }
+        ]
+      },
+      {
+        "text": "Use it on him",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "He survives. Joins you. Quiet.",
+            "effects": {
+              "recruit_specific_faction": "raiders"
+            }
+          },
+          {
+            "weight": 50,
+            "text": "He dies anyway.",
+            "effects": {
+              "items": {
+                "medkit": -1
+              },
+              "morale": -2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Make it quick",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You did what he asked.",
+            "effects": {
+              "items": {
+                "ammo_9mm": -1
+              },
+              "morale": -2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "ration_cut": {
+    "title": "Cut Rations",
+    "weight": 3,
+    "min_day": 12,
+    "tags": [
+      "moral",
+      "settlement"
+    ],
+    "conditions": {
+      "has_base": true,
+      "min_party": 3
+    },
+    "description": "There isn't enough food for everyone for the week. Someone has to take less.",
+    "options": [
+      {
+        "text": "You take less",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You lose weight. You earn respect.",
+            "effects": {
+              "hp": -2,
+              "morale": 3
+            }
+          }
+        ]
+      },
+      {
+        "text": "Cut the newest member's ration",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "They accept it. Quietly. You notice.",
+            "effects": {
+              "tension": 4
+            }
+          }
+        ]
+      },
+      {
+        "text": "Equal cut for everyone",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Fair. Worse, but fair.",
+            "effects": {
+              "morale": -1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "abandoned_lab": {
+    "title": "Abandoned Lab",
+    "weight": 3,
+    "min_day": 10,
+    "tags": [
+      "lore"
+    ],
+    "conditions": {
+      "on_building": true
+    },
+    "description": "A hospital sub-basement, still cool. Refrigerators with broken locks. Vials marked with biohazard tape. A clipboard. Page 1: 'Subject responded to compound 7. Subject is asymptomatic at 96 hours.'",
+    "options": [
+      {
+        "text": "Take what's salvageable",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "Antibiotics, gauze, a few syringes.",
+            "effects": {
+              "items": {
+                "antibiotics": 2,
+                "bandage": 3,
+                "medkit": 1
+              }
+            }
+          },
+          {
+            "weight": 40,
+            "text": "Compound 7 is here. You don't know what it does. You take a vial.",
+            "effects": {
+              "items": {
+                "antibiotics": 1
+              },
+              "knowledge": "immunity_exists"
+            }
+          }
+        ]
+      },
+      {
+        "text": "Burn it",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Some answers shouldn't exist. You watch it burn.",
+            "effects": {
+              "morale": 1,
+              "knowledge": "the_truth"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "broadcast_tower": {
+    "title": "The Broadcast Tower",
+    "weight": 3,
+    "min_day": 12,
+    "tags": [
+      "lore"
+    ],
+    "description": "A radio tower, still standing. A body at the base, headphones still on. The body is two years dead. The light on the panel still blinks.",
+    "options": [
+      {
+        "text": "Climb up. Send a message.",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "You broadcast. Hours pass. Then a faint reply: 'Who is this?' You're not alone.",
+            "effects": {
+              "morale": 3,
+              "knowledge": "the_truth"
+            }
+          },
+          {
+            "weight": 50,
+            "text": "You broadcast. Nothing answers. The light keeps blinking.",
+            "effects": {
+              "morale": -2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Loot the body and leave",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Decent kit. You move on.",
+            "effects": {
+              "items": {
+                "scrap": 2,
+                "ammo_9mm": 1
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "patient_zero_rumor": {
+    "title": "A Rumor About Patient Zero",
+    "weight": 2,
+    "min_day": 18,
+    "tags": [
+      "lore",
+      "horror"
+    ],
+    "description": "A trader at a campfire tells you a story. He says he met a man who claimed to be patient zero. A teacher, in Minnesota. Bitten by a tick. Survived. Never turned. Lives somewhere in the mountains.",
+    "options": [
+      {
+        "text": "Press for details",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "He has a map. He shouldn't have a map. He gives it to you.",
+            "effects": {
+              "knowledge": "the_truth"
+            }
+          },
+          {
+            "weight": 50,
+            "text": "He laughs. He says he made it all up. He doesn't sound sure.",
+            "effects": {
+              "morale": -1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Dismiss it",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Stories. Just stories.",
+            "effects": {
+              "morale": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "federal_remnant_offer": {
+    "title": "The Remnant Recruits",
+    "weight": 4,
+    "min_day": 15,
+    "tags": [
+      "faction"
+    ],
+    "description": "Two men in fragmented uniforms approach. 'The Federal Remnant is rebuilding civil order. We're recruiting. Citizens get walls, food, rules. Some rules.' They wait.",
+    "options": [
+      {
+        "text": "Send a representative",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "Your rep returns with supplies and a contract. You read the contract. You don't sign.",
+            "effects": {
+              "items": {
+                "canned_food": 4,
+                "ammo_9mm": 2
+              },
+              "morale": 2
+            }
+          },
+          {
+            "weight": 40,
+            "text": "Your rep doesn't return.",
+            "effects": {
+              "kill_random_party": true
+            }
+          }
+        ]
+      },
+      {
+        "text": "Decline politely",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "They nod and walk on. They'll be back.",
+            "effects": {
+              "tension": 2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Trade with them",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Fair prices, all things considered.",
+            "effects": {
+              "items": {
+                "canned_food": 3,
+                "scrap": -2
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "void_children_ritual": {
+    "title": "The Void Children",
+    "weight": 3,
+    "min_day": 14,
+    "tags": [
+      "faction",
+      "horror"
+    ],
+    "description": "You see a clearing. Children in black robes — they look like children — surround a fire. They are very still. They are very quiet. They are looking at you.",
+    "options": [
+      {
+        "text": "Approach peacefully",
+        "outcomes": [
+          {
+            "weight": 50,
+            "text": "They speak as one: 'You are not yet ready.' They walk into the dark.",
+            "effects": {
+              "morale": -4,
+              "knowledge": "the_truth"
+            }
+          },
+          {
+            "weight": 50,
+            "text": "They attack as one.",
+            "effects": {
+              "hp": -4,
+              "spawn_hostile_npc": "void_children"
+            }
+          }
+        ]
+      },
+      {
+        "text": "Back away silently",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You walk backward until they're out of sight.",
+            "effects": {
+              "morale": -2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "pacifist_camp": {
+    "title": "A Pacifist Camp",
+    "weight": 3,
+    "min_day": 11,
+    "tags": [
+      "faction",
+      "wholesome"
+    ],
+    "description": "A small camp by a stream. No walls. No fences. They greet you openly. 'We don't fight. We don't kill. We trade fairly. Some of us last a long time. Most don't.'",
+    "options": [
+      {
+        "text": "Trade with them",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Fair prices, real warmth.",
+            "effects": {
+              "items": {
+                "canned_food": 3,
+                "bandage": 2,
+                "scrap": -2
+              },
+              "morale": 2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Try to recruit one",
+        "outcomes": [
+          {
+            "weight": 60,
+            "text": "An older woman comes along. She'll cook but never carry a weapon.",
+            "effects": {
+              "recruit_specific_faction": "pacifists"
+            }
+          },
+          {
+            "weight": 40,
+            "text": "Nobody leaves the camp.",
+            "effects": {}
+          }
+        ]
+      },
+      {
+        "text": "Warn them about the world",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "They smile gently. 'We know.'",
+            "effects": {
+              "morale": -1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "salvage_crew_hire": {
+    "title": "Salvage Crew For Hire",
+    "weight": 4,
+    "min_day": 9,
+    "tags": [
+      "faction"
+    ],
+    "conditions": {
+      "has_base": true
+    },
+    "description": "Three engineers with too many tools. 'We salvage. We build. Pay us in scrap and we'll move your build along.'",
+    "options": [
+      {
+        "text": "Hire them (5 scrap)",
+        "cost": {
+          "scrap": 5
+        },
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Two days off any active build. Whatever you've got.",
+            "effects": {
+              "preparation_bonus": 2,
+              "morale": 1
+            }
+          }
+        ]
+      },
+      {
+        "text": "Recruit one full-time",
+        "cost": {
+          "scrap": 10,
+          "canned_food": 4
+        },
+        "outcomes": [
+          {
+            "weight": 80,
+            "text": "The youngest joins. Calls themselves an engineer. Mostly correct.",
+            "effects": {
+              "recruit_specific_faction": "salvage_engineers"
+            }
+          },
+          {
+            "weight": 20,
+            "text": "They accept the payment, promise to return, vanish.",
+            "effects": {
+              "morale": -2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Decline",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "They move on. They wave.",
+            "effects": {}
+          }
+        ]
+      }
+    ]
+  },
+  "rainstorm": {
+    "title": "Heavy Rain",
+    "weight": 3,
+    "min_day": 1,
+    "tags": [
+      "flavor"
+    ],
+    "description": "It rains hard for two hours. You stand under an awning. You collect what you can.",
+    "options": [
+      {
+        "text": "Stay until it passes",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "Clean water. Briefly clean clothes.",
+            "effects": {
+              "items": {
+                "water_bottle": 4
+              },
+              "morale": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "an_owl_at_dusk": {
+    "title": "An Owl at Dusk",
+    "weight": 2,
+    "min_day": 1,
+    "tags": [
+      "flavor",
+      "wholesome"
+    ],
+    "description": "An owl on a branch. Awake. Aware. Indifferent. The world it knew is mostly gone. The world it knows now seems to suit it.",
+    "options": [
+      {
+        "text": "Watch it for a while",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You sit. It sits. The light fades. You both move on.",
+            "effects": {
+              "morale": 2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "found_a_guitar": {
+    "title": "A Guitar",
+    "weight": 2,
+    "min_day": 3,
+    "tags": [
+      "wholesome"
+    ],
+    "conditions": {
+      "on_building": true
+    },
+    "description": "A guitar in a closet. Most strings intact. Mostly in tune.",
+    "options": [
+      {
+        "text": "Play it badly",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "You remember most of one song.",
+            "effects": {
+              "morale": 3,
+              "noise": 2
+            }
+          }
+        ]
+      },
+      {
+        "text": "Take it",
+        "outcomes": [
+          {
+            "weight": 100,
+            "text": "It's heavy. You leave it after a day.",
+            "effects": {
+              "morale": 1
+            }
+          }
+        ]
+      }
     ]
   }
 }

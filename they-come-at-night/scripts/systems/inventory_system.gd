@@ -94,6 +94,12 @@ static func _roll_loot(terrain_id: String) -> String:
 		category_weights = {"material": 50, "food": 30, "consumable": 15, "weapon": 5}
 	elif terrain_id == "church":
 		category_weights = {"consumable": 30, "food": 30, "material": 25, "weapon": 15}
+	elif terrain_id == "junkyard":
+		category_weights = {"material": 70, "weapon": 15, "ammo": 5, "armor": 10}
+	elif terrain_id == "police_station":
+		category_weights = {"weapon": 30, "ammo": 35, "armor": 20, "consumable": 10, "material": 5}
+	elif terrain_id == "farm":
+		category_weights = {"food": 60, "material": 25, "consumable": 10, "weapon": 5}
 
 	var category: String = String(RNG.weighted_pick_dict(category_weights))
 	# Pick an item of that category, weighted by rarity.

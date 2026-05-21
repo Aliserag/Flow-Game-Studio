@@ -51,8 +51,8 @@ static func _step_npc(n: Npc, grid: Grid) -> void:
 	NpcBehavior.post_step_action(n, grid)
 
 static func _maybe_spawn_zombie(grid: Grid) -> void:
-	var chance: float = BASE_SPAWN_CHANCE + 0.01 * GameState.day
-	if not RNG.chance(min(0.85, chance)):
+	var chance: float = (BASE_SPAWN_CHANCE + 0.01 * GameState.day) * DifficultyConfig.zombie_spawn_multiplier()
+	if not RNG.chance(min(0.95, chance)):
 		return
 	var pool := _spawn_pool_for_day(GameState.day)
 	if pool.is_empty():

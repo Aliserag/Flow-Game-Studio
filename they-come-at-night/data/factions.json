@@ -91,5 +91,70 @@
       "Heard there's a Costco two days east. Untouched. Maybe.",
       "Numbers help. Want to split a haul?"
     ]
+  },
+  "federal_remnant": {
+    "name": "Federal Remnant",
+    "alignment": "lawful",
+    "weight": 8,
+    "join_chance": 0.4,
+    "betrayal_chance": 0.05,
+    "description": "Fragments of the old government. Authoritarian, disciplined, expect tribute.",
+    "intro_lines": [
+      "Federal Remnant. Identify yourself and state your business.",
+      "We're rebuilding. Civilians who comply get walls, food, rules.",
+      "You armed? Show me. Slowly."
+    ]
+  },
+  "free_traders": {
+    "name": "Free Traders Guild",
+    "alignment": "neutral",
+    "weight": 12,
+    "join_chance": 0.5,
+    "betrayal_chance": 0.08,
+    "description": "Wandering merchants. Trade everywhere, settle nowhere.",
+    "intro_lines": [
+      "Trade?",
+      "What do you have. What do you need. Let's talk.",
+      "Free Traders. We move. We deal. We don't ask names."
+    ]
+  },
+  "void_children": {
+    "name": "Children of the Void",
+    "alignment": "hostile",
+    "weight": 4,
+    "join_chance": 0.2,
+    "betrayal_chance": 0.7,
+    "description": "Nihilist cult. They wear black, speak in unison, and believe the world deserves to end.",
+    "intro_lines": [
+      "We have seen the truth. Have you?",
+      "Nothing matters. That's why we matter.",
+      "Join us. Or don't. The void doesn't notice."
+    ]
+  },
+  "pacifists": {
+    "name": "Pacifist Camp",
+    "alignment": "lawful",
+    "weight": 6,
+    "join_chance": 0.6,
+    "betrayal_chance": 0.0,
+    "description": "Refuse violence. Even when it would save them. Many do not last.",
+    "intro_lines": [
+      "Peace be with you.",
+      "We don't carry weapons. We can still trade.",
+      "We've lost many. We won't lose ourselves."
+    ]
+  },
+  "salvage_engineers": {
+    "name": "Salvage Engineers",
+    "alignment": "neutral",
+    "weight": 8,
+    "join_chance": 0.55,
+    "betrayal_chance": 0.1,
+    "description": "Tradespeople who never stopped being tradespeople. Hire them and your builds go faster.",
+    "intro_lines": [
+      "Need anything built? We're listening.",
+      "Salvage. Repair. Reuse. We can help.",
+      "Pay in scrap. Or food. Or both."
+    ]
   }
 }

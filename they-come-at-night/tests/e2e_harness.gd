@@ -36,6 +36,9 @@ static func run(root: Node) -> bool:
 	_phase_n_megahorde_victory()
 	_phase_o_defeats()
 	_phase_q_events()
+	_phase_r_settlement_stats_tasks()
+	_phase_s_difficulty_and_map_size()
+	_phase_t_new_content_coverage()
 	_phase_p_ui_scenes(root)
 	_summary()
 	return fails == 0
@@ -736,6 +739,133 @@ static func _phase_q_events() -> void:
 	_eq("P17", "defense_temp_magnitude", 4, GameState._defense_temp_bonus)
 	_eq("P17", "defense_temp_turns", 5, GameState._defense_temp_turns)
 
+static func _phase_r_settlement_stats_tasks() -> void:
+	print("\n[E2E] -- Phase R: M2 settlement, stats & tasks --")
+	GameState.reset_run(GameState.Mode.SETTLED, SEED)
+	RNG.seed_run(SEED)
+	# M2.1 — stats are populated within bounds.
+	var lead := Survivor.make_lead()
+	GameState.party.append(lead)
+	GameState.assignments[lead.id] = []
+	_truthy("M21", "lead_strength_in_range", lead.strength >= 1 and lead.strength <= 5)
+	_truthy("M21", "lead_smarts_in_range", lead.smarts >= 1 and lead.smarts <= 5)
+	_truthy("M21", "lead_stealth_in_range", lead.stealth >= 1 and lead.stealth <= 5)
+	# Lead has at least one elevated stat (≥ 3).
+	_truthy("M21", "lead_has_strong_stat",
+		lead.strength >= 3 or lead.smarts >= 3 or lead.stealth >= 3)
+	var recruit: Survivor = Survivor.make_random_recruit()
+	_truthy("M21", "recruit_stats_in_range",
+		recruit.strength >= 1 and recruit.strength <= 5)
+
+	# M2.2 — task system.
+	GameState.grid = MapGenerator.generate(GameState.map_size)
+	lead.pos = Vector2i(7, 7)
+	GameState.grid.add_entity(lead)
+	# Establish base + start a build, then assign build_assist.
+	BaseSystem.establish(lead.pos, GameState.grid)
+	GameState.add_to_inventory("wood", 10)
+	GameState.add_to_inventory("scrap", 10)
+	BaseSystem.start_build("barricade")
+	var days_at_start: int = GameState.building_days_left
+	_truthy("M22", "build_started", days_at_start > 0)
+	# Add a high-strength helper and assign them to build_assist.
+	var helper := Survivor.new()
+	helper.display_name = "Helper"
+	helper.faction_id = "salvage_engineers"
+	helper.strength = 5
+	helper.smarts = 5
+	helper.pos = lead.pos
+	GameState.party.append(helper)
+	GameState.assignments[helper.id] = []
+	GameState.grid.add_entity(helper)
+	TaskSystem.assign_task(helper.id, "build_assist")
+	_eq("M22", "task_assigned", "build_assist", helper.daily_task)
+	# Execute one turn — should pull at least 1 day off the build.
+	TaskSystem.execute_daily_tasks(GameState.grid)
+	_truthy("M22", "build_assist_accelerates",
+		GameState.building_days_left < days_at_start,
+		"start=%d after=%d" % [days_at_start, GameState.building_days_left])
+	# Task resets after execution.
+	_eq("M22", "task_clears_after_execute", "", helper.daily_task)
+	# Guard task adds defense_temp.
+	GameState._defense_temp_bonus = 0
+	GameState._defense_temp_turns = 0
+	TaskSystem.assign_task(helper.id, "guard")
+	TaskSystem.execute_daily_tasks(GameState.grid)
+	_truthy("M22", "guard_grants_defense_temp", GameState._defense_temp_bonus > 0)
+
+	# M2.5 — tier-3 enhancements present.
+	for enh in ["scout_network", "greenhouse", "sniper_nest"]:
+		_truthy("M25", "enhancement_%s_defined" % enh, DataLoader.enhancements.has(enh))
+		var cfg: Dictionary = DataLoader.enhancements.get(enh, {})
+		_truthy("M25", "enhancement_%s_has_cost" % enh, cfg.has("cost"))
+
+static func _phase_s_difficulty_and_map_size() -> void:
+	print("\n[E2E] -- Phase S: M3 difficulty + map size --")
+	# Tourist has lower spawn multiplier than Apocalypse.
+	GameState.difficulty = GameState.Difficulty.TOURIST
+	var t_mult: float = DifficultyConfig.zombie_spawn_multiplier()
+	GameState.difficulty = GameState.Difficulty.APOCALYPSE
+	var a_mult: float = DifficultyConfig.zombie_spawn_multiplier()
+	_truthy("M35", "apocalypse_multiplier_higher_than_tourist", a_mult > t_mult,
+		"tourist=%f apoc=%f" % [t_mult, a_mult])
+	# Food consumption scaling.
+	GameState.difficulty = GameState.Difficulty.TOURIST
+	var t_food: float = DifficultyConfig.food_consumption_multiplier()
+	GameState.difficulty = GameState.Difficulty.APOCALYPSE
+	var a_food: float = DifficultyConfig.food_consumption_multiplier()
+	_truthy("M35", "apocalypse_food_burn_higher", a_food > t_food,
+		"tourist=%f apoc=%f" % [t_food, a_food])
+	# Megahorde unlock range shifts.
+	GameState.difficulty = GameState.Difficulty.TOURIST
+	var t_range: Array = DifficultyConfig.megahorde_unlock_range()
+	GameState.difficulty = GameState.Difficulty.APOCALYPSE
+	var a_range: Array = DifficultyConfig.megahorde_unlock_range()
+	_truthy("M35", "apocalypse_unlocks_earlier",
+		int(a_range[0]) < int(t_range[0]),
+		"tourist_min=%d apoc_min=%d" % [int(t_range[0]), int(a_range[0])])
+	# Restore default for downstream assertions.
+	GameState.difficulty = GameState.Difficulty.STANDARD
+
+	# M3.6 — map size variants.
+	for sz in [Vector2i(10, 10), Vector2i(14, 14), Vector2i(20, 20)]:
+		GameState.reset_run(GameState.Mode.SOLO, SEED, GameState.Difficulty.STANDARD, sz)
+		GameState.grid = MapGenerator.generate(sz)
+		_eq("M36", "map_size_%dx%d_generated" % [sz.x, sz.y], sz, GameState.grid.size)
+	# Larger map → later megahorde unlock day on average.
+	GameState.difficulty = GameState.Difficulty.STANDARD
+	var small_day: int = DifficultyConfig.megahorde_unlock_day_for_map_size(Vector2i(10, 10))
+	var big_day: int = DifficultyConfig.megahorde_unlock_day_for_map_size(Vector2i(20, 20))
+	_truthy("M36", "larger_map_has_later_unlock_day", big_day > small_day,
+		"10x10=%d 20x20=%d" % [small_day, big_day])
+
+static func _phase_t_new_content_coverage() -> void:
+	print("\n[E2E] -- Phase T: M3 new content --")
+	_truthy("M31", "events_total_at_least_49", DataLoader.events.size() >= 49,
+		"count=%d" % DataLoader.events.size())
+	_truthy("M32", "factions_total_at_least_12", DataLoader.factions.size() >= 12,
+		"count=%d" % DataLoader.factions.size())
+	for fid in ["federal_remnant", "free_traders", "void_children", "pacifists", "salvage_engineers"]:
+		_truthy("M32", "faction_%s_defined" % fid, DataLoader.factions.has(fid))
+	_truthy("M33", "items_total_at_least_32", DataLoader.items.size() >= 32,
+		"count=%d" % DataLoader.items.size())
+	_truthy("M34", "terrain_total_at_least_13", DataLoader.terrain.size() >= 13,
+		"count=%d" % DataLoader.terrain.size())
+	for tid in ["junkyard", "police_station", "farm"]:
+		_truthy("M34", "terrain_%s_defined" % tid, DataLoader.terrain.has(tid))
+	# Generate enough maps to see all new terrains appear at least once.
+	var seen_new: Dictionary = {}
+	for _i in 8:
+		var g: Grid = MapGenerator.generate(Vector2i(14, 14))
+		for x in 14:
+			for y in 14:
+				var t: Tile = g.get_tile(Vector2i(x, y))
+				if t == null: continue
+				if t.terrain_id in ["junkyard", "police_station", "farm"]:
+					seen_new[t.terrain_id] = true
+	_truthy("M34", "new_terrains_appear_in_maps", seen_new.size() >= 2,
+		"saw %s" % str(seen_new.keys()))
+
 static func _phase_p_ui_scenes(root: Node) -> void:
 	print("\n[E2E] -- Phase P: UI scene boot --")
 	# Boot each scene as a child and verify _ready completes without errors.
@@ -764,7 +894,7 @@ static func _phase_p_ui_scenes(root: Node) -> void:
 	var gv: Node = gv_packed.instantiate()
 	root.add_child(gv)
 	# A frame happens implicitly when we add_child. Panels are children:
-	for panel_name in ["BuildPanel", "AssignPanel", "TradePanel", "KnowledgePanel", "EventModal", "GameOver"]:
+	for panel_name in ["BuildPanel", "AssignPanel", "TradePanel", "KnowledgePanel", "EventModal", "GameOver", "SettlementView"]:
 		var p: Node = gv.get_node_or_null(panel_name)
 		_truthy("P20", "gameview_panel_%s_exists" % panel_name, p != null)
 		if p == null:

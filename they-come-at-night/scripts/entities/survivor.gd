@@ -10,6 +10,14 @@ var injured: bool = false
 var infected: bool = false               # set when bitten — turns later
 var is_lead: bool = false
 
+# Per-survivor stats (M2.1). Range 1-5.
+var strength: int = 1   # melee, build assist, guard
+var smarts: int = 1     # heal, event outcomes
+var stealth: int = 1    # scavenge yield, escape
+
+# Daily task assignment (M2.2). Cleared at end of each day.
+var daily_task: String = ""
+
 const FIRST_NAMES := [
 	"Ash", "Wren", "Mateo", "Iris", "Jonas", "Maeve", "Theo", "Ruby",
 	"Soren", "Hana", "Felix", "Nia", "Kai", "Iona", "Beck", "Vera",
@@ -53,6 +61,10 @@ static func make_random_recruit() -> Survivor:
 	s.max_hp = RNG.randi_range_inclusive(6, 10)
 	s.hp = s.max_hp
 	s.attack = RNG.randi_range_inclusive(1, 3)
+	# Stats roll 1-4 for recruits; lead bumps one up to 5.
+	s.strength = RNG.randi_range_inclusive(1, 4)
+	s.smarts = RNG.randi_range_inclusive(1, 4)
+	s.stealth = RNG.randi_range_inclusive(1, 4)
 	# Pick faction by weight.
 	var faction_keys: Array = DataLoader.factions.keys()
 	var weights: Array = []
@@ -71,6 +83,13 @@ static func make_lead() -> Survivor:
 	s.max_hp = 10
 	s.hp = 10
 	s.attack = 3
+	# Lead has one elevated stat at 5; others rolled 2-4.
+	s.strength = RNG.randi_range_inclusive(2, 4)
+	s.smarts = RNG.randi_range_inclusive(2, 4)
+	s.stealth = RNG.randi_range_inclusive(2, 4)
+	var stat_picks: Array = ["strength", "smarts", "stealth"]
+	var top: String = String(RNG.pick(stat_picks))
+	s.set(top, 5)
 	return s
 
 static func random_name() -> String:

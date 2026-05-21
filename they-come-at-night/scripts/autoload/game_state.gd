@@ -4,6 +4,9 @@ extends Node
 
 enum Mode { SOLO, SETTLED }
 enum Phase { MENU, PLAYING, EVENT, GAME_OVER }
+enum Difficulty { TOURIST, STANDARD, APOCALYPSE, PERMADEATH }
+
+var difficulty: int = Difficulty.STANDARD
 
 const MAX_HP := 10
 const MAX_MORALE := 10
@@ -60,9 +63,12 @@ var stats: Dictionary = {
 	"events_seen": 0
 }
 
-func reset_run(new_mode: int, seed_value: int = 0) -> void:
+func reset_run(new_mode: int, seed_value: int = 0, difficulty_value: int = Difficulty.STANDARD,
+		map_size_value: Vector2i = Vector2i(14, 14)) -> void:
 	mode = new_mode
 	phase = Phase.PLAYING
+	difficulty = difficulty_value
+	map_size = map_size_value
 	day = 1
 	turns_today = 0
 	party.clear()

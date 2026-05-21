@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://b1mainmenu000"]
+[gd_scene load_steps=3 format=3 uid="uid://b1mainmenu000"]
 
 [ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_menu"]
+[ext_resource type="PackedScene" path="res://scenes/SettingsMenu.tscn" id="2_settings"]
 
 [node name="MainMenu" type="Control"]
 anchor_right = 1.0
@@ -53,14 +54,29 @@ theme_override_constants/separation = 14
 [node name="ContinueButton" type="Button" parent="Panel/VBox"]
 text = "CONTINUE"
 
+[node name="DifficultyLabel" type="Label" parent="Panel/VBox"]
+text = "Difficulty:"
+
+[node name="DifficultyButton" type="OptionButton" parent="Panel/VBox"]
+
+[node name="MapSizeLabel" type="Label" parent="Panel/VBox"]
+text = "Map size:"
+
+[node name="MapSizeButton" type="OptionButton" parent="Panel/VBox"]
+
 [node name="SoloButton" type="Button" parent="Panel/VBox"]
 text = "SOLO SURVIVOR"
 
 [node name="SettledButton" type="Button" parent="Panel/VBox"]
 text = "SETTLED (start with a base)"
 
+[node name="SettingsButton" type="Button" parent="Panel/VBox"]
+text = "SETTINGS"
+
 [node name="QuitButton" type="Button" parent="Panel/VBox"]
 text = "QUIT"
+
+[node name="SettingsMenu" parent="." instance=ExtResource("2_settings")]
 
 [node name="About" type="Label" parent="Panel/VBox"]
 text = "v0.1"

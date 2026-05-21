@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://b1gameview00000"]
+[gd_scene load_steps=10 format=3 uid="uid://b1gameview00000"]
 
 [ext_resource type="Script" path="res://scripts/ui/game_view.gd" id="1_gv"]
 [ext_resource type="Script" path="res://scripts/ui/grid_renderer.gd" id="2_gr"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/ui/assign_panel.gd" id="5_ap"]
 [ext_resource type="Script" path="res://scripts/ui/knowledge_panel.gd" id="6_kp"]
 [ext_resource type="Script" path="res://scripts/ui/trade_panel.gd" id="7_tp"]
+[ext_resource type="PackedScene" path="res://scenes/SettlementView.tscn" id="8_sv"]
 
 [node name="GameView" type="Control"]
 anchor_right = 1.0
@@ -371,6 +372,8 @@ theme_override_constants/separation = 6
 
 [node name="CloseBtn" type="Button" parent="KnowledgePanel/Panel/Margin/V"]
 text = "Close"
+
+[node name="SettlementView" parent="." instance=ExtResource("8_sv")]
 
 [node name="GameOver" type="Control" parent="."]
 anchor_right = 1.0

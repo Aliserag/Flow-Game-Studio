@@ -44,6 +44,12 @@ static func _conditions_met(conds: Dictionary, current_tile: Tile) -> bool:
 	if conds.get("min_party", 0) > 0:
 		if GameState.party.size() < int(conds["min_party"]):
 			return false
+	# M2: mode-gated events (settled-only or solo-only).
+	if conds.has("mode_required"):
+		var required: String = String(conds["mode_required"])
+		var mode_str: String = "settled" if GameState.mode == GameState.Mode.SETTLED else "solo"
+		if required != mode_str:
+			return false
 	return true
 
 static func _build_payload(event_id: String) -> Dictionary:

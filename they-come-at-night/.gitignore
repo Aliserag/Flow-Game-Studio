@@ -5,6 +5,7 @@
 # Exported builds
 /build/
 /exports/
+/dist/
 *.exe
 *.dmg
 *.x86_64

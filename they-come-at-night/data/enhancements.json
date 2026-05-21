@@ -86,5 +86,35 @@
     "siege_survival": true,
     "requires": ["fortified_walls"],
     "description": "Reinforced concrete and steel. The megahorde might not be the end."
+  },
+  "scout_network": {
+    "name": "Scout Network",
+    "tier": 3,
+    "cost": {"scrap": 12, "wood": 6},
+    "build_days": 3,
+    "vision_bonus": 2,
+    "warning_bonus": 1,
+    "requires": ["watchtower"],
+    "description": "Three lookouts working in shifts. The map gets clearer."
+  },
+  "greenhouse": {
+    "name": "Greenhouse",
+    "tier": 3,
+    "cost": {"scrap": 8, "wood": 14},
+    "build_days": 4,
+    "food_per_day": 3,
+    "morale_bonus": 1,
+    "requires": ["garden"],
+    "description": "Glass salvaged from a dozen windows. Tomatoes year-round, almost."
+  },
+  "sniper_nest": {
+    "name": "Sniper Nest",
+    "tier": 3,
+    "cost": {"scrap": 14, "wood": 6, "ammo_rifle": 4},
+    "build_days": 3,
+    "attack_bonus": 4,
+    "defense_bonus": 2,
+    "requires": ["watchtower", "armory"],
+    "description": "Sandbags, a rangefinder, a long sight line. One trigger pull at a time."
   }
 }

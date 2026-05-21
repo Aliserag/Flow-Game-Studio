@@ -18,6 +18,8 @@ static func recompute_vision(grid: Grid) -> void:
 
 static func end_turn(grid: Grid) -> void:
 	# 1. Player phase already done (move/scavenge/etc applied before calling end_turn).
+	# 1b. Execute any assigned daily tasks (M2.2). Runs before AI so guard buffs land.
+	TaskSystem.execute_daily_tasks(grid)
 	# 2. Zombie/NPC AI tick.
 	ZombieAi.tick(grid)
 	# 3. Check for combat — any zombie now sharing player's tile triggers fight.
@@ -61,8 +63,9 @@ static func _resolve_collisions(grid: Grid) -> void:
 			EventBus.log_danger("Combat with %s — %d damage dealt, %d casualties." % [e.display_name, result.damage_to_zombie, result.casualties])
 
 static func _daily_upkeep() -> void:
-	# Each member needs ~1 unit of food per day (canned_food, mre, water_bottle).
-	var need: int = max(1, GameState.party.size())
+	# Each member needs N units of food per day, scaled by difficulty.
+	var per_head: float = DifficultyConfig.food_consumption_multiplier()
+	var need: int = max(1, int(ceil(GameState.party.size() * per_head)))
 	var fed: int = 0
 	for food_id in ["mre", "canned_food", "water_bottle"]:
 		while fed < need and GameState.has_item(food_id, 1):
