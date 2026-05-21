@@ -1,55 +1,72 @@
 class_name CombatResolver
 extends RefCounted
 ## Pure-function combat resolution.
-## Takes a player warband and enemy composition. Returns ordered event log + outcome.
-## Deterministic when seeded RNG is provided.
 ##
-## Combat model (G0):
+## Takes a player warband, enemy composition, optional biome modifier, and an RNG node.
+## Returns ordered event log + outcome. Deterministic when seeded RNG is provided.
+##
+## Combat model (G1):
 ## - Tick-based round system. Each round, units act in speed order (high speed first).
 ## - Each acting unit targets the lowest-HP opposing unit (front-line bias by index).
-## - Damage = max(1, attacker.attack - defender.defense * 0.5), then crit chance check.
+## - Damage = max(1, attacker.attack - floor(defender.defense / 2)), then trait/crit modifiers.
 ## - Crit multiplies damage by 2.
+## - Wounded-target bonus (Butcher trait): +15% damage vs targets below 50% HP.
+## - Round-end heal (Spirit-Touched trait): heals most-wounded ally.
+## - Vengeful trait: +2 attack permanently after an ally dies.
+## - Biome modifier (e.g., enemy_speed_bonus_early): applies for first N rounds.
+## - Boss phase 2: triggers when boss HP crosses configured threshold. Boss gains
+##   stat bonuses and an event is emitted (battle-display can play a special toast).
 ## - Battle ends when one side is fully dead.
 
-const MAX_ROUNDS: int = 50  # safety cap
+const MAX_ROUNDS: int = 80
 
-# Event kinds (string for clarity in logs / replays)
 const EV_BATTLE_START := "battle_start"
 const EV_ROUND_START := "round_start"
 const EV_ATTACK := "attack"
 const EV_DEATH := "death"
+const EV_HEAL := "heal"
+const EV_PHASE_CHANGE := "phase_change"
 const EV_BATTLE_END := "battle_end"
 
 
 class Combatant:
 	extends RefCounted
-	var unit_id: String           # orc.id for player orcs; "enemy_<id>_<n>" for enemies
+	var unit_id: String
 	var display_name: String
 	var team: int                 # 0 = player, 1 = enemy
-	var source: Variant           # the Orc instance for players, the enemy dict for enemies
+	var source: Variant
 	var current_hp: int
 	var max_hp: int
 	var attack: int
 	var defense: int
 	var speed: int
+	var base_speed: int           # snapshot of starting speed (for biome modifier expiry)
 	var is_ranged: bool = false
 	var crit_chance: float = 0.05
 	var traits: Array[String] = []
 	var heal_on_kill: int = 0
+	var round_heal_ally: int = 0  # Spirit-Touched
+	var wounded_bonus: float = 0.0  # Butcher
+	var vengeful_pending: int = 0   # +attack on ally death; consumed once.
+	var is_boss: bool = false
+	var boss_phase_threshold: float = 0.0
+	var boss_phase_modifier: Dictionary = {}
+	var boss_phase_message: String = ""
+	var phase_2_triggered: bool = false
 
 
 static func resolve(
-	player_orcs: Array,        # Array[Orc] living members
+	player_orcs: Array,
 	enemy_composition: Dictionary,
 	registry: Node,
-	rng: Node                  # the Rng autoload or compatible
+	rng: Node,
+	biome_modifier: Dictionary = {}
 ) -> Dictionary:
 	var events: Array[Dictionary] = []
 	var combatants: Array = []
 	var player_team := []
 	var enemy_team := []
 
-	# Build player combatants
 	for orc: Orc in player_orcs:
 		if not orc.is_alive():
 			continue
@@ -65,14 +82,16 @@ static func resolve(
 		c.attack = int(stats["attack"])
 		c.defense = int(stats["defense"])
 		c.speed = int(stats["speed"])
+		c.base_speed = c.speed
 		c.traits = orc.traits.duplicate()
 		c.is_ranged = _orc_is_ranged(orc, registry)
 		c.crit_chance = _orc_crit_chance(orc, registry)
 		c.heal_on_kill = _orc_heal_on_kill(orc, registry)
+		c.round_heal_ally = _orc_round_heal_ally(orc, registry)
+		c.wounded_bonus = _orc_wounded_bonus(orc, registry)
 		combatants.append(c)
 		player_team.append(c)
 
-	# Build enemy combatants from composition
 	var members: Array = enemy_composition.get("members", [])
 	var n_idx: int = 0
 	for member: Dictionary in members:
@@ -93,11 +112,20 @@ static func resolve(
 			c.attack = int(es.get("attack", 4))
 			c.defense = int(es.get("defense", 1))
 			c.speed = int(es.get("speed", 3))
+			c.base_speed = c.speed
 			var et: Array = enemy_def.get("traits", [])
 			c.traits.clear()
 			for t in et:
 				c.traits.append(String(t))
 			c.crit_chance = 0.05
+			# Boss properties
+			c.is_boss = bool(enemy_def.get("is_boss", false))
+			if c.is_boss:
+				c.boss_phase_threshold = float(enemy_def.get("phase_2_threshold", 0.5))
+				c.boss_phase_modifier = enemy_def.get("phase_2_modifier", {})
+				c.boss_phase_message = String(enemy_def.get("phase_2_message", "The boss enrages!"))
+			# Heal/bonus traits for enemies too
+			c.round_heal_ally = _team_trait_round_heal(c, registry)
 			combatants.append(c)
 			enemy_team.append(c)
 			n_idx += 1
@@ -108,34 +136,43 @@ static func resolve(
 		"enemy_count": enemy_team.size(),
 		"player_names": player_team.map(func(c): return c.display_name),
 		"enemy_names": enemy_team.map(func(c): return c.display_name),
+		"biome_modifier": biome_modifier,
 	})
+
+	# Apply biome modifier at battle start where applicable.
+	_apply_biome_modifier_start(combatants, biome_modifier)
 
 	var round_num := 0
 	while round_num < MAX_ROUNDS:
 		round_num += 1
 		events.append({"kind": EV_ROUND_START, "round": round_num})
-		# Build action order by current speed (stable sort: original index break tie)
+
+		# Biome modifier round expiry
+		_apply_biome_modifier_round(combatants, biome_modifier, round_num)
+
+		# Action order
 		var actors: Array = combatants.duplicate()
 		actors.sort_custom(func(a, b):
 			if a.speed == b.speed:
 				return a.unit_id < b.unit_id
 			return a.speed > b.speed
 		)
+
 		for actor: Combatant in actors:
 			if actor.current_hp <= 0:
 				continue
-			# Find target
 			var target: Combatant = _find_target(actor, combatants)
 			if target == null:
-				break  # No targets — one team is wiped
-			# Roll for crit
+				break
 			var is_crit: bool = rng.roll_chance(actor.crit_chance)
-			var raw_damage: int = max(1, actor.attack - int(actor.defense * 0.0) - int(target.defense / 2))
-			if raw_damage < 1:
-				raw_damage = 1
-			var damage: int = raw_damage * (2 if is_crit else 1)
-			# Apply damage
-			var taken: int = min(target.current_hp, damage)
+			var raw: int = max(1, actor.attack - int(target.defense / 2))
+			var damage: float = float(raw)
+			if is_crit:
+				damage *= 2.0
+			if actor.wounded_bonus > 0.0 and target.current_hp * 2 < target.max_hp:
+				damage *= (1.0 + actor.wounded_bonus)
+			var damage_int: int = max(1, int(damage))
+			var taken: int = min(target.current_hp, damage_int)
 			target.current_hp -= taken
 			events.append({
 				"kind": EV_ATTACK,
@@ -148,7 +185,27 @@ static func resolve(
 				"crit": is_crit,
 				"target_hp_after": target.current_hp,
 			})
-			# Death?
+			# Boss phase 2 trigger
+			if target.is_boss and not target.phase_2_triggered:
+				if target.current_hp > 0 and float(target.current_hp) <= float(target.max_hp) * target.boss_phase_threshold:
+					target.phase_2_triggered = true
+					var atk_bonus: int = int(target.boss_phase_modifier.get("attack", 0))
+					var def_bonus: int = int(target.boss_phase_modifier.get("defense", 0))
+					var spd_bonus: int = int(target.boss_phase_modifier.get("speed", 0))
+					target.attack += atk_bonus
+					target.defense += def_bonus
+					target.speed += spd_bonus
+					target.base_speed += spd_bonus
+					events.append({
+						"kind": EV_PHASE_CHANGE,
+						"round": round_num,
+						"unit_id": target.unit_id,
+						"unit_name": target.display_name,
+						"message": target.boss_phase_message,
+						"attack_bonus": atk_bonus,
+						"defense_bonus": def_bonus,
+						"speed_bonus": spd_bonus,
+					})
 			if target.current_hp <= 0:
 				events.append({
 					"kind": EV_DEATH,
@@ -159,34 +216,35 @@ static func resolve(
 					"killer_name": actor.display_name,
 					"victim_team": target.team,
 				})
-				# Heal-on-kill traits (e.g., Bloodthirsty)
+				# Heal-on-kill
 				if actor.heal_on_kill > 0 and actor.current_hp > 0:
 					var before: int = actor.current_hp
 					actor.current_hp = min(actor.max_hp, actor.current_hp + actor.heal_on_kill)
 					var healed: int = actor.current_hp - before
 					if healed > 0:
 						events.append({
-							"kind": "heal",
+							"kind": EV_HEAL,
 							"round": round_num,
 							"unit_id": actor.unit_id,
 							"unit_name": actor.display_name,
 							"amount": healed,
 						})
-				# Update player orc kill count if applicable
+				# Vengeful: living allies of the victim's team gain +2 attack permanently
+				_apply_vengeful_on_death(target, combatants)
+				# Player orc kill counter
 				if actor.team == 0 and actor.source is Orc:
 					(actor.source as Orc).kills += 1
-				# Check end condition
 				if _team_dead(player_team):
 					return _finalize(events, false, round_num, player_team, enemy_team, combatants)
 				if _team_dead(enemy_team):
 					return _finalize(events, true, round_num, player_team, enemy_team, combatants)
-		# end of round
+		# End-of-round: round-heal traits (Shaman, Hedge Witch)
+		_apply_round_heals(combatants, events, round_num)
 		if _team_dead(player_team):
 			return _finalize(events, false, round_num, player_team, enemy_team, combatants)
 		if _team_dead(enemy_team):
 			return _finalize(events, true, round_num, player_team, enemy_team, combatants)
 
-	# Hit safety cap — treat as player loss (stalemate is bad design surface)
 	return _finalize(events, false, round_num, player_team, enemy_team, combatants)
 
 
@@ -198,7 +256,6 @@ static func _find_target(actor: Combatant, all: Array) -> Variant:
 			candidates.append(c)
 	if candidates.is_empty():
 		return null
-	# Target lowest-HP alive opponent; tie-break on unit_id for determinism
 	candidates.sort_custom(func(a, b):
 		if a.current_hp == b.current_hp:
 			return a.unit_id < b.unit_id
@@ -265,7 +322,7 @@ static func _finalize(
 
 
 static func _team_attack_bonus_from(player_orcs: Array, registry: Node) -> int:
-	## Sum of all "team_modifiers.attack" granted by leader-like traits across the warband.
+	## Sum of all team_modifiers.attack from leader-like traits AND gear (e.g., Warband Banner).
 	var bonus := 0
 	for orc: Orc in player_orcs:
 		if not orc.is_alive():
@@ -274,6 +331,10 @@ static func _team_attack_bonus_from(player_orcs: Array, registry: Node) -> int:
 			var t: Dictionary = registry.get_trait(String(tid))
 			var tm: Dictionary = t.get("team_modifiers", {})
 			bonus += int(tm.get("attack", 0))
+		for slot in orc.equipped_gear:
+			var g: Dictionary = registry.get_gear(orc.equipped_gear[slot])
+			var gm: Dictionary = g.get("team_modifiers", {})
+			bonus += int(gm.get("attack", 0))
 	return bonus
 
 
@@ -287,10 +348,11 @@ static func _orc_is_ranged(orc: Orc, registry: Node) -> bool:
 
 static func _orc_crit_chance(orc: Orc, registry: Node) -> float:
 	var base := 0.05
+	var ranged := _orc_is_ranged(orc, registry)
 	for tid in orc.traits:
 		var t: Dictionary = registry.get_trait(String(tid))
 		base += float(t.get("crit_chance_bonus", 0.0))
-		if _orc_is_ranged(orc, registry):
+		if ranged:
 			base += float(t.get("ranged_crit_bonus", 0.0))
 	return clampf(base, 0.0, 0.95)
 
@@ -302,3 +364,92 @@ static func _orc_heal_on_kill(orc: Orc, registry: Node) -> int:
 		var ok: Dictionary = t.get("on_kill", {})
 		total += int(ok.get("heal", 0))
 	return total
+
+
+static func _orc_round_heal_ally(orc: Orc, registry: Node) -> int:
+	var total := 0
+	for tid in orc.traits:
+		var t: Dictionary = registry.get_trait(String(tid))
+		total += int(t.get("round_heal_ally", 0))
+	return total
+
+
+static func _orc_wounded_bonus(orc: Orc, registry: Node) -> float:
+	var total := 0.0
+	for tid in orc.traits:
+		var t: Dictionary = registry.get_trait(String(tid))
+		total += float(t.get("wounded_target_bonus", 0.0))
+	return total
+
+
+static func _team_trait_round_heal(c: Combatant, registry: Node) -> int:
+	var total := 0
+	for tid in c.traits:
+		var t: Dictionary = registry.get_trait(String(tid))
+		total += int(t.get("round_heal_ally", 0))
+	return total
+
+
+static func _apply_round_heals(combatants: Array, events: Array[Dictionary], round_num: int) -> void:
+	## For each combatant with round_heal_ally > 0, heal the most-wounded living ally on their team.
+	for healer: Combatant in combatants:
+		if healer.current_hp <= 0 or healer.round_heal_ally <= 0:
+			continue
+		var target: Combatant = null
+		var worst_gap: int = 0
+		for c: Combatant in combatants:
+			if c.team != healer.team or c.current_hp <= 0:
+				continue
+			var gap: int = c.max_hp - c.current_hp
+			if gap > worst_gap:
+				worst_gap = gap
+				target = c
+		if target != null and worst_gap > 0:
+			var before: int = target.current_hp
+			target.current_hp = min(target.max_hp, target.current_hp + healer.round_heal_ally)
+			var amt: int = target.current_hp - before
+			if amt > 0:
+				events.append({
+					"kind": EV_HEAL,
+					"round": round_num,
+					"unit_id": target.unit_id,
+					"unit_name": target.display_name,
+					"healer_name": healer.display_name,
+					"amount": amt,
+				})
+
+
+static func _apply_vengeful_on_death(victim: Combatant, combatants: Array) -> void:
+	## Allies of the victim (same team, alive) with Vengeful trait gain +2 attack permanently.
+	for c: Combatant in combatants:
+		if c.team != victim.team or c.unit_id == victim.unit_id:
+			continue
+		if c.current_hp <= 0:
+			continue
+		if c.traits.has("vengeful") and not c.vengeful_pending:
+			c.attack += 2
+			c.vengeful_pending = 1
+
+
+static func _apply_biome_modifier_start(combatants: Array, modifier: Dictionary) -> void:
+	if modifier.is_empty():
+		return
+	var rule: String = String(modifier.get("rule", ""))
+	if rule == "enemy_speed_bonus_early":
+		var bonus: int = int(modifier.get("params", {}).get("bonus", 1))
+		for c: Combatant in combatants:
+			if c.team == 1:
+				c.speed += bonus  # Will be removed after N rounds in _apply_biome_modifier_round
+
+
+static func _apply_biome_modifier_round(combatants: Array, modifier: Dictionary, round_num: int) -> void:
+	if modifier.is_empty():
+		return
+	var rule: String = String(modifier.get("rule", ""))
+	if rule == "enemy_speed_bonus_early":
+		var rounds: int = int(modifier.get("params", {}).get("rounds", 3))
+		if round_num == rounds + 1:
+			# Expire bonus
+			for c: Combatant in combatants:
+				if c.team == 1:
+					c.speed = c.base_speed

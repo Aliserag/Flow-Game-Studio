@@ -1,97 +1,25 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "gear": [
-    {
-      "id": "iron-sword-common",
-      "name": "Iron Sword",
-      "slot": "weapon",
-      "tier": "common",
-      "price": 20,
-      "modifiers": {
-        "attack": 2
-      },
-      "description": "Standard issue."
-    },
-    {
-      "id": "twohanded-axe-common",
-      "name": "Two-Handed Axe",
-      "slot": "weapon",
-      "tier": "common",
-      "price": 25,
-      "modifiers": {
-        "attack": 4,
-        "defense": -1
-      },
-      "description": "Hits like a wagon, swings slow."
-    },
-    {
-      "id": "short-bow-common",
-      "name": "Short Bow",
-      "slot": "weapon",
-      "tier": "common",
-      "price": 18,
-      "modifiers": {
-        "attack": 2,
-        "speed": 1
-      },
-      "is_ranged": true,
-      "description": "Strings get wet, then it's a stick."
-    },
-    {
-      "id": "club-common",
-      "name": "Spiked Club",
-      "slot": "weapon",
-      "tier": "common",
-      "price": 12,
-      "modifiers": {
-        "attack": 2
-      },
-      "description": "A stick with bits in it."
-    },
-    {
-      "id": "rusty-knife-common",
-      "name": "Rusty Knife",
-      "slot": "weapon",
-      "tier": "common",
-      "price": 5,
-      "modifiers": {
-        "attack": 1
-      },
-      "description": "Better than nothing. Barely."
-    },
-    {
-      "id": "leather-tunic-common",
-      "name": "Leather Tunic",
-      "slot": "chest",
-      "tier": "common",
-      "price": 15,
-      "modifiers": {
-        "defense": 2,
-        "max_hp": 5
-      },
-      "description": "Soaks one good cut. Maybe two."
-    },
-    {
-      "id": "wooden-shield-common",
-      "name": "Wooden Shield",
-      "slot": "offhand",
-      "tier": "common",
-      "price": 18,
-      "modifiers": {
-        "defense": 3
-      },
-      "description": "A round bit of plank."
-    },
-    {
-      "id": "lucky-charm-common",
-      "name": "Lucky Charm",
-      "slot": "accessory",
-      "tier": "common",
-      "price": 30,
-      "modifiers": {
-        "speed": 2
-      },
-      "description": "Doesn't work. People wear it anyway."
-    }
+    {"id": "iron-sword-common", "name": "Iron Sword", "slot": "weapon", "tier": "common", "price": 20, "modifiers": {"attack": 2}, "description": "Standard issue."},
+    {"id": "twohanded-axe-common", "name": "Two-Handed Axe", "slot": "weapon", "tier": "common", "price": 25, "modifiers": {"attack": 4, "defense": -1}, "description": "Hits like a wagon, swings slow."},
+    {"id": "short-bow-common", "name": "Short Bow", "slot": "weapon", "tier": "common", "price": 18, "modifiers": {"attack": 2, "speed": 1}, "is_ranged": true, "description": "Strings get wet, then it's a stick."},
+    {"id": "club-common", "name": "Spiked Club", "slot": "weapon", "tier": "common", "price": 12, "modifiers": {"attack": 2}, "description": "A stick with bits in it."},
+    {"id": "rusty-knife-common", "name": "Rusty Knife", "slot": "weapon", "tier": "common", "price": 5, "modifiers": {"attack": 1}, "description": "Better than nothing. Barely."},
+    {"id": "cleaver-common", "name": "Butcher's Cleaver", "slot": "weapon", "tier": "common", "price": 16, "modifiers": {"attack": 3}, "description": "It separated something once. Maybe still does."},
+    {"id": "bone-staff-common", "name": "Bone Staff", "slot": "weapon", "tier": "common", "price": 14, "modifiers": {"attack": 1, "max_hp": 3}, "description": "Knots of dried marrow. Hums quietly at night."},
+    {"id": "iron-sword-uncommon", "name": "Old Sword of Talvar", "slot": "weapon", "tier": "uncommon", "price": 55, "modifiers": {"attack": 4, "defense": 1}, "description": "Old steel. Older grip leather."},
+    {"id": "longbow-uncommon", "name": "Hunter's Longbow", "slot": "weapon", "tier": "uncommon", "price": 60, "modifiers": {"attack": 4, "speed": 1}, "is_ranged": true, "description": "Six feet of yew. Pulls hard, reaches far."},
+    {"id": "warden-blade-unique", "name": "The Warden's Blade", "slot": "weapon", "tier": "unique", "price": 200, "modifiers": {"attack": 7, "defense": 2}, "description": "Hagar's. Now yours. Heavy with names."},
+    {"id": "leather-tunic-common", "name": "Leather Tunic", "slot": "chest", "tier": "common", "price": 15, "modifiers": {"defense": 2, "max_hp": 5}, "description": "Soaks one good cut. Maybe two."},
+    {"id": "chain-shirt-uncommon", "name": "Chain Shirt", "slot": "chest", "tier": "uncommon", "price": 50, "modifiers": {"defense": 4, "max_hp": 6, "speed": -1}, "description": "Cold against the skin. Cold against blades too."},
+    {"id": "iron-crown-unique", "name": "Iron Crown of Hagar", "slot": "head", "tier": "unique", "price": 150, "modifiers": {"defense": 3, "max_hp": 10, "attack": 1}, "description": "Bent. Pitted. Heavy with the wrong kind of authority."},
+    {"id": "leather-cap-uncommon", "name": "Hunter's Cap", "slot": "head", "tier": "uncommon", "price": 28, "modifiers": {"defense": 1, "speed": 1}, "description": "Folded leather. Keeps the rain out of one eye."},
+    {"id": "wooden-shield-common", "name": "Wooden Shield", "slot": "offhand", "tier": "common", "price": 18, "modifiers": {"defense": 3}, "description": "A round bit of plank."},
+    {"id": "kite-shield-uncommon", "name": "Kite Shield", "slot": "offhand", "tier": "uncommon", "price": 45, "modifiers": {"defense": 5, "speed": -1}, "description": "Full body cover. Slows the swing."},
+    {"id": "lucky-charm-common", "name": "Lucky Charm", "slot": "accessory", "tier": "common", "price": 30, "modifiers": {"speed": 2}, "description": "Doesn't work. People wear it anyway."},
+    {"id": "warband-banner-uncommon", "name": "Warband Banner", "slot": "accessory", "tier": "uncommon", "price": 65, "modifiers": {"max_hp": 4}, "team_modifiers": {"attack": 1}, "description": "Painted with sigils and dried blood."},
+    {"id": "skull-trophy-uncommon", "name": "Skull Trophy", "slot": "accessory", "tier": "uncommon", "price": 40, "modifiers": {"attack": 2}, "description": "An enemy who knew your name. Briefly."},
+    {"id": "warpaint-uncommon", "name": "Battle Warpaint", "slot": "accessory", "tier": "uncommon", "price": 35, "modifiers": {"speed": 2, "attack": 1}, "description": "Looks mean. Is mean."}
   ]
 }

@@ -1,0 +1,31 @@
+{
+  "version": "0.1.0",
+  "biomes": [
+    {
+      "id": "farm-village",
+      "name": "Farm & Village",
+      "subtitle": "The first raids. Soft targets and harder lessons.",
+      "tier_range": [1, 2],
+      "node_count_per_run": 12,
+      "boss_composition_id": "iron-warden-boss",
+      "sky_palette": ["#4A3728", "#1C2535"],
+      "ground_palette": ["#5C3A1E", "#2E1F14"],
+      "battle_modifier": {
+        "id": "dawn-fields",
+        "name": "Dawn over the Fields",
+        "description": "First light. Enemies have +1 speed for the first 3 rounds.",
+        "rule": "enemy_speed_bonus_early",
+        "params": {"bonus": 1, "rounds": 3}
+      },
+      "composition_pool": [
+        "farm-raid-easy",
+        "farm-raid-medium",
+        "village-watch",
+        "witch-thicket",
+        "hunter-band",
+        "bandit-camp-hard",
+        "mercenary-patrol"
+      ]
+    }
+  ]
+}

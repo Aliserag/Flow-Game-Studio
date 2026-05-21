@@ -1,66 +1,17 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "traits": [
-    {
-      "id": "bloodthirsty",
-      "name": "Bloodthirsty",
-      "kind": "positive",
-      "modifiers": {
-        "attack": 1
-      },
-      "on_kill": {
-        "heal": 3
-      },
-      "description": "Heals on kill. Loves the work."
-    },
-    {
-      "id": "thick-hide",
-      "name": "Thick Hide",
-      "kind": "positive",
-      "modifiers": {
-        "defense": 2,
-        "max_hp": 5
-      },
-      "description": "Damage reduced. Walks slow."
-    },
-    {
-      "id": "sharp-eye",
-      "name": "Sharp Eye",
-      "kind": "positive",
-      "modifiers": {
-        "attack": 1
-      },
-      "ranged_crit_bonus": 0.10,
-      "description": "+10% crit chance on ranged attacks."
-    },
-    {
-      "id": "natural-leader",
-      "name": "Natural Leader",
-      "kind": "positive",
-      "team_modifiers": {
-        "attack": 1
-      },
-      "description": "Allies on the same side gain +1 attack."
-    },
-    {
-      "id": "coward",
-      "name": "Coward",
-      "kind": "negative",
-      "modifiers": {
-        "defense": -1,
-        "speed": 1
-      },
-      "description": "Faster. Squishier. You can hear them whimpering."
-    },
-    {
-      "id": "drunkard",
-      "name": "Drunkard",
-      "kind": "negative",
-      "modifiers": {
-        "attack": -1
-      },
-      "crit_chance_bonus": 0.10,
-      "description": "Worse hits, but the occasional wild swing crits."
-    }
+    {"id": "bloodthirsty", "name": "Bloodthirsty", "kind": "positive", "modifiers": {"attack": 1}, "on_kill": {"heal": 3}, "description": "Heals on kill. Loves the work."},
+    {"id": "thick-hide", "name": "Thick Hide", "kind": "positive", "modifiers": {"defense": 2, "max_hp": 5}, "description": "Damage reduced. Walks slow."},
+    {"id": "sharp-eye", "name": "Sharp Eye", "kind": "positive", "modifiers": {"attack": 1}, "ranged_crit_bonus": 0.10, "description": "+10% crit chance on ranged attacks."},
+    {"id": "natural-leader", "name": "Natural Leader", "kind": "positive", "team_modifiers": {"attack": 1}, "description": "Allies on the same side gain +1 attack."},
+    {"id": "butcher", "name": "Butcher", "kind": "positive", "modifiers": {"attack": 1}, "wounded_target_bonus": 0.15, "description": "+15% damage vs targets below half HP."},
+    {"id": "spirit-touched", "name": "Spirit-Touched", "kind": "positive", "round_heal_ally": 4, "description": "Heals the most-wounded ally 4 HP each round."},
+    {"id": "veteran", "name": "Veteran", "kind": "positive", "modifiers": {"attack": 1, "defense": 1, "max_hp": 5}, "description": "Seen it all. Twice."},
+    {"id": "lucky", "name": "Lucky", "kind": "positive", "modifiers": {"speed": 1}, "crit_chance_bonus": 0.05, "description": "Just lucky. +5% crit chance."},
+    {"id": "coward", "name": "Coward", "kind": "negative", "modifiers": {"defense": -1, "speed": 1}, "description": "Faster. Squishier. You can hear them whimpering."},
+    {"id": "drunkard", "name": "Drunkard", "kind": "negative", "modifiers": {"attack": -1}, "crit_chance_bonus": 0.10, "description": "Worse hits, but the occasional wild swing crits."},
+    {"id": "old-wounds", "name": "Old Wounds", "kind": "negative", "modifiers": {"max_hp": -5, "defense": 1}, "description": "Healed wrong. Hurts when it rains."},
+    {"id": "vengeful", "name": "Vengeful", "kind": "positive", "modifiers": {"attack": 1}, "on_ally_death_bonus": {"attack": 2}, "description": "+2 attack for the rest of the battle when an ally falls."}
   ]
 }

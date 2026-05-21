@@ -1,12 +1,19 @@
 class_name CampaignController
 extends RefCounted
-## Orchestrates the campaign flow: TAVERN -> BATTLE_PREP -> BATTLE -> RESOLUTION -> TAVERN ...
+## Orchestrates the campaign flow for G1:
+##   TAVERN -> MAP -> SCOUT -> BATTLE_PREP -> BATTLE -> RESOLUTION -> MAP
+##   Map nodes can also be MARKET (RunState.market_stock) or REST (heal warband).
+##   Boss node = final node in row; defeating it = VICTORY.
+##
 ## Does NOT render anything. UI subscribes to RunState signals.
 
 var registry: Node
 var rng: Node
 var run_state: Node
+
 var current_enemy_comp: Dictionary = {}
+var current_biome: Dictionary = {}
+var current_scout_report: Dictionary = {}
 var last_battle_result: Dictionary = {}
 
 
@@ -18,6 +25,13 @@ func _init(registry_node: Node, rng_node: Node, run_state_node: Node) -> void:
 
 func begin_new_run(seed_value: int = -1) -> void:
 	run_state.start_new_run(seed_value)
+	# Pick the active biome — G1 has one
+	var biome_ids: Array[String] = registry.biome_ids()
+	if biome_ids.is_empty():
+		Console.error("No biomes defined", "campaign")
+		return
+	run_state.current_biome_id = biome_ids[0]
+	current_biome = registry.get_biome(run_state.current_biome_id)
 	enter_tavern()
 
 
@@ -43,53 +57,79 @@ func hire(orc: Orc) -> bool:
 	return run_state.hire_candidate(orc)
 
 
-func enter_battle_prep() -> void:
-	run_state.set_phase(run_state.Phase.BATTLE_PREP)
-	# Clear remaining candidates — passed orcs are forever gone (Pillar 2)
+func leave_tavern_for_map() -> void:
+	## Player commits — clears candidates and generates the campaign map.
 	run_state.clear_candidates()
-	# Pick enemy composition
-	current_enemy_comp = BattleSetup.pick_composition(registry, rng, run_state.battles_completed)
-	Console.info("Battle prep. Composition: %s" % str(current_enemy_comp.get("name", "?")), "campaign")
+	if run_state.campaign_map.is_empty():
+		run_state.campaign_map = CampaignMap.generate(run_state.current_biome_id, registry, rng)
+	run_state.set_phase(run_state.Phase.MAP)
+	run_state.emit_signal("map_changed")
+
+
+func get_available_map_nodes() -> Array:
+	return CampaignMap.get_available_next_nodes(run_state.campaign_map)
+
+
+func enter_map_node(node_id: String) -> void:
+	CampaignMap.enter_node(run_state.campaign_map, node_id)
+	var node = run_state.campaign_map["nodes"][node_id]
+	match node.node_type:
+		CampaignMap.NodeType.BATTLE, CampaignMap.NodeType.BOSS:
+			enter_scout(node.composition_id)
+		CampaignMap.NodeType.MARKET:
+			enter_market()
+		CampaignMap.NodeType.REST:
+			do_rest()
+		CampaignMap.NodeType.EVENT:
+			do_event()
+		_:
+			Console.warn("Unknown node type: %d" % node.node_type, "campaign")
+
+
+func enter_scout(comp_id: String) -> void:
+	current_enemy_comp = registry.get_composition(comp_id)
+	current_scout_report = ScoutReport.generate(current_enemy_comp, current_biome, registry)
+	run_state.set_phase(run_state.Phase.SCOUT)
+
+
+func commit_to_battle() -> void:
+	## Player accepts the scout report and enters battle.
+	run_state.set_phase(run_state.Phase.BATTLE_PREP)
 
 
 func resolve_battle() -> Dictionary:
-	## Runs the full battle simulation and applies all consequences to RunState.
-	## Returns the battle result dictionary with events + outcome.
 	run_state.set_phase(run_state.Phase.BATTLE)
 	if current_enemy_comp.is_empty():
-		Console.error("No enemy comp set; cannot resolve battle", "campaign")
+		Console.error("No enemy comp set; cannot resolve", "campaign")
 		return {}
 	var player_orcs: Array = run_state.get_all_living_orcs()
-	# Reset per-battle HP to max for the player side at battle start.
 	for o in player_orcs:
 		o.full_heal()
 		o.battles_fought += 1
-	last_battle_result = CombatResolver.resolve(player_orcs, current_enemy_comp, registry, rng)
-	# Apply consequences
+	var biome_mod: Dictionary = current_biome.get("battle_modifier", {})
+	last_battle_result = CombatResolver.resolve(player_orcs, current_enemy_comp, registry, rng, biome_mod)
 	_apply_battle_consequences(last_battle_result)
 	run_state.battles_completed += 1
 	if last_battle_result.get("victory", false):
 		run_state.battles_won += 1
 		var rewards: Dictionary = BattleSetup.compute_rewards(current_enemy_comp, registry, rng)
 		run_state.add_gold(int(rewards.get("gold", 0)))
-		# Award XP to survivors
-		var xp_each: int = int(rewards.get("xp_per_orc", 10))
-		run_state.award_xp_to_warband(xp_each)
-		# Distribute drops to inventory — for G0, drops are equipped to whoever has an empty slot
+		run_state.award_xp_to_warband(int(rewards.get("xp_per_orc", 10)))
 		_auto_equip_drops(rewards.get("drops", []))
 		run_state.emit_signal("battle_won", rewards)
 		last_battle_result["rewards"] = rewards
 	else:
 		run_state.emit_signal("battle_lost")
 	current_enemy_comp = {}
-	run_state.set_phase(run_state.Phase.RESOLUTION)
+	current_scout_report = {}
+	# Don't clobber GAME_OVER if hero died during battle
+	if run_state.run_active:
+		run_state.set_phase(run_state.Phase.RESOLUTION)
 	return last_battle_result
 
 
 func _apply_battle_consequences(result: Dictionary) -> void:
-	## Record deaths in RunState (permadeath). Killer name attached for memorial.
 	var dead_list: Array = result.get("player_dead", [])
-	# Identify killers via events
 	var events: Array = result.get("events", [])
 	var killer_by_victim: Dictionary = {}
 	for ev: Dictionary in events:
@@ -104,8 +144,8 @@ func _apply_battle_consequences(result: Dictionary) -> void:
 
 
 func _auto_equip_drops(drops: Array) -> void:
-	## Equips dropped gear to any warband member with an empty slot.
-	## Sells the rest as gold (50% of price).
+	## Pre-G1 behavior: auto-equip to empty slot, sell otherwise.
+	## G1 keeps auto-equip but ALSO adds the drop's gold value back if it'd be useless.
 	var orcs: Array = run_state.get_all_living_orcs()
 	for gid: String in drops:
 		var gear: Dictionary = registry.get_gear(gid)
@@ -119,16 +159,78 @@ func _auto_equip_drops(drops: Array) -> void:
 				placed = true
 				break
 		if not placed:
-			# Sell for 50%
 			run_state.add_gold(int(gear.get("price", 0)) / 2)
 
 
 func continue_from_resolution() -> void:
-	## Player presses Continue on the Resolution screen.
+	## After a normal battle: complete the map node and return to MAP.
+	## After a BOSS battle: check victory or hero death.
 	if not run_state.run_active:
-		# Hero died; no more tavern. Game already in GAME_OVER phase.
 		return
-	# If no living grunts AND only the hero remains alive, that's still OK to continue.
-	enter_tavern()
+	var map: Dictionary = run_state.campaign_map
+	var current_id: String = String(map.get("current_node_id", ""))
+	var was_boss: bool = CampaignMap.is_boss_node(map, current_id) if not current_id.is_empty() else false
+	CampaignMap.complete_current(map)
+	run_state.emit_signal("map_changed")
+	if was_boss and last_battle_result.get("victory", false):
+		# Campaign won!
+		run_state.set_phase(run_state.Phase.VICTORY)
+		run_state.end_run(true)
+		return
+	run_state.set_phase(run_state.Phase.MAP)
 
 
+func enter_market() -> void:
+	run_state.set_phase(run_state.Phase.MARKET)
+	var biome: Dictionary = current_biome
+	var tier: int = int(biome.get("tier_range", [1, 2])[1])
+	run_state.market_stock = Market.roll_stock(registry, rng, tier)
+	run_state.emit_signal("market_stock_changed")
+
+
+func buy_from_market(stock_index: int, target_orc: Orc) -> bool:
+	if stock_index < 0 or stock_index >= run_state.market_stock.size():
+		return false
+	var entry: Dictionary = run_state.market_stock[stock_index]
+	var ok: bool = Market.buy(registry, run_state, entry, target_orc)
+	if ok:
+		run_state.market_stock.remove_at(stock_index)
+		run_state.emit_signal("market_stock_changed")
+		run_state.emit_signal("roster_changed")
+	return ok
+
+
+func sell_orc_gear(orc: Orc, slot: String) -> int:
+	var gained: int = Market.sell(run_state, registry, orc, slot)
+	if gained > 0:
+		run_state.emit_signal("roster_changed")
+	return gained
+
+
+func leave_market() -> void:
+	CampaignMap.complete_current(run_state.campaign_map)
+	run_state.market_stock.clear()
+	run_state.emit_signal("market_stock_changed")
+	run_state.emit_signal("map_changed")
+	run_state.set_phase(run_state.Phase.MAP)
+
+
+func do_rest() -> void:
+	## REST node heals the warband halfway between current and max.
+	for o in run_state.get_all_living_orcs():
+		var heal_amount: int = int((o.max_hp - o.current_hp) / 2)
+		o.heal(heal_amount)
+	CampaignMap.complete_current(run_state.campaign_map)
+	run_state.emit_signal("map_changed")
+	run_state.emit_signal("roster_changed")
+	run_state.set_phase(run_state.Phase.MAP)
+
+
+func do_event() -> void:
+	## G1 event node: deterministic gold gift (small) OR random trait blessing.
+	## Keep simple — just give some gold.
+	var gift: int = rng.roll_int(15, 30)
+	run_state.add_gold(gift)
+	CampaignMap.complete_current(run_state.campaign_map)
+	run_state.emit_signal("map_changed")
+	run_state.set_phase(run_state.Phase.MAP)

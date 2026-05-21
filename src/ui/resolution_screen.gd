@@ -62,7 +62,18 @@ func _populate(result: Dictionary) -> void:
 
 func _on_continue_pressed() -> void:
 	CampaignHolder.controller.continue_from_resolution()
-	if RunState.run_active:
-		get_tree().change_scene_to_file("res://src/ui/TavernScreen.tscn")
-	else:
-		get_tree().change_scene_to_file("res://src/ui/GameOverScreen.tscn")
+	# G1 flow: after a normal battle return to the map. Boss victory -> VictoryScreen.
+	# Hero death anywhere -> GameOverScreen.
+	match RunState.phase:
+		RunState.Phase.VICTORY:
+			get_tree().change_scene_to_file("res://src/ui/VictoryScreen.tscn")
+		RunState.Phase.GAME_OVER:
+			get_tree().change_scene_to_file("res://src/ui/GameOverScreen.tscn")
+		RunState.Phase.MAP:
+			get_tree().change_scene_to_file("res://src/ui/CampaignMapScreen.tscn")
+		_:
+			# Fallback for any unexpected phase (e.g., still RESOLUTION)
+			if RunState.run_active:
+				get_tree().change_scene_to_file("res://src/ui/CampaignMapScreen.tscn")
+			else:
+				get_tree().change_scene_to_file("res://src/ui/GameOverScreen.tscn")

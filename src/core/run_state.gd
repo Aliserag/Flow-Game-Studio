@@ -14,7 +14,10 @@ signal battle_won(rewards: Dictionary)
 signal battle_lost()
 signal xp_awarded(orc_id: String, amount: int, levels_gained: int)
 
-enum Phase { TITLE, TAVERN, BATTLE_PREP, BATTLE, RESOLUTION, MEMORIAL, GAME_OVER }
+enum Phase { TITLE, TAVERN, MAP, SCOUT, BATTLE_PREP, BATTLE, RESOLUTION, MARKET, MEMORIAL, GAME_OVER, VICTORY }
+
+signal map_changed()
+signal market_stock_changed()
 
 var phase: int = Phase.TITLE
 var run_seed: int = 0
@@ -25,6 +28,11 @@ var roster: Array[Orc] = []         # Living grunts only (excludes hero)
 var gravestone: Array[Dictionary] = []  # Dicts of fallen orcs (snapshot at death)
 var candidates: Array[Orc] = []     # Currently rolled tavern candidates
 var candidate_prices: Dictionary = {}  # orc.id -> int
+
+# G1: campaign map state
+var current_biome_id: String = ""
+var campaign_map: Dictionary = {}   # Dict from CampaignMap.generate()
+var market_stock: Array = []        # Array of stock entries
 
 var gold: int = 0
 var battles_completed: int = 0
@@ -44,6 +52,10 @@ func start_new_run(seed_value: int = -1) -> void:
 	roster.clear()
 	gravestone.clear()
 	candidates.clear()
+	candidate_prices.clear()
+	current_biome_id = ""
+	campaign_map = {}
+	market_stock = []
 	battles_completed = 0
 	battles_won = 0
 	run_active = true

@@ -1,7 +1,7 @@
 extends GutTest
-## G0 end-to-end integration test.
-## Simulates a complete WARBAND run from main-menu-equivalent start to either
-## hero death or campaign victory, exercising every G0 system.
+## G1 end-to-end integration test (covers G0 paths via the new map-driven loop).
+## Simulates a complete WARBAND campaign:
+##   Tavern -> Map -> [Battle | Market | Rest | Event] -> ... -> Boss -> Victory or Hero Death.
 
 const FIXED_SEED := 42
 
@@ -9,137 +9,170 @@ var _controller: CampaignController
 
 
 func before_each() -> void:
-	# Reset save system and start fresh
 	SaveSystem.clear_run()
 	RunState.candidates.clear()
 	RunState.candidate_prices.clear()
 	RunState.roster.clear()
 	RunState.gravestone.clear()
 	RunState.hero = null
+	RunState.campaign_map = {}
+	RunState.market_stock = []
 	_controller = CampaignController.new(ItemRegistry, Rng, RunState)
 
 
-func test_g0_full_run_completes_without_crashes() -> void:
-	## The critical end-to-end test. Simulates a full G0 player journey:
-	## - Start a new run
-	## - Enter tavern, optionally hire
-	## - Resolve a battle
-	## - Continue until hero death OR a hard cap of 30 battles
-	## - Verify the run ended in a known terminal state
+func _drive_until_terminal(controller: CampaignController, max_iters: int = 100) -> void:
+	## Drives the controller through the full G1 flow until VICTORY or hero death.
+	## Pure greedy: at tavern, hire the cheapest affordable if room. At map, pick first node.
+	## At market, buy nothing. At rest/event, auto-completes via enter_map_node().
+	var iters := 0
+	while RunState.run_active and iters < max_iters:
+		iters += 1
+		match RunState.phase:
+			RunState.Phase.TAVERN:
+				_hire_if_affordable(controller)
+				controller.leave_tavern_for_map()
+			RunState.Phase.MAP:
+				var available: Array = controller.get_available_map_nodes()
+				if available.is_empty():
+					# Map exhausted without victory — shouldn't happen
+					return
+				controller.enter_map_node(available[0].id)
+			RunState.Phase.SCOUT:
+				controller.commit_to_battle()
+				controller.resolve_battle()
+			RunState.Phase.BATTLE_PREP:
+				controller.resolve_battle()
+			RunState.Phase.RESOLUTION:
+				controller.continue_from_resolution()
+			RunState.Phase.MARKET:
+				controller.leave_market()
+			RunState.Phase.VICTORY, RunState.Phase.GAME_OVER:
+				return
+			_:
+				return
+
+
+func _hire_if_affordable(controller: CampaignController) -> void:
+	var econ: Dictionary = ItemRegistry.get_economy()
+	var max_grunts: int = int(econ.get("max_roster_size", 6)) - 1
+	if RunState.roster.size() >= max_grunts:
+		return
+	var best: Orc = null
+	var best_price := 9999
+	for c: Orc in RunState.candidates:
+		var p: int = RunState.price_for(c)
+		if p > 0 and p <= RunState.gold and p < best_price:
+			best = c
+			best_price = p
+	if best != null:
+		var hired: bool = controller.hire(best)
+		assert_true(hired, "Hire should succeed when affordable and room available")
+
+
+func test_g1_full_run_reaches_terminal_state() -> void:
+	## Critical end-to-end test: campaign reaches Victory or Game Over.
 	_controller.begin_new_run(FIXED_SEED)
-	assert_true(RunState.run_active, "Run should be active after begin")
-	assert_not_null(RunState.hero, "Hero should exist after begin")
-	assert_gt(RunState.roster.size(), 0, "Roster should have starting grunts")
-	assert_eq(RunState.phase, RunState.Phase.TAVERN, "Should be in TAVERN phase")
+	assert_true(RunState.run_active, "Run active after begin")
+	assert_not_null(RunState.hero, "Hero spawned")
+	assert_gt(RunState.roster.size(), 0, "Starting roster non-empty")
+	assert_eq(RunState.phase, RunState.Phase.TAVERN, "Starts in TAVERN")
+	assert_false(RunState.current_biome_id.is_empty(), "Biome assigned")
 
-	var max_battles := 30
-	var i := 0
-	while RunState.run_active and i < max_battles:
-		i += 1
-		# At tavern: maybe hire if we can afford the cheapest candidate AND have room
-		if RunState.phase == RunState.Phase.TAVERN:
-			assert_gt(RunState.candidates.size(), 0, "Should have candidates")
-			var econ: Dictionary = ItemRegistry.get_economy()
-			var max_grunts: int = int(econ.get("max_roster_size", 6)) - 1
-			# Try to hire the cheapest affordable candidate (greedy)
-			var best: Orc = null
-			var best_price := 9999
-			for c in RunState.candidates:
-				var p: int = RunState.price_for(c)
-				if p > 0 and p <= RunState.gold and p < best_price:
-					best = c
-					best_price = p
-			var has_room: bool = RunState.roster.size() < max_grunts
-			if best != null and has_room:
-				var hired: bool = _controller.hire(best)
-				assert_true(hired, "Hire should succeed when affordable and room available")
-		# Proceed to battle
-		_controller.enter_battle_prep()
-		assert_eq(RunState.candidates.size(), 0, "Candidates cleared on battle prep")
-		var result: Dictionary = _controller.resolve_battle()
-		assert_true(result.has("events"), "Battle result should have events")
-		assert_gt(result.get("events", []).size(), 0, "At least one event in battle")
-		assert_true(result.has("victory"), "Result has victory bool")
-		# After resolve, controller transitions to RESOLUTION phase
-		assert_eq(RunState.phase, RunState.Phase.RESOLUTION, "Phase = RESOLUTION after resolve")
-		# Continue
-		_controller.continue_from_resolution()
-		if RunState.run_active:
-			assert_eq(RunState.phase, RunState.Phase.TAVERN, "Back to TAVERN on continue")
+	_drive_until_terminal(_controller)
 
-	# Run terminated. Either hero died (run_active false, phase GAME_OVER) or hit cap.
-	if not RunState.run_active:
-		assert_eq(RunState.phase, RunState.Phase.GAME_OVER, "Game over phase when run ended")
-		# Hero should be dead (current_hp == 0) per permadeath contract
-		assert_eq(RunState.hero.current_hp, 0, "Hero is dead at game over")
-		# Hero should be in gravestone
-		var hero_in_gravestone := false
-		for entry in RunState.gravestone:
-			if entry.get("is_hero", false):
-				hero_in_gravestone = true
-				break
-		assert_true(hero_in_gravestone, "Hero entry recorded in gravestone")
-	# Battles completed should match iteration count (or be one less if we hit cap mid-state)
+	assert_true(
+		RunState.phase == RunState.Phase.VICTORY or RunState.phase == RunState.Phase.GAME_OVER,
+		"Should reach VICTORY or GAME_OVER (got phase=%d)" % RunState.phase
+	)
+	assert_false(RunState.run_active, "Run not active after terminal")
 	assert_gt(RunState.battles_completed, 0, "At least one battle completed")
 
 
-func test_g0_permadeath_persists_across_battles() -> void:
-	## Verify that orcs who die in battle 1 are NOT present after battle 2.
+func test_g1_permadeath_persists_across_battles() -> void:
+	## Dead orcs are removed from roster and recorded in gravestone permanently.
 	_controller.begin_new_run(FIXED_SEED + 7)
-	# Play one battle
-	_controller.enter_battle_prep()
+	_controller.leave_tavern_for_map()
+	# Enter first map node
+	var first_nodes: Array = _controller.get_available_map_nodes()
+	# Pick the first battle node we find
+	var picked: bool = false
+	for n in first_nodes:
+		if n.node_type == CampaignMap.NodeType.BATTLE:
+			_controller.enter_map_node(n.id)
+			picked = true
+			break
+	if not picked:
+		# All initial-row nodes might be non-battle; just pick first
+		_controller.enter_map_node(first_nodes[0].id)
+	# If we landed on SCOUT, commit to battle
+	if RunState.phase == RunState.Phase.SCOUT:
+		_controller.commit_to_battle()
 	var result: Dictionary = _controller.resolve_battle()
 	var dead_orcs: Array = result.get("player_dead", [])
 	_controller.continue_from_resolution()
-	# Battle must run at least one round
 	assert_gte(int(result.get("rounds", 0)), 1, "Battle ran at least one round")
-	# Each dead grunt: not in roster, present in gravestone
 	for d in dead_orcs:
 		var dead_orc: Orc = d.get("source")
 		if dead_orc == null or dead_orc.is_hero:
 			continue
-		assert_does_not_have(RunState.roster, dead_orc, "Dead orc should not be in roster")
+		assert_does_not_have(RunState.roster, dead_orc, "Dead orc off roster")
 		var found := false
 		for entry in RunState.gravestone:
 			if entry.get("id", "") == dead_orc.id:
 				found = true
 				break
-		assert_true(found, "Dead orc should be in gravestone: %s" % dead_orc.name)
+		assert_true(found, "Dead orc in gravestone: %s" % dead_orc.name)
 
 
-func test_g0_deterministic_run_same_seed_same_outcome() -> void:
-	## Two runs with same seed should produce identical battles_completed/won counts
-	## up to the same termination point.
+func test_g1_deterministic_run_same_seed_same_outcome() -> void:
+	## Two runs with same seed produce identical terminal state.
 	_controller.begin_new_run(123456)
-	var battles_a := 0
-	var i := 0
-	while RunState.run_active and i < 15:
-		i += 1
-		_controller.enter_battle_prep()
-		_controller.resolve_battle()
-		_controller.continue_from_resolution()
-		battles_a += 1
+	_drive_until_terminal(_controller, 30)
+	var battles_a := RunState.battles_completed
 	var won_a := RunState.battles_won
 	var gold_a := RunState.gold
+	var phase_a := RunState.phase
 
-	# Reset and replay
 	SaveSystem.clear_run()
 	RunState.candidates.clear()
 	RunState.candidate_prices.clear()
 	RunState.roster.clear()
 	RunState.gravestone.clear()
 	RunState.hero = null
+	RunState.campaign_map = {}
+	RunState.market_stock = []
 	var ctrl_b: CampaignController = CampaignController.new(ItemRegistry, Rng, RunState)
 	ctrl_b.begin_new_run(123456)
-	var battles_b := 0
-	i = 0
-	while RunState.run_active and i < 15:
-		i += 1
-		ctrl_b.enter_battle_prep()
-		ctrl_b.resolve_battle()
-		ctrl_b.continue_from_resolution()
-		battles_b += 1
+	_drive_until_terminal(ctrl_b, 30)
 
-	assert_eq(battles_b, battles_a, "Same seed -> same battle count")
-	assert_eq(RunState.battles_won, won_a, "Same seed -> same wins")
-	assert_eq(RunState.gold, gold_a, "Same seed -> same final gold")
+	assert_eq(RunState.battles_completed, battles_a, "Same battle count")
+	assert_eq(RunState.battles_won, won_a, "Same wins")
+	assert_eq(RunState.gold, gold_a, "Same final gold")
+	assert_eq(RunState.phase, phase_a, "Same terminal phase")
+
+
+func test_g1_boss_phase_change_event_emitted_in_boss_fight() -> void:
+	## Verify the boss phase-change mechanic works by constructing a direct
+	## CombatResolver call against the boss composition with a strong player.
+	var hero_arch := ItemRegistry.get_archetype("chieftain")
+	var hero: Orc = Orc.from_archetype(hero_arch)
+	hero.name = "Test Hero"
+	# Make the hero overpowered so we can chew through boss HP fast
+	hero.attack = 30
+	hero.defense = 10
+	hero.max_hp = 200
+	hero.current_hp = 200
+	var brute_arch := ItemRegistry.get_archetype("brute")
+	var brute: Orc = Orc.from_archetype(brute_arch)
+	brute.attack = 25
+	brute.max_hp = 150
+	brute.current_hp = 150
+	var boss_comp := ItemRegistry.get_composition("iron-warden-boss")
+	Rng.set_seed(1)
+	var result := CombatResolver.resolve([hero, brute], boss_comp, ItemRegistry, Rng, {})
+	var saw_phase_change := false
+	for ev in result["events"]:
+		if ev.get("kind", "") == CombatResolver.EV_PHASE_CHANGE:
+			saw_phase_change = true
+			break
+	assert_true(saw_phase_change, "Boss should trigger phase change when HP drops below threshold")

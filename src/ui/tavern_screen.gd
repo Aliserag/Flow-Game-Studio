@@ -146,8 +146,9 @@ func _on_hire_pressed(orc: Orc) -> void:
 
 
 func _on_battle_pressed() -> void:
-	CampaignHolder.controller.enter_battle_prep()
-	get_tree().change_scene_to_file("res://src/ui/BattleScreen.tscn")
+	# G1 flow: leave tavern → campaign map. The map's nodes drive the battle entry.
+	CampaignHolder.controller.leave_tavern_for_map()
+	get_tree().change_scene_to_file("res://src/ui/CampaignMapScreen.tscn")
 
 
 func _on_memorial_pressed() -> void:

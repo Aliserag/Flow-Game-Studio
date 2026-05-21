@@ -6,6 +6,7 @@ const ENEMIES_PATH := "res://data/enemy-types.json"
 const GEAR_PATH := "res://data/gear-pieces.json"
 const TRAITS_PATH := "res://data/traits.json"
 const ECONOMY_PATH := "res://data/economy.json"
+const BIOMES_PATH := "res://data/biomes.json"
 
 var _archetypes: Dictionary = {}
 var _enemies: Dictionary = {}
@@ -13,6 +14,7 @@ var _gear: Dictionary = {}
 var _traits: Dictionary = {}
 var _compositions: Dictionary = {}
 var _economy: Dictionary = {}
+var _biomes: Dictionary = {}
 var _loaded: bool = false
 
 
@@ -27,11 +29,12 @@ func load_all() -> void:
 	_gear = _load_indexed(GEAR_PATH, "gear", "id")
 	_traits = _load_indexed(TRAITS_PATH, "traits", "id")
 	_economy = _load_top(ECONOMY_PATH)
+	_biomes = _load_indexed(BIOMES_PATH, "biomes", "id")
 	_loaded = true
 	Console.info(
-		"Loaded: %d archetypes, %d enemies, %d compositions, %d gear, %d traits" % [
+		"Loaded: %d archetypes, %d enemies, %d compositions, %d gear, %d traits, %d biomes" % [
 			_archetypes.size(), _enemies.size(), _compositions.size(),
-			_gear.size(), _traits.size()
+			_gear.size(), _traits.size(), _biomes.size()
 		],
 		"registry"
 	)
@@ -103,6 +106,42 @@ func composition_ids() -> Array[String]:
 	for id in _compositions:
 		out.append(id)
 	return out
+
+
+func gear_ids() -> Array[String]:
+	var out: Array[String] = []
+	for id in _gear:
+		out.append(id)
+	return out
+
+
+func get_biome(id: String) -> Dictionary:
+	if not _biomes.has(id):
+		Console.warn("Unknown biome: %s" % id, "registry")
+		return {}
+	return _biomes[id]
+
+
+func biome_ids() -> Array[String]:
+	var out: Array[String] = []
+	for id in _biomes:
+		out.append(id)
+	return out
+
+
+func compositions_for_biome(biome_id: String) -> Array[String]:
+	## Returns non-boss composition ids that belong to a biome.
+	var biome := get_biome(biome_id)
+	var pool: Array = biome.get("composition_pool", [])
+	var out: Array[String] = []
+	for id in pool:
+		out.append(String(id))
+	return out
+
+
+func boss_composition_for_biome(biome_id: String) -> String:
+	var biome := get_biome(biome_id)
+	return String(biome.get("boss_composition_id", ""))
 
 
 func _load_top(path: String) -> Dictionary:

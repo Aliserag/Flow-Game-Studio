@@ -1,21 +1,14 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "archetypes": [
     {
       "id": "chieftain",
       "name": "Chieftain",
       "kind": "hero",
-      "base_stats": {
-        "max_hp": 50,
-        "attack": 8,
-        "defense": 4,
-        "speed": 5
-      },
-      "stat_growth": {
-        "brawn": 2,
-        "cunning": 1,
-        "hide": 1
-      },
+      "silhouette": "tall-broad",
+      "palette_key": "chieftain",
+      "base_stats": {"max_hp": 50, "attack": 8, "defense": 4, "speed": 5},
+      "stat_growth": {"brawn": 2, "cunning": 1, "hide": 1},
       "starting_traits": ["natural-leader"],
       "default_gear": ["iron-sword-common", "leather-tunic-common"],
       "voice_lines": ["For the warband!", "On me, you dogs!"],
@@ -25,17 +18,10 @@
       "id": "berserker",
       "name": "Berserker",
       "kind": "grunt",
-      "base_stats": {
-        "max_hp": 35,
-        "attack": 9,
-        "defense": 2,
-        "speed": 6
-      },
-      "stat_growth": {
-        "brawn": 3,
-        "cunning": 0,
-        "hide": 0
-      },
+      "silhouette": "lean-forward",
+      "palette_key": "berserker",
+      "base_stats": {"max_hp": 35, "attack": 9, "defense": 2, "speed": 6},
+      "stat_growth": {"brawn": 3, "cunning": 0, "hide": 0},
       "starting_traits": ["bloodthirsty"],
       "default_gear": ["twohanded-axe-common"],
       "voice_lines": ["WAAAGH!", "Skull split!", "More blood!"],
@@ -45,17 +31,10 @@
       "id": "brute",
       "name": "Brute",
       "kind": "grunt",
-      "base_stats": {
-        "max_hp": 60,
-        "attack": 5,
-        "defense": 6,
-        "speed": 3
-      },
-      "stat_growth": {
-        "brawn": 2,
-        "cunning": 0,
-        "hide": 2
-      },
+      "silhouette": "wide-shoulder",
+      "palette_key": "brute",
+      "base_stats": {"max_hp": 60, "attack": 5, "defense": 6, "speed": 3},
+      "stat_growth": {"brawn": 2, "cunning": 0, "hide": 2},
       "starting_traits": ["thick-hide"],
       "default_gear": ["club-common", "wooden-shield-common"],
       "voice_lines": ["Smash.", "Hurr.", "Bigger orc better."],
@@ -65,21 +44,40 @@
       "id": "archer",
       "name": "Archer",
       "kind": "grunt",
-      "base_stats": {
-        "max_hp": 30,
-        "attack": 7,
-        "defense": 2,
-        "speed": 5
-      },
-      "stat_growth": {
-        "brawn": 0,
-        "cunning": 3,
-        "hide": 1
-      },
+      "silhouette": "tall-lean",
+      "palette_key": "archer",
+      "base_stats": {"max_hp": 30, "attack": 7, "defense": 2, "speed": 5},
+      "stat_growth": {"brawn": 0, "cunning": 3, "hide": 1},
       "starting_traits": ["sharp-eye"],
       "default_gear": ["short-bow-common"],
       "voice_lines": ["Eye for an eye.", "Marked."],
       "description": "Ranged. Targets back rank when possible."
+    },
+    {
+      "id": "cleaver",
+      "name": "Cleaver",
+      "kind": "grunt",
+      "silhouette": "medium-raised",
+      "palette_key": "cleaver",
+      "base_stats": {"max_hp": 40, "attack": 7, "defense": 3, "speed": 5},
+      "stat_growth": {"brawn": 2, "cunning": 1, "hide": 1},
+      "starting_traits": ["butcher"],
+      "default_gear": ["cleaver-common", "leather-tunic-common"],
+      "voice_lines": ["Carving day.", "One swing.", "Meat for the pot."],
+      "description": "Balanced melee. Critical bonus on wounded targets."
+    },
+    {
+      "id": "shaman",
+      "name": "Shaman",
+      "kind": "grunt",
+      "silhouette": "bone-crown",
+      "palette_key": "shaman",
+      "base_stats": {"max_hp": 28, "attack": 5, "defense": 2, "speed": 4},
+      "stat_growth": {"brawn": 0, "cunning": 2, "hide": 1},
+      "starting_traits": ["spirit-touched"],
+      "default_gear": ["bone-staff-common"],
+      "voice_lines": ["The ancestors watch.", "Smoke and bone.", "Mend."],
+      "description": "Healer support. Restores HP to most-wounded ally each round."
     }
   ]
 }
