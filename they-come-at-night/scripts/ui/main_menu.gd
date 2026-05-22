@@ -9,6 +9,8 @@ extends Control
 @onready var mapsize_btn: OptionButton = $Panel/VBox/MapSizeButton
 @onready var settings_btn: Button = $Panel/VBox/SettingsButton
 @onready var settings_menu: Control = $SettingsMenu
+@onready var credits_btn: Button = $Panel/VBox/CreditsButton
+@onready var credits_screen: Control = $CreditsScreen
 
 const RESUMING_FLAG := "_resuming_save"
 
@@ -19,7 +21,9 @@ func _ready() -> void:
 	quit_btn.pressed.connect(func(): get_tree().quit())
 	if settings_btn != null:
 		settings_btn.pressed.connect(func(): settings_menu.show_panel())
-	about_label.text = "v0.3 — survive until the megahorde."
+	if credits_btn != null:
+		credits_btn.pressed.connect(func(): credits_screen.show_panel())
+	about_label.text = "%s — survive until the megahorde." % BuildInfo.build_id
 	continue_btn.disabled = not SaveSystem.has_save()
 	if continue_btn.disabled:
 		continue_btn.text = "CONTINUE (no save)"

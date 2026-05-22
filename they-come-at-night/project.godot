@@ -8,6 +8,7 @@ config_version=5
 
 config/name="They Come At Night"
 config/description="Grid-based procedural zombie apocalypse survival roguelike."
+config/version="0.4.0"
 run/main_scene="res://scenes/Main.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
@@ -18,6 +19,7 @@ GameState="*res://scripts/autoload/game_state.gd"
 EventBus="*res://scripts/autoload/event_bus.gd"
 DataLoader="*res://scripts/autoload/data_loader.gd"
 RNG="*res://scripts/autoload/rng.gd"
+BuildInfo="*res://scripts/autoload/build_info.gd"
 AudioDirector="*res://scripts/systems/audio_director.gd"
 SettingsService="*res://scripts/systems/settings_service.gd"
 

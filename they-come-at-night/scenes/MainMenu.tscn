@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://b1mainmenu000"]
+[gd_scene load_steps=4 format=3 uid="uid://b1mainmenu000"]
 
 [ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_menu"]
 [ext_resource type="PackedScene" path="res://scenes/SettingsMenu.tscn" id="2_settings"]
+[ext_resource type="PackedScene" path="res://scenes/CreditsScreen.tscn" id="3_credits"]
 
 [node name="MainMenu" type="Control"]
 anchor_right = 1.0
@@ -73,10 +74,15 @@ text = "SETTLED (start with a base)"
 [node name="SettingsButton" type="Button" parent="Panel/VBox"]
 text = "SETTINGS"
 
+[node name="CreditsButton" type="Button" parent="Panel/VBox"]
+text = "CREDITS"
+
 [node name="QuitButton" type="Button" parent="Panel/VBox"]
 text = "QUIT"
 
 [node name="SettingsMenu" parent="." instance=ExtResource("2_settings")]
+
+[node name="CreditsScreen" parent="." instance=ExtResource("3_credits")]
 
 [node name="About" type="Label" parent="Panel/VBox"]
 text = "v0.1"

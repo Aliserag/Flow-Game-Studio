@@ -1,0 +1,24 @@
+They Come At Night — Controls
+
+The game is mouse-driven. Click the action buttons at the bottom of the screen
+to choose what to do this turn.
+
+  Move           Click the "Move" action, then click an adjacent tile.
+  Scavenge       Click "Scavenge tile" while standing on a tile.
+  Establish base Click "Establish base here" while standing on a tile.
+  Build          At your base tile, click "Open Build menu".
+  Settlement     At your base tile, click "Settlement" for the detail screen.
+  Inventory      Click "Open Inventory / Assign" to assign items.
+  Parley         When an NPC is adjacent, "Talk to <name>" appears.
+  Knowledge      Click "Knowledge (N)" to review what your survivors have learned.
+  Rest           Heals lead by 1 HP and ends the day.
+  End Day        Skip the day's action.
+  Save           Save your progress.
+
+Keyboard
+  Esc            Cancel current action / open Pause overlay (Pause → Resume / Quit to Menu)
+  F12            Take a screenshot (saved to user://screenshots/)
+
+Goal: survive until the megahorde. Kill it and you win.
+You always know how many days until the megahorde arrives.
+You die if your party is wiped, your lead is killed, or morale hits zero.

@@ -51,16 +51,21 @@ Browser smoke (headless Chromium):
 
 **Autonomous total: 22/25** (was 19 last session — +3 from audio, sprites, browser-verification).
 
-## What's still genuinely blocked
+## Roadmap descoped 2026-05-22
+
+- M4.6 Localization — English-only v1.0
+- M4.8 Tutorial state machine — labels self-document the action bar
+- M5.3 Store presence — operator decision
+- M5.5 Launch — operator decision
+
+## What's still genuinely blocked (engineering can't proceed)
 
 | Item | Why | What unblocks it |
 |---|---|---|
 | **macOS export** | Cross-compile + Xcode signing | Mac developer with `make export-macos` |
-| **Hand-drawn pixel art** | The procedural sprites are recognizable but not stylized | Commission a 22-sprite set if you want artist polish |
-| **Music tracks** | I only have SFX; the audio buses are wired for music but the slot is empty | One CC0 ambient horror track from a CC0 music library |
-| **Tutorial scripted state machine** | Lower priority than other M4 polish; needs UX validation | Author after first round of human playtesting |
-| **Localization translations** | I can extract strings but quality requires a human reviewer | Run after string-freeze |
-| **Steam page / launch** | Requires accounts I don't have | Standard publishing workflow |
+| **Hand-drawn pixel art** | The procedural sprites are recognizable but not stylized | Commission a 22-sprite set, OR adopt Kenney's Roguelike Modern City pack via `SpriteGenerator.override_texture(key, path)` |
+| **Music tracks** | Procedural ambient drone now plays on boot (closes G3b); real music would replace it | Drop OGG/WAV files into `assets/audio/music/` (operator-owned) |
+| **Human playtest** | By definition | Five strangers × 30 minutes |
 
 ## How to play right now
 

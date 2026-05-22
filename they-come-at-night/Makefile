@@ -44,21 +44,29 @@ verify-green:
 	@$(MAKE) smoke-long
 	@echo "=== GREEN ==="
 
-export-linux:
+stamp-commit:
+	@# Writes the short git commit hash into res://BUILD_COMMIT so the BuildInfo
+	@# autoload can read it at runtime.
+	@git rev-parse --short HEAD > BUILD_COMMIT 2>/dev/null || echo "unknown" > BUILD_COMMIT
+
+export-linux: stamp-commit
 	@mkdir -p dist/linux
 	@$(GODOT) --headless --export-release "Linux/X11" dist/linux/they-come-at-night.x86_64
+	@cp CONTROLS.txt dist/linux/CONTROLS.txt
 
-export-web:
+export-web: stamp-commit
 	@mkdir -p dist/web
 	@$(GODOT) --headless --export-release "Web" dist/web/index.html
 
-export-windows:
+export-windows: stamp-commit
 	@mkdir -p dist/windows
 	@$(GODOT) --headless --export-release "Windows Desktop" dist/windows/they-come-at-night.exe
+	@cp CONTROLS.txt dist/windows/CONTROLS.txt
 
-export-macos:
+export-macos: stamp-commit
 	@mkdir -p dist/macos
 	@$(GODOT) --headless --export-release "macOS" dist/macos/they-come-at-night.zip
+	@cp CONTROLS.txt dist/macos/CONTROLS.txt
 
 export-all: export-linux export-windows export-macos export-web
 

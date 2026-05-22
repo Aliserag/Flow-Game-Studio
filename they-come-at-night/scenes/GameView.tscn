@@ -375,6 +375,53 @@ text = "Close"
 
 [node name="SettlementView" parent="." instance=ExtResource("8_sv")]
 
+[node name="PauseOverlay" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+visible = false
+process_mode = 3
+
+[node name="Backdrop" type="ColorRect" parent="PauseOverlay"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.7)
+
+[node name="Panel" type="PanelContainer" parent="PauseOverlay"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -130.0
+offset_right = 160.0
+offset_bottom = 130.0
+
+[node name="Margin" type="MarginContainer" parent="PauseOverlay/Panel"]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="V" type="VBoxContainer" parent="PauseOverlay/Panel/Margin"]
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="PauseOverlay/Panel/Margin/V"]
+text = "Paused"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.85, 0.65, 0.4, 1)
+
+[node name="Hint" type="Label" parent="PauseOverlay/Panel/Margin/V"]
+text = "F12 = screenshot   Esc = resume"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+
+[node name="ResumeBtn" type="Button" parent="PauseOverlay/Panel/Margin/V"]
+text = "Resume"
+
+[node name="QuitBtn" type="Button" parent="PauseOverlay/Panel/Margin/V"]
+text = "Quit to Menu"
+
 [node name="GameOver" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0

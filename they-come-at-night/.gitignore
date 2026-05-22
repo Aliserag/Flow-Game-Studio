@@ -2,6 +2,9 @@
 .godot/
 .import/
 
+# Generated at export-time by `make stamp-commit`.
+BUILD_COMMIT
+
 # Exported builds
 /build/
 /exports/

@@ -60,6 +60,64 @@ func _ready() -> void:
 	EventBus.enhancement_built.connect(_on_enhancement_built)
 	EventBus.player_moved.connect(_on_player_moved)
 	EventBus.party_changed.connect(_on_party_changed)
+	# Start ambient music. Real track if assets/audio/music/ambient.* exists,
+	# else a procedural low-drone loop so the game isn't silent.
+	_start_ambient_music()
+
+func _start_ambient_music() -> void:
+	# Prefer a real file if one is dropped in.
+	for ext in [".ogg", ".wav", ".mp3"]:
+		var path: String = "res://assets/audio/music/ambient" + ext
+		if ResourceLoader.exists(path):
+			music_player.stream = load(path)
+			if music_player.stream is AudioStream:
+				music_player.stream.loop = true if music_player.stream.has_method("set_loop") else true
+			music_player.play()
+			return
+	# Procedural fallback — a low drone with subtle modulation.
+	music_player.stream = _build_ambient_drone()
+	music_player.play()
+	# Workaround for AudioStreamWAV looping in newer Godot: replay on finished.
+	if not music_player.finished.is_connected(_on_music_finished):
+		music_player.finished.connect(_on_music_finished)
+
+func _on_music_finished() -> void:
+	if not muted_music and music_player.stream != null:
+		music_player.play()
+
+func _build_ambient_drone() -> AudioStream:
+	# Generates a ~6-second low-frequency drone with a slow LFO and thin noise
+	# layer. Designed to loop seamlessly when restarted on `finished`.
+	var sw := AudioStreamWAV.new()
+	sw.format = AudioStreamWAV.FORMAT_16_BITS
+	sw.mix_rate = 22050
+	sw.stereo = false
+	var duration_s: float = 6.0
+	var sample_count: int = int(sw.mix_rate * duration_s)
+	# Two detuned low oscillators + subtle high-frequency wash.
+	var f1: float = 65.0   # low C-ish drone
+	var f2: float = 97.5   # detuned partial
+	var samples := PackedByteArray()
+	samples.resize(sample_count * 2)
+	var lfo_speed: float = 0.18  # Hz
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 0x434F4C44  # "COLD"
+	for i in sample_count:
+		var t: float = float(i) / sw.mix_rate
+		# Sine pair.
+		var s1: float = sin(TAU * f1 * t)
+		var s2: float = sin(TAU * f2 * t)
+		# Slow LFO modulation on amplitude.
+		var lfo: float = 0.5 + 0.5 * sin(TAU * lfo_speed * t)
+		# Thin pink-ish noise wash.
+		var noise: float = (rng.randf() - 0.5) * 0.06
+		var v: float = (s1 * 0.35 + s2 * 0.22) * (0.5 + lfo * 0.5) + noise
+		v *= 0.4  # overall headroom; should be quiet
+		var s_int: int = clampi(int(v * 32767.0), -32768, 32767)
+		samples[i * 2] = s_int & 0xff
+		samples[i * 2 + 1] = (s_int >> 8) & 0xff
+	sw.data = samples
+	return sw
 
 func _ensure_buses() -> void:
 	# Buses created at runtime so this works even without a project.audio_bus_layout.

@@ -116,6 +116,16 @@ func _wire_signals() -> void:
 	EventBus.open_trade_request.connect(_on_open_trade_request)
 	EventBus.game_over.connect(_on_game_over)
 	game_over_btn.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/MainMenu.tscn"))
+	# Pause overlay buttons.
+	var pause_resume: Button = $PauseOverlay/Panel/Margin/V/ResumeBtn if has_node("PauseOverlay/Panel/Margin/V/ResumeBtn") else null
+	var pause_quit: Button = $PauseOverlay/Panel/Margin/V/QuitBtn if has_node("PauseOverlay/Panel/Margin/V/QuitBtn") else null
+	if pause_resume != null:
+		pause_resume.pressed.connect(_toggle_pause)
+	if pause_quit != null:
+		pause_quit.pressed.connect(func() -> void:
+			get_tree().paused = false
+			get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+		)
 
 func _on_event_modal_request(payload: Dictionary) -> void:
 	GameState.phase = GameState.Phase.EVENT
@@ -338,6 +348,39 @@ func _on_game_over(victory: bool, summary: String) -> void:
 		game_over_label.text = "GAME OVER\n\n" + summary + "\n\nDays survived: %d\nZombies killed: %d\nRecruits: %d" % [GameState.stats.days_survived, GameState.stats.zombies_killed, GameState.stats.npcs_recruited]
 
 func _input(event: InputEvent) -> void:
+	# Esc: prefer cancelling Move mode, else open pause overlay.
 	if event.is_action_pressed("ui_cancel"):
-		_move_mode = false
-		_rebuild_actions()
+		if _move_mode:
+			_move_mode = false
+			_rebuild_actions()
+			return
+		if not _any_modal_open():
+			_toggle_pause()
+	# F12: take a screenshot (G8).
+	if event is InputEventKey and event.pressed and event.keycode == KEY_F12:
+		_take_screenshot()
+
+func _any_modal_open() -> bool:
+	return event_modal.visible or build_panel.visible or assign_panel.visible \
+		or knowledge_panel.visible or trade_panel.visible or settlement_view.visible \
+		or game_over.visible
+
+func _toggle_pause() -> void:
+	var overlay: Control = $PauseOverlay if has_node("PauseOverlay") else null
+	if overlay == null:
+		return
+	overlay.visible = not overlay.visible
+	get_tree().paused = overlay.visible
+
+func _take_screenshot() -> void:
+	var dir := DirAccess.open("user://")
+	if dir != null and not dir.dir_exists("screenshots"):
+		dir.make_dir("screenshots")
+	var img: Image = get_viewport().get_texture().get_image()
+	var ts: String = Time.get_datetime_string_from_system().replace(":", "-")
+	var path: String = "user://screenshots/screenshot-%s.png" % ts
+	var err := img.save_png(path)
+	if err == OK:
+		EventBus.log_good("Screenshot saved: %s" % path)
+	else:
+		EventBus.log_warn("Screenshot failed (err %d)" % err)

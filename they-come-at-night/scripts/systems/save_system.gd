@@ -27,6 +27,7 @@ static func save() -> bool:
 		return false
 	var blob: Dictionary = {
 		"version": SAVE_VERSION,
+		"build_id": BuildInfo.build_id,
 		"saved_at": Time.get_unix_time_from_system(),
 		"state": _serialize_state(),
 		"party": _serialize_party(),

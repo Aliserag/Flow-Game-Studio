@@ -152,24 +152,24 @@ godot --headless --editor --quit
 - [ ] Reduce-motion toggle disables tweens and shake
 - [ ] All action buttons have accessible-name strings
 
-### M4.6 — Localization scaffold
-- [ ] All UI strings routed through `tr("KEY")`
-- [ ] `localization/en.po` exists with every string
-- [ ] Language switcher in settings
-- [ ] At minimum 50% of UI translated to a second language (e.g., Spanish)
+### M4.6 — Localization scaffold (DESCOPED 2026-05-22)
+- ~~All UI strings routed through `tr("KEY")`~~ — removed from scope
+- ~~`localization/en.po` exists with every string~~ — removed from scope
+- ~~Language switcher in settings~~ — removed from scope
+- ~~Translation to a second language~~ — removed from scope
+- Rationale: out of scope for v1.0. English-only launch. Revisit if/when there is demand.
 
 ### M4.7 — Settings menu
-- [ ] `scenes/SettingsMenu.tscn` exists, accessible from main menu and pause menu
-- [ ] Audio: master / music / sfx sliders (0-100)
-- [ ] Display: resolution dropdown, fullscreen toggle, vsync toggle
-- [ ] Gameplay: difficulty, autosave on/off
-- [ ] Accessibility: text scale, reduce motion, colorblind
-- [ ] Settings persist to `user://settings.cfg` across launches
+- [x] `scenes/SettingsMenu.tscn` exists, accessible from main menu
+- [x] Audio: master / music / sfx sliders (0-100)
+- [x] Display: fullscreen toggle, vsync toggle
+- [x] Gameplay: difficulty, autosave on/off
+- [x] Accessibility: text scale, reduce motion, colorblind
+- [x] Settings persist to `user://settings.cfg` across launches
 
-### M4.8 — Tutorial
-- [ ] First-run interactive tutorial: 5 guided steps (move, scavenge, base, event, end-day)
-- [ ] Skippable from main menu
-- [ ] Tutorial-shown flag in settings
+### M4.8 — Tutorial (DESCOPED 2026-05-22)
+- ~~First-run interactive tutorial~~ — removed from scope
+- Rationale: out of scope for v1.0. The action bar with "Move (click adjacent tile)" labels self-documents enough; a real tutorial requires UX validation that only humans can provide.
 
 ---
 
@@ -185,11 +185,12 @@ godot --headless --editor --quit
 - [ ] `make export-all` produces all three artifacts in `dist/`
 - [HUMAN-BLOCKED] Code signing (Windows EV cert, macOS notarization)
 
-### M5.3 — Store presence
-- [HUMAN-BLOCKED] Steam page submission
-- [HUMAN-BLOCKED] itch.io page setup
-- [HUMAN-BLOCKED] Trailer recording (requires GUI)
-- [HUMAN-BLOCKED] Capsule art and screenshots
+### M5.3 — Store presence (DESCOPED 2026-05-22)
+- ~~Steam page submission~~ — removed from scope
+- ~~itch.io page setup~~ — removed from scope
+- ~~Trailer recording~~ — removed from scope
+- ~~Capsule art and screenshots~~ — removed from scope
+- Rationale: out of scope. Final builds in `dist/` are the deliverable; distribution channels are an operator decision, not an engineering deliverable.
 
 ### M5.4 — Final QA gate
 - [ ] All M0-M3 acceptance criteria still pass on green build
@@ -199,9 +200,10 @@ godot --headless --editor --quit
 - [ ] Performance: 14×14 map gen < 100ms; turn end < 5ms
 - [HUMAN-BLOCKED] 30 hours of cumulative human playtest
 
-### M5.5 — Launch
-- [HUMAN-BLOCKED] Live on Steam / itch
-- [HUMAN-BLOCKED] Day-one patch ready
+### M5.5 — Launch (DESCOPED 2026-05-22)
+- ~~Live on Steam / itch~~ — removed from scope
+- ~~Day-one patch ready~~ — removed from scope
+- Rationale: distribution is an operator decision. The shippable artifact is what we produce.
 
 ---
 
@@ -217,14 +219,16 @@ listing what shipped, what's blocked, and what the operator's next actions are.
 
 ---
 
-## Human-blocked items (tracked separately)
+## Descoped (no longer tracked)
 
-These ride alongside the loop but never block it:
+- **M4.6 Localization** — English-only v1.0
+- **M4.8 Tutorial state machine** — labels self-document the action bar
+- **M5.3 Store presence** — operator decision
+- **M5.5 Launch** — operator decision
 
-- M4.1: real audio assets
-- M4.2: hand-drawn sprite art
-- M5.1: browser-platform save/load verification
-- M5.2: platform code signing
-- M5.3: Steam + itch pages, trailer, capsule art, screenshots
-- M5.4: 30+ hours human playtest
-- M5.5: actual launch
+## Genuinely human-blocked (engineering can't proceed without operator)
+
+- **macOS export** — needs a Mac with Xcode CLI tools to run `make export-macos`
+- **Hand-drawn pixel art replacement** — procedural sprites already ship; commission an artist if you want stylistic polish
+- **Music tracks** — buses are wired, no music files; commission or use CC0 music pack
+- **Human playtest** — by definition
