@@ -10,35 +10,80 @@ extends RefCounted
 
 const SIZE := 32
 
+# Where the runtime sprite loader looks for hand-authored or AI-generated PNG
+# overrides. File layout produced by tools/generate_sprites.py:
+#   assets/sprites/terrain/<terrain_id>.png
+#   assets/sprites/entities/zombie_<unit_id>.png
+#   assets/sprites/entities/survivor_<variant>.png
+#   assets/sprites/entities/npc_<faction_id>.png
+const ASSET_TERRAIN_DIR := "res://assets/sprites/terrain/"
+const ASSET_ENTITY_DIR := "res://assets/sprites/entities/"
+
 static var _cache: Dictionary = {}    # key -> ImageTexture
 static var _overrides: Dictionary = {} # key -> path to external PNG
+static var _scanned: bool = false
 
 static func override_texture(key: String, png_path: String) -> void:
 	_overrides[key] = png_path
 	_cache.erase(key)
 
+# Scan asset folders once per run, populating _overrides for any slot with a
+# matching PNG. Idempotent.
+static func _scan_asset_overrides() -> void:
+	if _scanned:
+		return
+	_scanned = true
+	var td := DirAccess.open(ASSET_TERRAIN_DIR)
+	if td != null:
+		td.list_dir_begin()
+		while true:
+			var fname: String = td.get_next()
+			if fname == "":
+				break
+			if td.current_is_dir() or not fname.ends_with(".png"):
+				continue
+			var slot: String = "terrain:" + fname.replace(".png", "")
+			_overrides[slot] = ASSET_TERRAIN_DIR + fname
+		td.list_dir_end()
+	var ed := DirAccess.open(ASSET_ENTITY_DIR)
+	if ed != null:
+		ed.list_dir_begin()
+		while true:
+			var fname2: String = ed.get_next()
+			if fname2 == "":
+				break
+			if ed.current_is_dir() or not fname2.ends_with(".png"):
+				continue
+			# zombie_single.png  →  zombie:single
+			var base: String = fname2.replace(".png", "")
+			var first_us: int = base.find("_")
+			if first_us > 0:
+				var slot2: String = base.substr(0, first_us) + ":" + base.substr(first_us + 1)
+				_overrides[slot2] = ASSET_ENTITY_DIR + fname2
+		ed.list_dir_end()
+
 static func get_terrain_texture(terrain_id: String) -> ImageTexture:
+	_scan_asset_overrides()
 	var key := "terrain:" + terrain_id
 	if _cache.has(key):
 		return _cache[key]
-	if _overrides.has(key) and ResourceLoader.exists(_overrides[key]):
-		var tex: Texture2D = load(_overrides[key])
-		if tex is ImageTexture:
-			_cache[key] = tex
-			return tex
+	var tex: ImageTexture = _load_override_png(_overrides.get(key, ""))
+	if tex != null:
+		_cache[key] = tex
+		return tex
 	var image := _draw_terrain(terrain_id)
 	var t := ImageTexture.create_from_image(image)
 	_cache[key] = t
 	return t
 
 static func get_entity_texture(key: String) -> ImageTexture:
+	_scan_asset_overrides()
 	if _cache.has(key):
 		return _cache[key]
-	if _overrides.has(key) and ResourceLoader.exists(_overrides[key]):
-		var tex: Texture2D = load(_overrides[key])
-		if tex is ImageTexture:
-			_cache[key] = tex
-			return tex
+	var tex: ImageTexture = _load_override_png(_overrides.get(key, ""))
+	if tex != null:
+		_cache[key] = tex
+		return tex
 	var image: Image = null
 	if key.begins_with("zombie:"):
 		image = _draw_zombie(key.replace("zombie:", ""))
@@ -51,6 +96,31 @@ static func get_entity_texture(key: String) -> ImageTexture:
 	var t := ImageTexture.create_from_image(image)
 	_cache[key] = t
 	return t
+
+# ---------- override loader ----------
+
+# Loads an arbitrary PNG path into an ImageTexture. Returns null on miss.
+# Accepts both `res://...` and raw `assets/sprites/...` paths.
+static func _load_override_png(png_path: String) -> ImageTexture:
+	if png_path == "":
+		return null
+	# Resource path → use load.
+	if png_path.begins_with("res://") and ResourceLoader.exists(png_path):
+		var res: Resource = load(png_path)
+		if res is ImageTexture:
+			return res
+		if res is Texture2D:
+			# Convert Texture2D-style imports into a plain ImageTexture.
+			var img: Image = (res as Texture2D).get_image()
+			if img != null:
+				return ImageTexture.create_from_image(img)
+	# Fall back: try opening as a file directly (covers PNGs added at runtime).
+	if FileAccess.file_exists(png_path):
+		var img2 := Image.new()
+		var err: int = img2.load(png_path)
+		if err == OK:
+			return ImageTexture.create_from_image(img2)
+	return null
 
 # ---------- drawing primitives ----------
 

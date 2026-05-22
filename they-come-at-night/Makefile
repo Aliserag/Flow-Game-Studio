@@ -14,6 +14,8 @@ help:
 	@echo "  make export-linux  — build Linux/X11 binary into dist/linux/"
 	@echo "  make export-web    — build HTML5 into dist/web/"
 	@echo "  make export-all    — build all platforms"
+	@echo "  make sprites       — generate sprite set via PixelLab (requires PIXELLAB_SECRET)"
+	@echo "  make sprites-dry   — print sprite-generation plan; no API calls"
 	@echo "  make clean         — wipe dist/"
 
 editor-scan:
@@ -43,6 +45,18 @@ verify-green:
 	@echo "=== long smoke ==="
 	@$(MAKE) smoke-long
 	@echo "=== GREEN ==="
+
+sprites:
+	@# Generate the project sprite set via PixelLab (https://www.pixellab.ai/).
+	@# Requires: pip install pixellab pillow; PIXELLAB_SECRET env var.
+	@# Resumable — skips slots whose PNG already exists. Pass --regen <slot>
+	@# to redo one, or --dry-run for a free plan.
+	@if [ -z "$$PIXELLAB_SECRET" ]; then echo "Set PIXELLAB_SECRET first."; exit 1; fi
+	@python3 tools/generate_sprites.py
+
+sprites-dry:
+	@# Print the prompt plan without spending PixelLab credits.
+	@python3 tools/generate_sprites.py --dry-run
 
 stamp-commit:
 	@# Writes the short git commit hash into res://BUILD_COMMIT so the BuildInfo
