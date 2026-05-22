@@ -25,18 +25,41 @@ var muted_music: bool = false
 # synthesized tone. Lets the audio pipeline run end-to-end even without assets.
 var _placeholder_streams: Dictionary = {}
 
+# Real CC0 audio assets (Kenney) loaded once at _ready and reused per cue.
+# Licenses live under assets/audio/licenses/.
+const SFX_PATHS: Dictionary = {
+	"click": "res://assets/audio/sfx/click.wav",
+	"combat_hit": "res://assets/audio/sfx/combat_hit.wav",
+	"swarm_warning": "res://assets/audio/sfx/swarm_warning.wav",
+	"megahorde_arrived": "res://assets/audio/sfx/megahorde_arrived.wav",
+	"victory": "res://assets/audio/sfx/victory.wav",
+	"defeat": "res://assets/audio/sfx/defeat.wav",
+	"build_complete": "res://assets/audio/sfx/build_complete.wav",
+	"move": "res://assets/audio/sfx/move.wav",
+	"scavenge": "res://assets/audio/sfx/scavenge.wav",
+	"recruit": "res://assets/audio/sfx/recruit.wav",
+}
+var _sfx_streams: Dictionary = {}
+
 func _ready() -> void:
 	_ensure_buses()
 	_create_pool()
 	music_player = AudioStreamPlayer.new()
 	music_player.bus = BUS_MUSIC
 	add_child(music_player)
-	# Wire signal cues. These calls are no-ops audibly until assets land.
+	# Preload SFX streams so first-play is jank-free.
+	for cue in SFX_PATHS.keys():
+		var path: String = SFX_PATHS[cue]
+		if ResourceLoader.exists(path):
+			_sfx_streams[cue] = load(path)
+	# Wire signal cues. Real CC0 audio plays now; procedural fallback if a cue is missing.
 	EventBus.combat_resolved.connect(_on_combat_resolved)
 	EventBus.swarm_warning.connect(_on_swarm_warning)
 	EventBus.megahorde_arrived.connect(_on_megahorde_arrived)
 	EventBus.game_over.connect(_on_game_over)
 	EventBus.enhancement_built.connect(_on_enhancement_built)
+	EventBus.player_moved.connect(_on_player_moved)
+	EventBus.party_changed.connect(_on_party_changed)
 
 func _ensure_buses() -> void:
 	# Buses created at runtime so this works even without a project.audio_bus_layout.
@@ -57,7 +80,9 @@ func _create_pool() -> void:
 func play_sfx(cue: String) -> void:
 	if muted_sfx:
 		return
-	var stream: AudioStream = _placeholder_for(cue)
+	var stream: AudioStream = _sfx_streams.get(cue, null)
+	if stream == null:
+		stream = _placeholder_for(cue)
 	if stream == null:
 		return
 	var p: AudioStreamPlayer = _free_sfx_player()
@@ -152,3 +177,15 @@ func _on_game_over(victory: bool, _summary: String) -> void:
 
 func _on_enhancement_built(_id: String) -> void:
 	play_sfx("build_complete")
+
+func _on_player_moved(_from: Vector2i, _to: Vector2i) -> void:
+	play_sfx("move")
+
+# Track party-size changes so we only fire on growth (recruits), not shrinkage.
+var _last_party_size: int = -1
+
+func _on_party_changed() -> void:
+	var sz: int = GameState.party.size() if GameState else 0
+	if _last_party_size >= 0 and sz > _last_party_size:
+		play_sfx("recruit")
+	_last_party_size = sz

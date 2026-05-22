@@ -38,7 +38,8 @@ dist/
 # === Engine: Godot ===
 .godot/
 *.translation
-export_presets.cfg
+# export_presets.cfg is intentionally tracked so CI / Makefile builds match contributor builds
+!export_presets.cfg
 *.import
 # GUT test results / temp files
 .gut_temp/
