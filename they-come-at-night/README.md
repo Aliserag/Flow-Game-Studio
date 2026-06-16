@@ -1,6 +1,6 @@
 # They Come At Night
 
-A grid-based, procedurally generated zombie apocalypse survival roguelike for **Godot 4.6**.
+A grid-based, procedurally generated zombie apocalypse survival roguelike for **Godot 4**.
 
 You start as a single survivor on a procedurally generated grid. Every day you make
 one decision: move, scavenge, establish a base, build a wall, rest. Every night
@@ -9,13 +9,113 @@ who they say they are. A few are not.
 
 The goal is to survive long enough to face the **megahorde**, and survive that too.
 
-## Running it
+> Content warning: depicts a zombie apocalypse with themes of death, betrayal,
+> cannibalism, infection, hopelessness, and the loss of children. Pixel-art
+> graphics — nothing explicit — but the tone is dark.
 
-1. Install **Godot 4.6** (project pinned to 4.6 in `project.godot`).
+## Play
+
+Pre-built artifacts in `dist/` after running `make export-all`:
+
+- `dist/web/index.html` — open in any modern browser (~44MB)
+- `dist/linux/they-come-at-night.x86_64` — ~70MB
+- `dist/windows/they-come-at-night.exe` — ~98MB
+- `dist/macos/` — operator must run `make export-macos` on a Mac
+
+Controls and gameplay help: see `CONTROLS.txt` (shipped next to each binary)
+or click CREDITS from the main menu.
+
+## Develop
+
+1. Install **Godot 4.4** or later.
 2. Open the `they-come-at-night/` folder as a Godot project.
-3. Press F5 (run main scene). The main menu appears — pick a mode and play.
+3. Press F5 to run.
 
-The game has no external dependencies. All data is in `data/*.json`.
+All gameplay data is in `data/*.json`. No external runtime dependencies.
+
+### Make targets
+
+```bash
+make verify-green   # editor scan + 418 tests + 158 E2E + smokes + playtest
+make test           # unit tests only
+make e2e            # 158-assertion programmatic playthrough
+make smoke          # 50-turn solo run
+make smoke-long     # 100-turn settled run
+make playtest       # 45 seeded balance runs across difficulty × map matrix
+make export-web     # → dist/web/index.html (CC0/MIT assets bundled)
+make export-linux   # → dist/linux/they-come-at-night.x86_64
+make export-windows # → dist/windows/they-come-at-night.exe
+make sprites        # PixelLab sprite generation (requires PIXELLAB_SECRET)
+make sprites-dry    # preview sprite-generation prompts at zero cost
+```
+
+### Browser smoke (validates the web export in a real headless Chromium)
+
+```bash
+PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers NODE_PATH=/opt/node22/lib/node_modules \
+    node tests/browser_smoke.js
+```
+
+## Project structure
+
+```
+they-come-at-night/
+├── project.godot                Godot project file (v0.4.0)
+├── LICENSE                      MIT
+├── PRIVACY.md                   Privacy & content notice
+├── CONTROLS.txt                 Ships next to each binary
+├── Makefile                     verify-green + exports + sprites
+├── assets/
+│   ├── audio/sfx/               CC0 Kenney + MIT Godot demos
+│   ├── audio/music/             MIT (Godot demos: ambient.ogg, menu.ogg)
+│   ├── audio/licenses/          Auto-discovered by the credits screen
+│   ├── sprites/                 Optional PNG overrides (auto-discovered)
+│   └── theme.tres               Warm-brown UI theme
+├── data/                        61 events, 12 factions, 32 items, 13 terrains
+├── scripts/
+│   ├── autoload/                GameState, EventBus, DataLoader, RNG,
+│   │                            BuildInfo, CrashLogger, AudioDirector,
+│   │                            SettingsService
+│   ├── entities/                Survivor, Zombie, NPC
+│   ├── systems/                 turn manager, combat, base, swarm, betrayal,
+│   │                            parley, trade, save, sprite & audio generators
+│   └── ui/                      Each scene's controller
+├── scenes/                      Main, MainMenu, GameView, Settings, Settlement,
+│                                Credits, plus modal/panel scenes
+├── tests/                       418 unit + 158 E2E + browser smoke +
+│                                playtest harness
+└── tools/                       generate_sprites.py (PixelLab pipeline)
+```
+
+## Status (v0.4.0)
+
+- **418/418 unit tests, 158/158 E2E assertions** — three deterministic runs
+- **Browser-verified** — boots and renders in headless Chromium
+- **Linux + Windows + Web builds** — all three packaged and tested
+- **Real CC0/MIT audio** — 10 SFX cues + ambient + menu music
+- **Procedural sprites** — distinguishable per terrain/entity
+  (`make sprites` swaps in PixelLab-generated PNGs)
+- **Save/load** with versioned migration framework
+- **Settings menu**, **credits screen**, **pause overlay**, **F12 screenshot**,
+  **content warning splash**, **local crash log**, **version stamp**
+- **Automated playtest** — 45-run balance harness with findings report
+
+### What's still missing for a real launch
+
+- **Human playtest** — automated playtest can find balance issues but cannot
+  judge fun
+- **macOS build** — needs `make export-macos` on a Mac with Xcode CLI
+- **Hand-drawn art polish** — procedural sprites are recognizable but not
+  stylized; run `make sprites` for AI-generated, or commission an artist
+- See `production/ralph/playtest-findings.md` for the balance issues the
+  harness already uncovered (Tourist+Standard wipe-rate, Apocalypse food
+  collapse)
+
+## License
+
+MIT — see `LICENSE`. Bundled assets retain their own licenses (CC0 and MIT);
+the credits screen auto-discovers and lists them.
+
 
 ## Modes
 

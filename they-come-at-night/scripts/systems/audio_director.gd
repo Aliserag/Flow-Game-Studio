@@ -65,21 +65,41 @@ func _ready() -> void:
 	_start_ambient_music()
 
 func _start_ambient_music() -> void:
-	# Prefer a real file if one is dropped in.
-	for ext in [".ogg", ".wav", ".mp3"]:
-		var path: String = "res://assets/audio/music/ambient" + ext
-		if ResourceLoader.exists(path):
-			music_player.stream = load(path)
-			if music_player.stream is AudioStream:
-				music_player.stream.loop = true if music_player.stream.has_method("set_loop") else true
-			music_player.play()
-			return
-	# Procedural fallback — a low drone with subtle modulation.
-	music_player.stream = _build_ambient_drone()
+	# Prefer real OGG/WAV/MP3 in assets/audio/music/ambient.*
+	var stream: AudioStream = _load_music_stream("ambient")
+	if stream == null:
+		stream = _build_ambient_drone()
+	music_player.stream = stream
+	# OggVorbis streams support a native loop flag; AudioStreamWAV requires
+	# a replay-on-finished workaround.
+	if stream is AudioStreamOggVorbis:
+		(stream as AudioStreamOggVorbis).loop = true
+	elif stream is AudioStreamMP3:
+		(stream as AudioStreamMP3).loop = true
+	elif stream is AudioStreamWAV:
+		(stream as AudioStreamWAV).loop_mode = AudioStreamWAV.LOOP_FORWARD
 	music_player.play()
-	# Workaround for AudioStreamWAV looping in newer Godot: replay on finished.
 	if not music_player.finished.is_connected(_on_music_finished):
 		music_player.finished.connect(_on_music_finished)
+
+func play_menu_music() -> void:
+	# Allows MainMenu to swap to a different track when the menu is up.
+	var stream: AudioStream = _load_music_stream("menu")
+	if stream == null:
+		return
+	if stream is AudioStreamOggVorbis:
+		(stream as AudioStreamOggVorbis).loop = true
+	music_player.stream = stream
+	music_player.play()
+
+func _load_music_stream(name: String) -> AudioStream:
+	for ext in [".ogg", ".wav", ".mp3"]:
+		var path: String = "res://assets/audio/music/" + name + ext
+		if ResourceLoader.exists(path):
+			var s: Resource = load(path)
+			if s is AudioStream:
+				return s
+	return null
 
 func _on_music_finished() -> void:
 	if not muted_music and music_player.stream != null:

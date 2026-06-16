@@ -139,7 +139,10 @@ func adjust_lead_hp(delta: int) -> void:
 		end_run(false, "Your lead survivor died.")
 	EventBus.hud_refresh_requested.emit()
 
+var last_run_victory: bool = false
+
 func end_run(victory: bool, summary: String) -> void:
 	phase = Phase.GAME_OVER
 	stats["days_survived"] = day
+	last_run_victory = victory
 	EventBus.game_over.emit(victory, summary)

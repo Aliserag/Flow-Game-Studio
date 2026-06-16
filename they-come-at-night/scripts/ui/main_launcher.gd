@@ -26,6 +26,9 @@ func _ready() -> void:
 		if arg == "--e2e":
 			_run_e2e()
 			return
+		if arg == "--playtest":
+			_run_playtest()
+			return
 	# Default: keep the MainMenu child visible (already instanced in scene).
 
 func _run_tests() -> void:
@@ -108,6 +111,15 @@ func _run_e2e() -> void:
 	# Give a frame so any queued frees complete before quit.
 	await get_tree().process_frame
 	get_tree().quit(0 if ok else 1)
+
+func _run_playtest() -> void:
+	for c in get_children():
+		c.visible = false
+	var summary: Dictionary = PlaytestHarness.run()
+	PlaytestHarness.print_report(summary)
+	# Exit non-zero if findings include any degenerate cells — useful for CI.
+	var fails: int = (summary.get("findings", []) as Array).size()
+	get_tree().quit(1 if fails > 0 else 0)
 
 func _run_smoke_long() -> void:
 	for c in get_children():

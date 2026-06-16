@@ -20,6 +20,7 @@ EventBus="*res://scripts/autoload/event_bus.gd"
 DataLoader="*res://scripts/autoload/data_loader.gd"
 RNG="*res://scripts/autoload/rng.gd"
 BuildInfo="*res://scripts/autoload/build_info.gd"
+CrashLogger="*res://scripts/autoload/crash_logger.gd"
 AudioDirector="*res://scripts/systems/audio_director.gd"
 SettingsService="*res://scripts/systems/settings_service.gd"
 

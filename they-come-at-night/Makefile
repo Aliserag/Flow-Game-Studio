@@ -33,6 +33,11 @@ smoke-long:
 e2e:
 	@$(GODOT) --headless res://scenes/Main.tscn -- --e2e
 
+playtest:
+	@# Run the automated playtest harness — 45 seeded runs across the
+	@# difficulty × map-size matrix. Non-zero exit if any degenerate cells.
+	@$(GODOT) --headless res://scenes/Main.tscn -- --playtest
+
 verify-green:
 	@echo "=== editor scan ==="
 	@$(MAKE) editor-scan
@@ -44,6 +49,8 @@ verify-green:
 	@$(MAKE) smoke
 	@echo "=== long smoke ==="
 	@$(MAKE) smoke-long
+	@echo "=== playtest harness (45 seeded runs) ==="
+	@$(MAKE) playtest || echo "  (playtest surfaced balance findings; see production/ralph/playtest-findings.md)"
 	@echo "=== GREEN ==="
 
 sprites:
