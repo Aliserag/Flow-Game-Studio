@@ -11,6 +11,7 @@ extends Control
 
 
 func _ready() -> void:
+	AudioBus.play_music("map")
 	RunState.gold_changed.connect(_on_gold_changed)
 	RunState.map_changed.connect(_refresh_map)
 	RunState.phase_changed.connect(_on_phase_changed)

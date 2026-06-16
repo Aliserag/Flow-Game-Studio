@@ -21,6 +21,7 @@ const ENEMY_COLOR: Color = Color(0.4, 0.4, 0.4, 1.0)
 
 
 func _ready() -> void:
+	AudioBus.play_music("tavern")
 	RunState.gold_changed.connect(_on_gold_changed)
 	RunState.roster_changed.connect(_refresh_roster)
 	RunState.hero_changed.connect(_refresh_roster)

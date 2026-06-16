@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://memorial_screen"]
+[gd_scene load_steps=3 format=3 uid="uid://memorial_screen"]
 
 [ext_resource type="Script" path="res://src/ui/memorial_screen.gd" id="1_memscr"]
+[ext_resource type="Theme" path="res://assets/themes/warband_theme.tres" id="2_theme"]
 
 [node name="MemorialScreen" type="Control"]
+theme = ExtResource("2_theme")
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

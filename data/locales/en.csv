@@ -1,0 +1,41 @@
+keys,en,de
+ui.hud.gold_label,Gold: %d,[de] Gold: %d
+ui.hud.battles_label,Battles: %d,[de] Battles: %d
+ui.hud.no_hero,No Hero,[de] No Hero
+ui.tavern.hire_button,Hire,[de] Hire
+ui.tavern.no_traits,No traits,[de] No traits
+ui.tavern.gold_price,%d Gold,[de] %d Gold
+ui.map.node_battle,Battle,[de] Battle
+ui.map.node_market,Market,[de] Market
+ui.map.node_rest,Rest,[de] Rest
+ui.map.node_event,Event,[de] Event
+ui.map.node_boss,BOSS,[de] BOSS
+ui.map.node_unknown,?,[de] ?
+ui.scout.boss_prefix,BOSS — ,[de] BOSS — 
+ui.scout.no_report,(no scout report),[de] (no scout report)
+ui.scout.no_modifier,Biome: no special modifier.,[de] Biome: no special modifier.
+ui.battle.header,BATTLE,[de] BATTLE
+ui.battle.resolve_button,RESOLVE BATTLE,[de] RESOLVE BATTLE
+ui.battle.resolving,Resolving...,[de] Resolving...
+ui.battle.continue_button,Continue to Resolution,[de] Continue to Resolution
+combat.round,-- Round %d --,[de] -- Round %d --
+combat.attack_template,%s hits %s for %d%s,[de] %s hits %s for %d%s
+combat.death_template,%s FELLS %s,[de] %s FELLS %s
+combat.crit_tag, CRIT!,[de]  CRIT!
+ui.market.buy_hero,Buy → Hero,[de] Buy → Hero
+ui.market.sell_template,Sell %s (%dg),[de] Sell %s (%dg)
+ui.market.leave_button,Leave Market,[de] Leave Market
+ui.resolution.victory,VICTORY,[de] VICTORY
+ui.resolution.defeat,DEFEAT,[de] DEFEAT
+ui.resolution.none_fell,None fell.,[de] None fell.
+ui.resolution.felled_by_template,%s — FELLED BY %s,[de] %s — FELLED BY %s
+ui.memorial.title,THE FALLEN — Gravestone Wall,[de] THE FALLEN — Gravestone Wall
+ui.memorial.empty,None have fallen yet. The warband walks.,[de] None have fallen yet. The warband walks.
+ui.memorial.back_button,Back to Tavern,[de] Back to Tavern
+ui.victory.title,THE WARBAND PREVAILS,[de] THE WARBAND PREVAILS
+ui.victory.subtitle,The Warden falls. The biome bleeds. The hero lives — for now.,[de] The Warden falls. The biome bleeds. The hero lives — for now.
+ui.victory.continue_button,Begin a New Campaign,[de] Begin a New Campaign
+ui.game_over.title,THE WARBAND IS BROKEN,[de] THE WARBAND IS BROKEN
+ui.game_over.new_campaign_button,Start New Campaign,[de] Start New Campaign
+ui.settings.telemetry_toggle,Enable anonymous telemetry,[de] Enable anonymous telemetry
+ui.settings.high_contrast_toggle,High-contrast UI,[de] High-contrast UI

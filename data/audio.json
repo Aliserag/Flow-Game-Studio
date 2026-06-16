@@ -1,0 +1,21 @@
+{
+  "version": "0.1.0",
+  "music": [
+    { "name": "menu",     "path": "res://assets/audio/music/mus_menu_main_loop.ogg" },
+    { "name": "tavern",   "path": "res://assets/audio/music/mus_tavern_weighted_loop.ogg" },
+    { "name": "map",      "path": "res://assets/audio/music/mus_map_traverse_loop.ogg" },
+    { "name": "battle",   "path": "res://assets/audio/music/mus_battle_drive_loop.ogg" },
+    { "name": "victory",  "path": "res://assets/audio/music/mus_victory_stinger.ogg" },
+    { "name": "gameover", "path": "res://assets/audio/music/mus_gameover_stinger.ogg" }
+  ],
+  "sfx": [
+    { "name": "hit",         "path": "res://assets/audio/sfx/sfx_combat_hit_blade_01.ogg" },
+    { "name": "crit",        "path": "res://assets/audio/sfx/sfx_combat_hit_crit_01.ogg" },
+    { "name": "orc_death",   "path": "res://assets/audio/sfx/sfx_combat_orc_death_01.ogg" },
+    { "name": "kill_banner", "path": "res://assets/audio/sfx/sfx_ui_kill_banner_01.ogg" },
+    { "name": "hire",        "path": "res://assets/audio/sfx/sfx_ui_hire_bell_01.ogg" },
+    { "name": "gold_spend",  "path": "res://assets/audio/sfx/sfx_ui_gold_spend_01.ogg" },
+    { "name": "ui_click",    "path": "res://assets/audio/sfx/sfx_ui_button_click_01.ogg" },
+    { "name": "boss_intro",  "path": "res://assets/audio/sfx/sfx_combat_boss_intro_01.ogg" }
+  ]
+}

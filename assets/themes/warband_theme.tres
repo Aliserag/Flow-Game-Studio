@@ -1,0 +1,25 @@
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://warband_theme"]
+
+[ext_resource type="FontFile" path="res://assets/fonts/CourierPrime-Regular.ttf" id="1_courier"]
+[ext_resource type="FontFile" path="res://assets/fonts/Cinzel-Regular.ttf" id="2_cinzel"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_header"]
+font = ExtResource("2_cinzel")
+font_size = 16
+font_color = Color(0.788, 0.659, 0.298, 1.0)
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font = ExtResource("2_cinzel")
+font_size = 24
+font_color = Color(0.788, 0.659, 0.298, 1.0)
+
+[resource]
+default_font = ExtResource("1_courier")
+default_font_size = 9
+
+Label/colors/font_color = Color(0.831, 0.722, 0.588, 1.0)
+Button/colors/font_color = Color(0.831, 0.722, 0.588, 1.0)
+Button/colors/font_hover_color = Color(0.788, 0.659, 0.298, 1.0)
+Button/colors/font_pressed_color = Color(0.545, 0.102, 0.102, 1.0)
+Button/colors/font_disabled_color = Color(0.4, 0.4, 0.35, 1.0)
+Button/font_sizes/font_size = 9

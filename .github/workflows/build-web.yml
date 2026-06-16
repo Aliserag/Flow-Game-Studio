@@ -1,0 +1,57 @@
+name: build-web
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: HTML5 export
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Godot binary + export templates
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.local/bin/godot
+            ~/.local/share/godot/export_templates/4.6.stable
+          key: godot-export-4.6-stable-${{ runner.os }}
+
+      - name: Install Godot 4.6 (if not cached)
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/.local/bin ~/.local/share/godot/export_templates/4.6.stable
+          curl -sL -o /tmp/godot.zip \
+            https://github.com/godotengine/godot/releases/download/4.6-stable/Godot_v4.6-stable_linux.x86_64.zip
+          unzip -q -o /tmp/godot.zip -d /tmp/godot
+          mv /tmp/godot/Godot_v4.6-stable_linux.x86_64 ~/.local/bin/godot
+          chmod +x ~/.local/bin/godot
+          curl -sL -o /tmp/templates.tpz \
+            https://github.com/godotengine/godot/releases/download/4.6-stable/Godot_v4.6-stable_export_templates.tpz
+          unzip -q -o /tmp/templates.tpz -d /tmp/templates_extract
+          cp /tmp/templates_extract/templates/*.zip /tmp/templates_extract/templates/*.apk \
+             /tmp/templates_extract/templates/icudt_godot.dat \
+             /tmp/templates_extract/templates/version.txt \
+             ~/.local/share/godot/export_templates/4.6.stable/ 2>/dev/null || true
+
+      - name: Import project
+        run: ~/.local/bin/godot --headless --path . --editor --quit || true
+
+      - name: Export Web
+        run: |
+          mkdir -p build
+          ~/.local/bin/godot --headless --path . \
+            --export-release "Web" build/index.html
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: warband-web-${{ github.sha }}
+          path: build/
+          retention-days: 14
