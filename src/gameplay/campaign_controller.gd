@@ -164,7 +164,7 @@ func _auto_equip_drops(drops: Array) -> void:
 
 func continue_from_resolution() -> void:
 	## After a normal battle: complete the map node and return to MAP.
-	## After a BOSS battle: check victory or hero death.
+	## After a BOSS battle: advance to next biome if one exists, else VICTORY.
 	if not run_state.run_active:
 		return
 	var map: Dictionary = run_state.campaign_map
@@ -173,9 +173,21 @@ func continue_from_resolution() -> void:
 	CampaignMap.complete_current(map)
 	run_state.emit_signal("map_changed")
 	if was_boss and last_battle_result.get("victory", false):
-		# Campaign won!
-		run_state.set_phase(run_state.Phase.VICTORY)
-		run_state.end_run(true)
+		# Boss down. Does this biome chain to another?
+		var next_biome_id: String = String(current_biome.get("next_biome_id", ""))
+		if next_biome_id.is_empty():
+			# Final biome cleared — campaign won
+			run_state.set_phase(run_state.Phase.VICTORY)
+			run_state.end_run(true)
+			return
+		# Chain into next biome: fresh map, same warband (full-healed)
+		run_state.current_biome_id = next_biome_id
+		current_biome = registry.get_biome(next_biome_id)
+		run_state.campaign_map = CampaignMap.generate(next_biome_id, registry, rng)
+		run_state.full_heal_warband()
+		Console.info("Biome cleared. Advancing to %s." % next_biome_id, "campaign")
+		run_state.emit_signal("map_changed")
+		run_state.set_phase(run_state.Phase.MAP)
 		return
 	run_state.set_phase(run_state.Phase.MAP)
 

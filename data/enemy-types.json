@@ -1,15 +1,26 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "enemies": [
     {
       "id": "bandit-thug",
       "name": "Bandit Thug",
       "tier": 1,
-      "stats": {"max_hp": 25, "attack": 5, "defense": 2, "speed": 4},
+      "stats": {
+        "max_hp": 25,
+        "attack": 5,
+        "defense": 2,
+        "speed": 4
+      },
       "traits": [],
       "drops": [
-        {"item_id": "rusty-knife-common", "weight": 5},
-        {"item_id": "GOLD:3-8", "weight": 10}
+        {
+          "item_id": "rusty-knife-common",
+          "weight": 5
+        },
+        {
+          "item_id": "GOLD:3-8",
+          "weight": 10
+        }
       ],
       "description": "A desperate human. Soft and slow."
     },
@@ -17,11 +28,24 @@
       "id": "bandit-archer",
       "name": "Bandit Archer",
       "tier": 1,
-      "stats": {"max_hp": 20, "attack": 6, "defense": 1, "speed": 5},
-      "traits": ["sharp-eye"],
+      "stats": {
+        "max_hp": 20,
+        "attack": 6,
+        "defense": 1,
+        "speed": 5
+      },
+      "traits": [
+        "sharp-eye"
+      ],
       "drops": [
-        {"item_id": "short-bow-common", "weight": 4},
-        {"item_id": "GOLD:5-10", "weight": 10}
+        {
+          "item_id": "short-bow-common",
+          "weight": 4
+        },
+        {
+          "item_id": "GOLD:5-10",
+          "weight": 10
+        }
       ],
       "description": "A thin man with a bow. Strikes from the back."
     },
@@ -29,12 +53,28 @@
       "id": "bandit-captain",
       "name": "Bandit Captain",
       "tier": 2,
-      "stats": {"max_hp": 40, "attack": 8, "defense": 4, "speed": 4},
-      "traits": ["natural-leader"],
+      "stats": {
+        "max_hp": 40,
+        "attack": 8,
+        "defense": 4,
+        "speed": 4
+      },
+      "traits": [
+        "natural-leader"
+      ],
       "drops": [
-        {"item_id": "iron-sword-common", "weight": 3},
-        {"item_id": "leather-tunic-common", "weight": 3},
-        {"item_id": "GOLD:15-25", "weight": 10}
+        {
+          "item_id": "iron-sword-common",
+          "weight": 3
+        },
+        {
+          "item_id": "leather-tunic-common",
+          "weight": 3
+        },
+        {
+          "item_id": "GOLD:15-25",
+          "weight": 10
+        }
       ],
       "description": "A wiry man with a sword and bad teeth."
     },
@@ -42,10 +82,20 @@
       "id": "farmhand",
       "name": "Farmhand",
       "tier": 1,
-      "stats": {"max_hp": 18, "attack": 3, "defense": 1, "speed": 3},
-      "traits": ["coward"],
+      "stats": {
+        "max_hp": 18,
+        "attack": 3,
+        "defense": 1,
+        "speed": 3
+      },
+      "traits": [
+        "coward"
+      ],
       "drops": [
-        {"item_id": "GOLD:2-6", "weight": 10}
+        {
+          "item_id": "GOLD:2-6",
+          "weight": 10
+        }
       ],
       "description": "Wields a pitchfork and a prayer."
     },
@@ -53,12 +103,26 @@
       "id": "village-guard",
       "name": "Village Guard",
       "tier": 1,
-      "stats": {"max_hp": 30, "attack": 5, "defense": 4, "speed": 3},
+      "stats": {
+        "max_hp": 30,
+        "attack": 5,
+        "defense": 4,
+        "speed": 3
+      },
       "traits": [],
       "drops": [
-        {"item_id": "club-common", "weight": 4},
-        {"item_id": "wooden-shield-common", "weight": 3},
-        {"item_id": "GOLD:8-14", "weight": 10}
+        {
+          "item_id": "club-common",
+          "weight": 4
+        },
+        {
+          "item_id": "wooden-shield-common",
+          "weight": 3
+        },
+        {
+          "item_id": "GOLD:8-14",
+          "weight": 10
+        }
       ],
       "description": "Town watch. Stoic and slow."
     },
@@ -66,12 +130,28 @@
       "id": "hedge-witch",
       "name": "Hedge Witch",
       "tier": 2,
-      "stats": {"max_hp": 22, "attack": 7, "defense": 1, "speed": 5},
-      "traits": ["spirit-touched"],
+      "stats": {
+        "max_hp": 22,
+        "attack": 7,
+        "defense": 1,
+        "speed": 5
+      },
+      "traits": [
+        "spirit-touched"
+      ],
       "drops": [
-        {"item_id": "bone-staff-common", "weight": 4},
-        {"item_id": "lucky-charm-common", "weight": 3},
-        {"item_id": "GOLD:10-20", "weight": 10}
+        {
+          "item_id": "bone-staff-common",
+          "weight": 4
+        },
+        {
+          "item_id": "lucky-charm-common",
+          "weight": 3
+        },
+        {
+          "item_id": "GOLD:10-20",
+          "weight": 10
+        }
       ],
       "description": "Mutters at the moon. Heals her allies."
     },
@@ -79,10 +159,20 @@
       "id": "mastiff",
       "name": "War Mastiff",
       "tier": 1,
-      "stats": {"max_hp": 18, "attack": 7, "defense": 1, "speed": 7},
-      "traits": ["bloodthirsty"],
+      "stats": {
+        "max_hp": 18,
+        "attack": 7,
+        "defense": 1,
+        "speed": 7
+      },
+      "traits": [
+        "bloodthirsty"
+      ],
       "drops": [
-        {"item_id": "GOLD:4-9", "weight": 10}
+        {
+          "item_id": "GOLD:4-9",
+          "weight": 10
+        }
       ],
       "description": "A muscle dog with a chain collar."
     },
@@ -90,12 +180,28 @@
       "id": "hunter",
       "name": "Forest Hunter",
       "tier": 2,
-      "stats": {"max_hp": 28, "attack": 7, "defense": 2, "speed": 6},
-      "traits": ["sharp-eye"],
+      "stats": {
+        "max_hp": 28,
+        "attack": 7,
+        "defense": 2,
+        "speed": 6
+      },
+      "traits": [
+        "sharp-eye"
+      ],
       "drops": [
-        {"item_id": "longbow-uncommon", "weight": 4},
-        {"item_id": "leather-cap-uncommon", "weight": 3},
-        {"item_id": "GOLD:12-22", "weight": 10}
+        {
+          "item_id": "longbow-uncommon",
+          "weight": 4
+        },
+        {
+          "item_id": "leather-cap-uncommon",
+          "weight": 3
+        },
+        {
+          "item_id": "GOLD:12-22",
+          "weight": 10
+        }
       ],
       "description": "Quiet. Picks her shots."
     },
@@ -103,12 +209,28 @@
       "id": "veteran-mercenary",
       "name": "Veteran Mercenary",
       "tier": 2,
-      "stats": {"max_hp": 45, "attack": 8, "defense": 5, "speed": 4},
-      "traits": ["thick-hide"],
+      "stats": {
+        "max_hp": 45,
+        "attack": 8,
+        "defense": 5,
+        "speed": 4
+      },
+      "traits": [
+        "thick-hide"
+      ],
       "drops": [
-        {"item_id": "iron-sword-uncommon", "weight": 3},
-        {"item_id": "chain-shirt-uncommon", "weight": 3},
-        {"item_id": "GOLD:18-30", "weight": 10}
+        {
+          "item_id": "iron-sword-uncommon",
+          "weight": 3
+        },
+        {
+          "item_id": "chain-shirt-uncommon",
+          "weight": 3
+        },
+        {
+          "item_id": "GOLD:18-30",
+          "weight": 10
+        }
       ],
       "description": "Many scars. Few words."
     },
@@ -117,17 +239,203 @@
       "name": "Iron Warden Hagar",
       "tier": 3,
       "is_boss": true,
-      "stats": {"max_hp": 140, "attack": 11, "defense": 7, "speed": 5},
-      "traits": ["natural-leader", "thick-hide"],
+      "stats": {
+        "max_hp": 140,
+        "attack": 11,
+        "defense": 7,
+        "speed": 5
+      },
+      "traits": [
+        "natural-leader",
+        "thick-hide"
+      ],
       "phase_2_threshold": 0.5,
-      "phase_2_modifier": {"attack": 4, "speed": 2},
-      "phase_2_message": "The Warden ROARS — iron and rage.",
+      "phase_2_modifier": {
+        "attack": 4,
+        "speed": 2
+      },
+      "phase_2_message": "The Warden ROARS \u2014 iron and rage.",
       "drops": [
-        {"item_id": "warden-blade-unique", "weight": 10},
-        {"item_id": "iron-crown-unique", "weight": 5},
-        {"item_id": "GOLD:60-90", "weight": 10}
+        {
+          "item_id": "warden-blade-unique",
+          "weight": 10
+        },
+        {
+          "item_id": "iron-crown-unique",
+          "weight": 5
+        },
+        {
+          "item_id": "GOLD:60-90",
+          "weight": 10
+        }
       ],
       "description": "A mountain of a man, plated head-to-toe. The Farm biome's keeper."
+    },
+    {
+      "id": "rival-grunt",
+      "name": "Rival Orc Grunt",
+      "tier": 2,
+      "stats": {
+        "max_hp": 32,
+        "attack": 7,
+        "defense": 3,
+        "speed": 4
+      },
+      "traits": [],
+      "drops": [
+        {
+          "item_id": "rusty-knife-common",
+          "weight": 5
+        },
+        {
+          "item_id": "GOLD:8-14",
+          "weight": 10
+        }
+      ],
+      "description": "Other warband. Your fight, by name."
+    },
+    {
+      "id": "rival-berserker",
+      "name": "Rival Berserker",
+      "tier": 2,
+      "stats": {
+        "max_hp": 30,
+        "attack": 10,
+        "defense": 1,
+        "speed": 6
+      },
+      "traits": [
+        "bloodthirsty"
+      ],
+      "drops": [
+        {
+          "item_id": "twohanded-axe-common",
+          "weight": 4
+        },
+        {
+          "item_id": "GOLD:12-20",
+          "weight": 10
+        }
+      ],
+      "description": "A berserker who is not yours. Same howl, different blood."
+    },
+    {
+      "id": "rival-shaman",
+      "name": "Rival Shaman",
+      "tier": 2,
+      "stats": {
+        "max_hp": 26,
+        "attack": 5,
+        "defense": 2,
+        "speed": 4
+      },
+      "traits": [
+        "spirit-touched"
+      ],
+      "drops": [
+        {
+          "item_id": "bone-staff-common",
+          "weight": 4
+        },
+        {
+          "item_id": "GOLD:14-22",
+          "weight": 10
+        }
+      ],
+      "description": "Calls on the same ancestors as your shaman. Both lose."
+    },
+    {
+      "id": "clan-scout",
+      "name": "Clan Scout",
+      "tier": 2,
+      "stats": {
+        "max_hp": 22,
+        "attack": 8,
+        "defense": 1,
+        "speed": 7
+      },
+      "traits": [
+        "lucky"
+      ],
+      "drops": [
+        {
+          "item_id": "short-bow-common",
+          "weight": 4
+        },
+        {
+          "item_id": "GOLD:10-18",
+          "weight": 10
+        }
+      ],
+      "description": "Fast. Hits and runs. Hard to corner."
+    },
+    {
+      "id": "clan-elite",
+      "name": "Clan Veteran",
+      "tier": 3,
+      "stats": {
+        "max_hp": 55,
+        "attack": 11,
+        "defense": 6,
+        "speed": 5
+      },
+      "traits": [
+        "veteran",
+        "natural-leader"
+      ],
+      "drops": [
+        {
+          "item_id": "iron-sword-uncommon",
+          "weight": 3
+        },
+        {
+          "item_id": "chain-shirt-uncommon",
+          "weight": 3
+        },
+        {
+          "item_id": "GOLD:25-40",
+          "weight": 10
+        }
+      ],
+      "description": "A grim orc with too many trophies on the belt."
+    },
+    {
+      "id": "clan-warchief-boss",
+      "name": "Warchief Drogan",
+      "tier": 3,
+      "is_boss": true,
+      "stats": {
+        "max_hp": 180,
+        "attack": 13,
+        "defense": 8,
+        "speed": 6
+      },
+      "traits": [
+        "natural-leader",
+        "veteran"
+      ],
+      "phase_2_threshold": 0.5,
+      "phase_2_modifier": {
+        "attack": 5,
+        "speed": 2,
+        "defense": -1
+      },
+      "phase_2_message": "Drogan throws down the helm \u2014 he wants this fight bare.",
+      "drops": [
+        {
+          "item_id": "drogans-axe-unique",
+          "weight": 10
+        },
+        {
+          "item_id": "warband-banner-uncommon",
+          "weight": 6
+        },
+        {
+          "item_id": "GOLD:100-150",
+          "weight": 10
+        }
+      ],
+      "description": "A warchief older than your clan. Half the warbands he gathers desert before his stare."
     }
   ],
   "compositions": [
@@ -137,8 +445,14 @@
       "tier": 1,
       "biome": "farm-village",
       "members": [
-        {"enemy_id": "farmhand", "count": 2},
-        {"enemy_id": "bandit-thug", "count": 1}
+        {
+          "enemy_id": "farmhand",
+          "count": 2
+        },
+        {
+          "enemy_id": "bandit-thug",
+          "count": 1
+        }
       ]
     },
     {
@@ -147,9 +461,18 @@
       "tier": 1,
       "biome": "farm-village",
       "members": [
-        {"enemy_id": "bandit-thug", "count": 2},
-        {"enemy_id": "bandit-archer", "count": 1},
-        {"enemy_id": "mastiff", "count": 1}
+        {
+          "enemy_id": "bandit-thug",
+          "count": 2
+        },
+        {
+          "enemy_id": "bandit-archer",
+          "count": 1
+        },
+        {
+          "enemy_id": "mastiff",
+          "count": 1
+        }
       ]
     },
     {
@@ -158,8 +481,14 @@
       "tier": 1,
       "biome": "farm-village",
       "members": [
-        {"enemy_id": "village-guard", "count": 2},
-        {"enemy_id": "farmhand", "count": 1}
+        {
+          "enemy_id": "village-guard",
+          "count": 2
+        },
+        {
+          "enemy_id": "farmhand",
+          "count": 1
+        }
       ]
     },
     {
@@ -168,9 +497,18 @@
       "tier": 2,
       "biome": "farm-village",
       "members": [
-        {"enemy_id": "hedge-witch", "count": 1},
-        {"enemy_id": "hunter", "count": 1},
-        {"enemy_id": "mastiff", "count": 2}
+        {
+          "enemy_id": "hedge-witch",
+          "count": 1
+        },
+        {
+          "enemy_id": "hunter",
+          "count": 1
+        },
+        {
+          "enemy_id": "mastiff",
+          "count": 2
+        }
       ]
     },
     {
@@ -179,9 +517,18 @@
       "tier": 2,
       "biome": "farm-village",
       "members": [
-        {"enemy_id": "hunter", "count": 2},
-        {"enemy_id": "bandit-archer", "count": 1},
-        {"enemy_id": "mastiff", "count": 1}
+        {
+          "enemy_id": "hunter",
+          "count": 2
+        },
+        {
+          "enemy_id": "bandit-archer",
+          "count": 1
+        },
+        {
+          "enemy_id": "mastiff",
+          "count": 1
+        }
       ]
     },
     {
@@ -190,9 +537,18 @@
       "tier": 2,
       "biome": "farm-village",
       "members": [
-        {"enemy_id": "bandit-thug", "count": 2},
-        {"enemy_id": "bandit-archer", "count": 2},
-        {"enemy_id": "bandit-captain", "count": 1}
+        {
+          "enemy_id": "bandit-thug",
+          "count": 2
+        },
+        {
+          "enemy_id": "bandit-archer",
+          "count": 2
+        },
+        {
+          "enemy_id": "bandit-captain",
+          "count": 1
+        }
       ]
     },
     {
@@ -201,8 +557,14 @@
       "tier": 2,
       "biome": "farm-village",
       "members": [
-        {"enemy_id": "veteran-mercenary", "count": 1},
-        {"enemy_id": "village-guard", "count": 2}
+        {
+          "enemy_id": "veteran-mercenary",
+          "count": 1
+        },
+        {
+          "enemy_id": "village-guard",
+          "count": 2
+        }
       ]
     },
     {
@@ -212,9 +574,151 @@
       "is_boss_fight": true,
       "biome": "farm-village",
       "members": [
-        {"enemy_id": "iron-warden-boss", "count": 1},
-        {"enemy_id": "veteran-mercenary", "count": 1},
-        {"enemy_id": "village-guard", "count": 2}
+        {
+          "enemy_id": "iron-warden-boss",
+          "count": 1
+        },
+        {
+          "enemy_id": "veteran-mercenary",
+          "count": 1
+        },
+        {
+          "enemy_id": "village-guard",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "rival-warband-light",
+      "name": "Rival Warband Patrol",
+      "tier": 2,
+      "biome": "clan-territory",
+      "members": [
+        {
+          "enemy_id": "rival-grunt",
+          "count": 2
+        },
+        {
+          "enemy_id": "clan-scout",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "rival-warband-mid",
+      "name": "Old Grudge",
+      "tier": 2,
+      "biome": "clan-territory",
+      "members": [
+        {
+          "enemy_id": "rival-grunt",
+          "count": 2
+        },
+        {
+          "enemy_id": "rival-berserker",
+          "count": 1
+        },
+        {
+          "enemy_id": "clan-scout",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "clan-scouts",
+      "name": "Clan Scout Pack",
+      "tier": 2,
+      "biome": "clan-territory",
+      "members": [
+        {
+          "enemy_id": "clan-scout",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "id": "clan-skirmishers",
+      "name": "Clan Skirmishers",
+      "tier": 2,
+      "biome": "clan-territory",
+      "members": [
+        {
+          "enemy_id": "rival-berserker",
+          "count": 1
+        },
+        {
+          "enemy_id": "rival-shaman",
+          "count": 1
+        },
+        {
+          "enemy_id": "rival-grunt",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "clan-elite",
+      "name": "Clan Elite Squad",
+      "tier": 3,
+      "biome": "clan-territory",
+      "members": [
+        {
+          "enemy_id": "clan-elite",
+          "count": 1
+        },
+        {
+          "enemy_id": "rival-berserker",
+          "count": 1
+        },
+        {
+          "enemy_id": "rival-grunt",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "old-grudge-ambush",
+      "name": "Ambush at the Cairn",
+      "tier": 3,
+      "biome": "clan-territory",
+      "members": [
+        {
+          "enemy_id": "clan-elite",
+          "count": 1
+        },
+        {
+          "enemy_id": "rival-shaman",
+          "count": 1
+        },
+        {
+          "enemy_id": "clan-scout",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "clan-warchief-boss",
+      "name": "Warchief Drogan",
+      "tier": 3,
+      "is_boss_fight": true,
+      "biome": "clan-territory",
+      "members": [
+        {
+          "enemy_id": "clan-warchief-boss",
+          "count": 1
+        },
+        {
+          "enemy_id": "clan-elite",
+          "count": 1
+        },
+        {
+          "enemy_id": "rival-berserker",
+          "count": 1
+        },
+        {
+          "enemy_id": "rival-grunt",
+          "count": 2
+        }
       ]
     }
   ]

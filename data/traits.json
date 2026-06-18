@@ -1,17 +1,221 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "traits": [
-    {"id": "bloodthirsty", "name": "Bloodthirsty", "kind": "positive", "modifiers": {"attack": 1}, "on_kill": {"heal": 3}, "description": "Heals on kill. Loves the work."},
-    {"id": "thick-hide", "name": "Thick Hide", "kind": "positive", "modifiers": {"defense": 2, "max_hp": 5}, "description": "Damage reduced. Walks slow."},
-    {"id": "sharp-eye", "name": "Sharp Eye", "kind": "positive", "modifiers": {"attack": 1}, "ranged_crit_bonus": 0.10, "description": "+10% crit chance on ranged attacks."},
-    {"id": "natural-leader", "name": "Natural Leader", "kind": "positive", "team_modifiers": {"attack": 1}, "description": "Allies on the same side gain +1 attack."},
-    {"id": "butcher", "name": "Butcher", "kind": "positive", "modifiers": {"attack": 1}, "wounded_target_bonus": 0.15, "description": "+15% damage vs targets below half HP."},
-    {"id": "spirit-touched", "name": "Spirit-Touched", "kind": "positive", "round_heal_ally": 4, "description": "Heals the most-wounded ally 4 HP each round."},
-    {"id": "veteran", "name": "Veteran", "kind": "positive", "modifiers": {"attack": 1, "defense": 1, "max_hp": 5}, "description": "Seen it all. Twice."},
-    {"id": "lucky", "name": "Lucky", "kind": "positive", "modifiers": {"speed": 1}, "crit_chance_bonus": 0.05, "description": "Just lucky. +5% crit chance."},
-    {"id": "coward", "name": "Coward", "kind": "negative", "modifiers": {"defense": -1, "speed": 1}, "description": "Faster. Squishier. You can hear them whimpering."},
-    {"id": "drunkard", "name": "Drunkard", "kind": "negative", "modifiers": {"attack": -1}, "crit_chance_bonus": 0.10, "description": "Worse hits, but the occasional wild swing crits."},
-    {"id": "old-wounds", "name": "Old Wounds", "kind": "negative", "modifiers": {"max_hp": -5, "defense": 1}, "description": "Healed wrong. Hurts when it rains."},
-    {"id": "vengeful", "name": "Vengeful", "kind": "positive", "modifiers": {"attack": 1}, "on_ally_death_bonus": {"attack": 2}, "description": "+2 attack for the rest of the battle when an ally falls."}
+    {
+      "id": "bloodthirsty",
+      "name": "Bloodthirsty",
+      "kind": "positive",
+      "modifiers": {
+        "attack": 1
+      },
+      "on_kill": {
+        "heal": 3
+      },
+      "description": "Heals on kill. Loves the work."
+    },
+    {
+      "id": "thick-hide",
+      "name": "Thick Hide",
+      "kind": "positive",
+      "modifiers": {
+        "defense": 2,
+        "max_hp": 5
+      },
+      "description": "Damage reduced. Walks slow."
+    },
+    {
+      "id": "sharp-eye",
+      "name": "Sharp Eye",
+      "kind": "positive",
+      "modifiers": {
+        "attack": 1
+      },
+      "ranged_crit_bonus": 0.1,
+      "description": "+10% crit chance on ranged attacks."
+    },
+    {
+      "id": "natural-leader",
+      "name": "Natural Leader",
+      "kind": "positive",
+      "team_modifiers": {
+        "attack": 1
+      },
+      "description": "Allies on the same side gain +1 attack."
+    },
+    {
+      "id": "butcher",
+      "name": "Butcher",
+      "kind": "positive",
+      "modifiers": {
+        "attack": 1
+      },
+      "wounded_target_bonus": 0.15,
+      "description": "+15% damage vs targets below half HP."
+    },
+    {
+      "id": "spirit-touched",
+      "name": "Spirit-Touched",
+      "kind": "positive",
+      "round_heal_ally": 4,
+      "description": "Heals the most-wounded ally 4 HP each round."
+    },
+    {
+      "id": "veteran",
+      "name": "Veteran",
+      "kind": "positive",
+      "modifiers": {
+        "attack": 1,
+        "defense": 1,
+        "max_hp": 5
+      },
+      "description": "Seen it all. Twice."
+    },
+    {
+      "id": "lucky",
+      "name": "Lucky",
+      "kind": "positive",
+      "modifiers": {
+        "speed": 1
+      },
+      "crit_chance_bonus": 0.05,
+      "description": "Just lucky. +5% crit chance."
+    },
+    {
+      "id": "coward",
+      "name": "Coward",
+      "kind": "negative",
+      "modifiers": {
+        "defense": -1,
+        "speed": 1
+      },
+      "description": "Faster. Squishier. You can hear them whimpering."
+    },
+    {
+      "id": "drunkard",
+      "name": "Drunkard",
+      "kind": "negative",
+      "modifiers": {
+        "attack": -1
+      },
+      "crit_chance_bonus": 0.1,
+      "description": "Worse hits, but the occasional wild swing crits."
+    },
+    {
+      "id": "old-wounds",
+      "name": "Old Wounds",
+      "kind": "negative",
+      "modifiers": {
+        "max_hp": -5,
+        "defense": 1
+      },
+      "description": "Healed wrong. Hurts when it rains."
+    },
+    {
+      "id": "vengeful",
+      "name": "Vengeful",
+      "kind": "positive",
+      "modifiers": {
+        "attack": 1
+      },
+      "on_ally_death_bonus": {
+        "attack": 2
+      },
+      "description": "+2 attack for the rest of the battle when an ally falls."
+    },
+    {
+      "id": "pack-leader",
+      "name": "Pack Leader",
+      "kind": "positive",
+      "team_modifiers": {
+        "attack": 1,
+        "defense": 1
+      },
+      "description": "Allies on the same side gain +1 attack and +1 defense."
+    },
+    {
+      "id": "tough-as-roots",
+      "name": "Tough as Roots",
+      "kind": "positive",
+      "modifiers": {
+        "max_hp": 12
+      },
+      "description": "Born of the bog. +12 max HP."
+    },
+    {
+      "id": "iron-fist",
+      "name": "Iron Fist",
+      "kind": "positive",
+      "modifiers": {
+        "attack": 2
+      },
+      "description": "Knuckles like steel knots. +2 attack."
+    },
+    {
+      "id": "unbreakable",
+      "name": "Unbreakable",
+      "kind": "positive",
+      "modifiers": {
+        "defense": 3,
+        "speed": -1
+      },
+      "description": "Slow as winter. +3 defense, -1 speed."
+    },
+    {
+      "id": "old-friend",
+      "name": "Old Friend",
+      "kind": "positive",
+      "on_ally_death_bonus": {
+        "attack": 3,
+        "defense": 1
+      },
+      "description": "+3 attack +1 defense for the rest of the battle when an ally falls."
+    },
+    {
+      "id": "spirit-bound",
+      "name": "Spirit-Bound",
+      "kind": "positive",
+      "round_heal_ally": 6,
+      "description": "Heals the most-wounded ally 6 HP each round. Cannot heal self."
+    },
+    {
+      "id": "silent-step",
+      "name": "Silent Step",
+      "kind": "positive",
+      "modifiers": {
+        "speed": 3
+      },
+      "crit_chance_bonus": 0.08,
+      "description": "+3 speed and +8% crit chance."
+    },
+    {
+      "id": "one-eye",
+      "name": "One Eye",
+      "kind": "negative",
+      "modifiers": {
+        "attack": -1,
+        "defense": 1
+      },
+      "description": "Lost an eye to the previous warchief. -1 attack, +1 defense."
+    },
+    {
+      "id": "haunted",
+      "name": "Haunted",
+      "kind": "negative",
+      "modifiers": {
+        "defense": -2
+      },
+      "crit_chance_bonus": 0.12,
+      "description": "Sees old friends. -2 defense, +12% crit chance."
+    },
+    {
+      "id": "rotting",
+      "name": "Rotting",
+      "kind": "negative",
+      "modifiers": {
+        "max_hp": -8,
+        "attack": 2
+      },
+      "description": "Already dying. -8 max HP, +2 attack."
+    }
   ]
 }

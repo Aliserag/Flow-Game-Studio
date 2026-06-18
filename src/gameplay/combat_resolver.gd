@@ -143,12 +143,18 @@ static func resolve(
 	_apply_biome_modifier_start(combatants, biome_modifier)
 
 	var round_num := 0
+	var first_kill_attack_bonus: int = 0
+	if String(biome_modifier.get("rule", "")) == "first_kill_attack_bonus":
+		first_kill_attack_bonus = int(biome_modifier.get("params", {}).get("bonus", 2))
 	while round_num < MAX_ROUNDS:
 		round_num += 1
 		events.append({"kind": EV_ROUND_START, "round": round_num})
 
 		# Biome modifier round expiry
 		_apply_biome_modifier_round(combatants, biome_modifier, round_num)
+
+		# Per-round flag for first-kill modifier
+		var first_kill_claimed: bool = false
 
 		# Action order
 		var actors: Array = combatants.duplicate()
@@ -216,6 +222,10 @@ static func resolve(
 					"killer_name": actor.display_name,
 					"victim_team": target.team,
 				})
+				# Biome modifier: first kill each round grants +bonus attack to the killer
+				if first_kill_attack_bonus > 0 and not first_kill_claimed and actor.current_hp > 0:
+					actor.attack += first_kill_attack_bonus
+					first_kill_claimed = true
 				# Heal-on-kill
 				if actor.heal_on_kill > 0 and actor.current_hp > 0:
 					var before: int = actor.current_hp

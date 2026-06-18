@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "biomes": [
     {
       "id": "farm-village",
@@ -8,6 +8,7 @@
       "tier_range": [1, 2],
       "node_count_per_run": 12,
       "boss_composition_id": "iron-warden-boss",
+      "next_biome_id": "clan-territory",
       "sky_palette": ["#4A3728", "#1C2535"],
       "ground_palette": ["#5C3A1E", "#2E1F14"],
       "battle_modifier": {
@@ -25,6 +26,32 @@
         "hunter-band",
         "bandit-camp-hard",
         "mercenary-patrol"
+      ]
+    },
+    {
+      "id": "clan-territory",
+      "name": "Clan Territory",
+      "subtitle": "Other orcs. Other warbands. Old grudges.",
+      "tier_range": [2, 3],
+      "node_count_per_run": 14,
+      "boss_composition_id": "clan-warchief-boss",
+      "next_biome_id": "",
+      "sky_palette": ["#1C2535", "#0E1118"],
+      "ground_palette": ["#3A3A45", "#1A1A1F"],
+      "battle_modifier": {
+        "id": "cairn-stones",
+        "name": "Under the Cairn Stones",
+        "description": "The ancestors watch. The first kill each round grants +2 attack to the killer.",
+        "rule": "first_kill_attack_bonus",
+        "params": {"bonus": 2}
+      },
+      "composition_pool": [
+        "rival-warband-light",
+        "rival-warband-mid",
+        "clan-scouts",
+        "clan-skirmishers",
+        "clan-elite",
+        "old-grudge-ambush"
       ]
     }
   ]
