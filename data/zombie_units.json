@@ -1,0 +1,72 @@
+{
+  "single": {
+    "name": "Wanderer",
+    "glyph": "z",
+    "color": "#5a8a4a",
+    "size_min": 1,
+    "size_max": 1,
+    "attack": 2,
+    "hp": 4,
+    "noise_radius": 1,
+    "spawn_weight_early": 70,
+    "spawn_weight_mid": 30,
+    "spawn_weight_late": 10,
+    "description": "A single shambler. Slow, but it doesn't tire."
+  },
+  "group": {
+    "name": "Pack",
+    "glyph": "Z",
+    "color": "#3a6a3a",
+    "size_min": 3,
+    "size_max": 6,
+    "attack": 5,
+    "hp": 12,
+    "noise_radius": 2,
+    "spawn_weight_early": 25,
+    "spawn_weight_mid": 50,
+    "spawn_weight_late": 30,
+    "description": "Small group hunting together. Coordinated by hunger."
+  },
+  "horde": {
+    "name": "Horde",
+    "glyph": "H",
+    "color": "#1a3a1a",
+    "size_min": 10,
+    "size_max": 25,
+    "attack": 12,
+    "hp": 40,
+    "noise_radius": 3,
+    "spawn_weight_early": 5,
+    "spawn_weight_mid": 20,
+    "spawn_weight_late": 60,
+    "description": "Dozens. They fill the street."
+  },
+  "swarm": {
+    "name": "Swarm",
+    "glyph": "X",
+    "color": "#0a1a0a",
+    "size_min": 50,
+    "size_max": 150,
+    "attack": 30,
+    "hp": 200,
+    "noise_radius": 5,
+    "spawn_weight_early": 0,
+    "spawn_weight_mid": 0,
+    "spawn_weight_late": 0,
+    "description": "A migrating tide of dead. You hear it before you see it."
+  },
+  "megahorde": {
+    "name": "MEGAHORDE",
+    "glyph": "M",
+    "color": "#000000",
+    "size_min": 500,
+    "size_max": 999,
+    "attack": 100,
+    "hp": 1000,
+    "noise_radius": 10,
+    "spawn_weight_early": 0,
+    "spawn_weight_mid": 0,
+    "spawn_weight_late": 0,
+    "description": "Every corpse for fifty miles. Final reckoning."
+  }
+}

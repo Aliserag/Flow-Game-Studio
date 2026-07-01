@@ -1,0 +1,8 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" fill="#1a0d0d"/>
+  <circle cx="64" cy="56" r="28" fill="#3a5e3a"/>
+  <circle cx="54" cy="52" r="4" fill="#1a0d0d"/>
+  <circle cx="74" cy="52" r="4" fill="#1a0d0d"/>
+  <path d="M48 70 L52 72 L56 70 L60 72 L64 70 L68 72 L72 70 L76 72 L80 70" stroke="#1a0d0d" stroke-width="2" fill="none"/>
+  <text x="64" y="110" font-family="monospace" font-size="14" fill="#a83232" text-anchor="middle" font-weight="bold">NIGHT</text>
+</svg>

@@ -1,0 +1,28 @@
+# Godot editor generated cache. Do not commit.
+.godot/
+.import/
+
+# Generated at export-time by `make stamp-commit`.
+BUILD_COMMIT
+
+# Exported builds
+/build/
+/exports/
+/dist/
+*.exe
+*.dmg
+*.x86_64
+*.app/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor swap files
+*.swp
+*.swo
+*~
+
+# Test coverage / artifacts
+/coverage/
+/test-results/

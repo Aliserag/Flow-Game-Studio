@@ -1,0 +1,90 @@
+[gd_scene load_steps=4 format=3 uid="uid://b1mainmenu000"]
+
+[ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_menu"]
+[ext_resource type="PackedScene" path="res://scenes/SettingsMenu.tscn" id="2_settings"]
+[ext_resource type="PackedScene" path="res://scenes/CreditsScreen.tscn" id="3_credits"]
+
+[node name="MainMenu" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_menu")
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.07, 0.05, 0.05, 1)
+
+[node name="Title" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.15
+offset_left = -260.0
+offset_right = 260.0
+offset_bottom = 80.0
+text = "THEY COME AT NIGHT"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 48
+theme_override_colors/font_color = Color(0.66, 0.2, 0.2, 1)
+
+[node name="Subtitle" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.25
+offset_left = -260.0
+offset_right = 260.0
+offset_bottom = 40.0
+text = "A grid-based zombie apocalypse roguelike"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.7, 0.65, 0.55, 1)
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -100.0
+offset_right = 180.0
+offset_bottom = 160.0
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+theme_override_constants/separation = 14
+
+[node name="ContinueButton" type="Button" parent="Panel/VBox"]
+text = "CONTINUE"
+
+[node name="DifficultyLabel" type="Label" parent="Panel/VBox"]
+text = "Difficulty:"
+
+[node name="DifficultyButton" type="OptionButton" parent="Panel/VBox"]
+
+[node name="MapSizeLabel" type="Label" parent="Panel/VBox"]
+text = "Map size:"
+
+[node name="MapSizeButton" type="OptionButton" parent="Panel/VBox"]
+
+[node name="SoloButton" type="Button" parent="Panel/VBox"]
+text = "SOLO SURVIVOR"
+
+[node name="SettledButton" type="Button" parent="Panel/VBox"]
+text = "SETTLED (start with a base)"
+
+[node name="SettingsButton" type="Button" parent="Panel/VBox"]
+text = "SETTINGS"
+
+[node name="CreditsButton" type="Button" parent="Panel/VBox"]
+text = "CREDITS"
+
+[node name="QuitButton" type="Button" parent="Panel/VBox"]
+text = "QUIT"
+
+[node name="SettingsMenu" parent="." instance=ExtResource("2_settings")]
+
+[node name="CreditsScreen" parent="." instance=ExtResource("3_credits")]
+
+[node name="About" type="Label" parent="Panel/VBox"]
+text = "v0.1"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)

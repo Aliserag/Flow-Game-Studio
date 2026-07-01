@@ -1,0 +1,45 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Godot
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/godot-bin
+          key: godot-4.4-stable-linux
+
+      - name: Install Godot 4.4
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot-bin
+          cd ~/godot-bin
+          curl -L -o godot.zip https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_linux.x86_64.zip
+          unzip godot.zip
+          mv Godot_v4.4-stable_linux.x86_64 godot
+          chmod +x godot
+
+      - name: Trigger editor scan (populate class cache)
+        run: |
+          ~/godot-bin/godot --headless --editor --quit || true
+
+      - name: Run unit tests
+        run: |
+          ~/godot-bin/godot --headless res://scenes/Main.tscn -- --test
+
+      - name: Run E2E harness
+        run: |
+          ~/godot-bin/godot --headless res://scenes/Main.tscn -- --e2e
+
+      - name: Run 50-turn smoke
+        run: |
+          ~/godot-bin/godot --headless res://scenes/Main.tscn -- --smoke
