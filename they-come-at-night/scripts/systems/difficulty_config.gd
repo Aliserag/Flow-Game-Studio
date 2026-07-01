@@ -13,11 +13,14 @@ static func zombie_spawn_multiplier() -> float:
 		_: return 1.0
 
 static func food_consumption_multiplier() -> float:
+	# Apocalypse was 1.5 pre-playtest — 100% of runs died of morale collapse
+	# rather than zombies. Dropped to 1.25 so combat pressure becomes the
+	# dominant threat instead of starvation.
 	match GameState.difficulty:
 		GameState.Difficulty.TOURIST: return 0.75
 		GameState.Difficulty.STANDARD: return 1.0
-		GameState.Difficulty.APOCALYPSE: return 1.5
-		GameState.Difficulty.PERMADEATH: return 1.5
+		GameState.Difficulty.APOCALYPSE: return 1.25
+		GameState.Difficulty.PERMADEATH: return 1.25
 		_: return 1.0
 
 static func megahorde_unlock_range() -> Array:
